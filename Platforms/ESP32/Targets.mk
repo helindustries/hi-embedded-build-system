@@ -55,7 +55,7 @@ endif
 
 $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).bin: $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).elf
 	@$(MSG) "[BIN]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$@)"
-	$(V)"$(ESPTOOL)" --chip $(MCU) elf2image --flash_mode $(ESP_FLASH_MODE) --flash_freq $(ESP_FLASH_FREQ) --flash_size $(ESP_FLASH_SIZE) --elf-sha256-offset $(ESP_FLASH_SHA256_OFFSET) -o "$@" "$<" $(PROCESS_OUTPUT)
+	$(V)"$(ESPTOOL)" --chip $(MCU) elf2image --flash_mode $(ESP_FLASH_MODE) --flash_freq $(ESP_FLASH_FREQ) --flash_size $(ESP_FLASH_SIZE) --elf-sha256-offset $(ESP_ELF_SHA256_OFFSET) -o "$@" "$<" $(PROCESS_OUTPUT)
 
 $(BUILD_DIR)/%-$(MCU).partitions.bin: $(MCU_BOARD)/%.partitions.csv
 	@$(MSG) "[PART]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$@)"
