@@ -113,7 +113,7 @@ Projects will require a **Makefile** set up. The Makefile should look something 
 all: dependencies binary-mcu stats-mcu
 
 # Perform all builds
-install: all upload-fpga-late upload-mcu
+install: all upload-mcu upload-fpga-late
 
 # Perform all cleanups
 clean: clean-dependencies clean-mcu
