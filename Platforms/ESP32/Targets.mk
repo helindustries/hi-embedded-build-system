@@ -8,7 +8,7 @@ ESP_BOOT_OFFSET ?= 0xe000
 ESP_BIN_OFFSET ?= 0x10000
 ESP_TINYUF2_OFFSET ?= 0x2d0000
 
-ifneq ($(strip $(ARDUINO_VARIANT_PATH)),)
+ifeq ($(strip $(ARDUINO_VARIANT_NAME)),)
 	# Require the files to be in a variant subdirectory
 	ESP_BOOTLOADER_BIN ?= $(MCU_BOARD)/bootloader.bin
 	ESP_BOOT_BIN ?= $(MCU_BOARD)/boot_app0.bin
@@ -17,30 +17,34 @@ ifneq ($(strip $(ARDUINO_VARIANT_PATH)),)
 		ESP_TINYUF2_BIN ?= $(MCU_BOARD)/tinyuf2.bin
 	endif
 else
-	# Use the files from the variant Arduino variant path, fall back to default data if necessary. In case of the
-	# bootloader, this is the one in the SDK, for the boot_app0 binary, there is a default in the Arduino install,
-	# for TinyUF2, if it isn't in the variant or the board-specific project path, don't use it
-	ESP_BOOTLOADER_BIN ?= $(strip $(shell $(LS) "$(ARDUINO_VARIANT_PATH)/bootloader"*".bin" 2>/dev/null | sort | tail -n 1))
-	ifeq ($(strip $(shell $(LS) $(ESP_BOOTLOADER_BIN) 2>/dev/null)),)
-		ESP_BOOTLOADER_BIN ?= $(MCU_BOARD)/bootloader.bin
-		ESP_BOOTLOADER_ELF ?= $(strip $(shell $(LS) "$(ARDUINO_USERPATH)/packages/esp32/hardware/esp32/"*"/tools/sdk/$(MCU)/bin/bootloader_$(ESP_FLASH_MODE)_$(ESP_FLASH_FREQ).elf" 2>/dev/null | sort | tail -n 1))
-	endif
+	ifeq ($(strip $(MCU_USE_TINYUF2)),yes)
+		ESP_TINYUF2_BIN ?= $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/tinyuf2.bin
+		ifeq ($(strip $(shell $(LS) "$(ESP_TINYUF2_BIN)" 2>/dev/null)),)
+			ESP_TINYUF2_BIN ?= $(MCU_BOARD)/tinyuf2.bin
+			ifeq ($(strip $(shell $(LS) "$(ESP_TINYUF2_BIN)" 2>/dev/null)),)
+				MCU_USE_TINYUF2 := no
+			endif
+		endif
 
-	ESP_BOOT_BIN ?= $(ARDUINO_VARIANT_PATH)/boot_app0.bin
-	ifeq ($(strip $(shell $(LS) $(ESP_BOOT_BIN) 2>/dev/null)),)
-		ESP_BOOT_BIN ?= $(strip $(shell $(LS) "$(ARDUINO_USERPATH)/packages/esp32/hardware/esp32/"*"/tools/partitions/boot_app0.bin" 2>/dev/null | sort | tail -n 1))
-		ifeq ($(strip $(shell $(LS) $(ESP_BOOT_BIN) 2>/dev/null)),)
-			ESP_BOOT_BIN ?= $(MCU_BOARD)/boot_app0.bin
+		ESP_BOOTLOADER_BIN ?= $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/bootloader-tinyuf2.bin
+		ifeq ($(strip $(shell $(LS) "$(ESP_BOOTLOADER_BIN)" 2>/dev/null)),)
+			ESP_BOOTLOADER_BIN ?= $(MCU_BOARD)/bootloader-tinyuf2.bin
+			ifeq ($(strip $(shell $(LS) "$(ESP_BOOTLOADER_BIN)" 2>/dev/null)),)
+				MCU_USE_TINYUF2 := no
+			endif
 		endif
 	endif
 
-	ifeq ($(strip $(MCU_USE_TINYUF2)),yes)
-	ESP_TINYUF2_BIN ?= $(ARDUINO_VARIANT_PATH)/tinyuf2.bin
-		ifeq ($(strip $(shell $(LS) $(ESP_TINYUF2_BIN) 2>/dev/null)),)
-			ESP_TINYUF2_BIN ?= $(MCU_BOARD)/tinyuf2.bin
-			ifeq ($(strip $(shell $(LS) $(ESP_TINYUF2_BIN) 2>/dev/null)),)
-				MCU_USE_TINYUF2 := no
-			endif
+	ifeq ($(strip $(shell $(LS) "$(ESP_BOOTLOADER_BIN)" 2>/dev/null)),)
+		ESP_BOOTLOADER_BIN ?= $(MCU_BOARD)/bootloader.bin
+		ESP_BOOTLOADER_ELF ?= $(ESP_SDK_PATH)/$(MCU)/bin/bootloader_$(ESP_FLASH_MODE)_$(ESP_FLASH_FREQ).elf
+	endif
+
+	ESP_BOOT_BIN ?= $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/boot_app0.bin
+	ifeq ($(strip $(shell $(LS) "$(ESP_BOOT_BIN)" 2>/dev/null)),)
+		ESP_BOOT_BIN ?= $(strip $(shell $(LS) "$(ESP_BASE_PATH)/tools/partitions/boot_app0.bin" 2>/dev/null | sort | tail -n 1))
+		ifeq ($(strip $(shell $(LS) "$(ESP_BOOT_BIN)" 2>/dev/null)),)
+			ESP_BOOT_BIN ?= $(MCU_BOARD)/boot_app0.bin
 		endif
 	endif
 endif
