@@ -44,7 +44,7 @@ but were not tested explicitly.
 * Simulator support using ISim or GHDL
 * ARMCC/CMSIS integration is available to some extend, but not included in the public release due to
 licensing concerns, via Wine even on Linux and macOS
-* New compilers and toolchains like AVR or nRF can easily be added
+* New compilers and toolchains like AVR can easily be added
 
 ## Supported devices and platforms:
 
@@ -97,8 +97,9 @@ the ESP32)
 
 ## Setup
 
-To configure the build system, create a Config.mk file in the repositories root directory. You can
-find an example in _Documents/Config.examples.mk_.
+To configure the build system, create a Config.mk file in the repositories root directory. You can find an example
+in _Documents/Config.examples.mk_. Can check the _Common.mk_ and _Toolchain.mk_ for variables, that are already
+available at that step to help you.
 
 ## Usage
 
@@ -115,7 +116,7 @@ all: dependencies binary-mcu stats-mcu
 install: all upload-fpga-late upload-mcu
 
 # Perform all cleanups
-clean: dependencies clean-mcu
+clean: dependencies clean-dependencies clean-mcu
 
 .PHONY: all install recover clean
 
@@ -201,6 +202,10 @@ include $(MAKE_INC_PATH)/FPGATargets.mk
 include $(MAKE_INC_PATH)/GHDLToolchain.mk
 include $(MAKE_INC_PATH)/GHDLTargets.mk
 ```
+
+With your _Makefile_ set up, you can run `make cfg-mcu` or `make cfg-fpga` to get an idea of how your build
+is configured and whether your build will perform as expected. To follow the build process in detail and
+debug issues, that arise, you can run `make VERBOSE=1` to get a detailed log of the build process.
 
 ### CLion Setup
 
