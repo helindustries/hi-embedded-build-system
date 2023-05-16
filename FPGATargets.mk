@@ -41,10 +41,6 @@ endif
 	$(V)cp "$<" "$@"
 	$(V)$(FPGA_DFUSUFFIX) -v $(FPGA_VENDOR_ID) -p $(FPGA_PRODUCT_ID) -a "$@"
 
-$(FPGA_DEPLOY_TARGET).upload_jtag_xilinx.timestamp: $(FPGA_DEPLOY_TARGET).lattice.svf $(FPGA_TARGET_DEPS)
-
-upload_xilinx_jtag: $(FPGA_DEPLOY_TARGET).upload_jtag_xilinx.timestamp
-
 #FPGA_FUJPROG ?= $(TOOLCHAIN_PATH)/FPGA/bin/fujprog
 $(FPGA_DEPLOY_TARGET).upload_fujprog.timestamp: $(FPGA_DEPLOY_TARGET) $(FPGA_TARGET_DEPS)
 ifneq ($(strip $(NO_GATEWARE_UPLOAD)),yes)
@@ -68,8 +64,7 @@ ifneq ($(strip $(NO_GATEWARE_UPLOAD)),yes)
 
 	@$(FMSG) "INFO:Uploading $<"
 	@$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$<)"
-	$(V)$(FPGA_FUJPROG) "$<" > /dev/null
-	$(V)touch "$@"
+	$(V)set -o pipefail && $(FPGA_FUJPROG) "$<" > /dev/null && touch "$@"
 endif
 
 upload_fujprog: $(FPGA_DEPLOY_TARGET).upload_fujprog.timestamp
@@ -96,8 +91,7 @@ ifneq ($(strip $(NO_GATEWARE_UPLOAD)),yes)
 
 	@$(FMSG) "INFO:Uploading $<"
 	@$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$<)"
-	$(V)$(FPGA_DFUUTIL) -a 0 -D "$<" > /dev/null
-	$(V)touch "$@"
+	$(V)set -o pipefail && $(FPGA_DFUUTIL) -a 0 -D "$<" > /dev/null && touch "$@"
 endif
 
 upload_dfuutil: $(FPGA_DEPLOY_TARGET).upload_dfuutil.timestamp

@@ -29,8 +29,7 @@ upload_arm: $(MCU_TARGET)-$(MCU).eep $(MCU_TARGET)-$(MCU).hex $(MCU_TARGET)-$(MC
 ifneq ($(strip $(MCU_JTAG_UPLOAD_BY_IDE)), yes)
 	@$(FMSG) "INFO:Uploading $<"
 	@$(MSG) "[UPLOAD]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	$(V)"$(OPENOCD)" $(OPENOCD_DEBUG) -s "$(OPENOCD_CFG_DIR)" -f "$(OPENOCD_CFG_DIR)/$(MCU_DEBUG_ADAPTER).cfg" -f "$(MAKE_INC_PATH)/Targets/MCU/$(MCU_BOARD).ocd.cfg" -c "capture 'reset halt; flash write_image erase $(MCU_TARGET)-$(MCU).hex'" -c "shutdown 0" $(PROCESS_OUTPUT)
-	$(V)touch "$@"
+	$(V)set -o pipefail && "$(OPENOCD)" $(OPENOCD_DEBUG) -s "$(OPENOCD_CFG_DIR)" -f "$(OPENOCD_CFG_DIR)/$(MCU_DEBUG_ADAPTER).cfg" -f "$(MAKE_INC_PATH)/Targets/MCU/$(MCU_BOARD).ocd.cfg" -c "capture 'reset halt; flash write_image erase $(MCU_TARGET)-$(MCU).hex'" -c "shutdown 0" $(PROCESS_OUTPUT) && touch "$@"
 endif
 
 upload_arm_jtag: $(MCU_TARGET)-$(MCU).hex.upload_arm_jtag.timestamp

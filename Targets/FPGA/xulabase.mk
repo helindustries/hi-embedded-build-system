@@ -27,8 +27,7 @@ ifneq ($(strip $(NO_GATEWARE_UPLOAD)),yes)
 
 	@$(FMSG) "INFO:Uploading $<"
 	@$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$<)"
-	$(V)"$(XSLOAD)" -b "$(FPGA_BOARD)" --fpga "$<" > /dev/null
-	$(V)touch "$@"
+	$(V)set -o pipefail && "$(XSLOAD)" -b "$(FPGA_BOARD)" --fpga "$<" > /dev/null && touch "$@"
 endif
 
 upload_xula: $(FPGA_DEPLOY_TARGET).upload_xula.timestamp

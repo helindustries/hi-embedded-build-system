@@ -13,8 +13,7 @@ include $(MAKE_INC_PATH)/Platforms/ARM/Targets.mk
 %.hex.upload_teensy.timestamp: %.hex upload_arm $(SOURCES) $(DEPENDENCY_LIB_PATHS) $(MODULES_LIBS) resetter
 	@$(FMSG) "INFO:Uploading $<"
 	@$(MSG) "[UPLOAD]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	$(V)$(TEENSY_LOADER) -mmcu=$(LOWER_MCU) -v -w $(MCU_TARGET).hex
-	$(V)touch "$@"
+	$(V)set -o pipefail && $(TEENSY_LOADER) -mmcu=$(LOWER_MCU) -v -w $(MCU_TARGET).hex && touch "$@"
 
 upload_teensy: $(MCU_TARGET)-$(MCU).hex.upload_teensy.timestamp
 
