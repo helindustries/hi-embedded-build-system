@@ -23,15 +23,15 @@ SIZE := $(ESP_COMPILERPATH)/xtensa-$(MCU)-elf-size
 START_GROUP := -Wl,--start-group
 END_GROUP := -Wl,--end-group -Wl,-EL
 
-ESP_SDK_PATH ?= $(ESP_BASE_PATH)/tools/sdk
 ESP_BASE_PATH ?= $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/esp32/hardware/esp32"/* 2>/dev/null | sort | tail -n 1))
+ESP_SDK_PATH ?= $(ESP_BASE_PATH)/tools/sdk
 CORE_PATH := $(ESP_BASE_PATH)/cores/esp32
 CORE_LIB_PATH := $(ESP_BASE_PATH)/libraries
 CORE_VARIANTS_PATH := $(ESP_BASE_PATH)/variants
 
-ESPTOOL ?= $(strip $(shell $(LS) "$(ARDUINO_USERPATH)/packages/esp32/tools/esptool_py"/*/esptool.py 2>/dev/null | sort | tail -n 1))
-ESPGENPART_PY ?= $(strip $(shell $(LS) "$(ARDUINO_USERPATH)/packages/esp32/tools/esp32ulp"/*/esptool_py/esp32ulp_generate_binary.py 2>/dev/null | sort | tail -n 1))
-ESPGENINSIGHT_PY ?= $(strip $(shell $(LS) "$(ARDUINO_USERPATH)/packages/esp32/tools/esp32ulp"/*/esptool_py/gen_insights_package.py 2>/dev/null | sort | tail -n 1))
+ESPTOOL ?= $(strip $(shell $(LS) "$(ARDUINO_USERPATH)/packages/esp32/tools/esptool_py"/*/esptool 2>/dev/null | sort | tail -n 1))
+ESPGENPART_PY ?= $(strip $(shell $(LS) "$(ARDUINO_USERPATH)/packages/esp32/hardware/esp32"/*/tools/gen_esp32part.py 2>/dev/null | sort | tail -n 1))
+ESPGENINSIGHT_PY ?= $(strip $(shell $(LS) "$(ARDUINO_USERPATH)/packages/esp32/hardware/esp32"/*/tools/gen_insights_package.py 2>/dev/null | sort | tail -n 1))
 MCU_BOARD_PORT ?= $(strip $(shell for port in $(shell cat "$(BUILD_DIR)/.last_esp32_port" 2>/dev/null) "/dev/cu.usb"*; do if python3 "$$ESPTOOL" --port "$port" chip_id > /dev/null 2>&1; then echo "$port"; break; fi; done))
 
 ifneq ($(strip $(ESP_BUILD_MINIMAL)),yes)
