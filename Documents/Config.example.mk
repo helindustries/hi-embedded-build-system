@@ -25,13 +25,13 @@ LATTICE_BASE_DIR ?= $(LATTICE_WINEPREFIX)/drive_c/lscc/diamond/3.12
 GHDL_LATTICE_LIB ?= $(TOOLCHAIN_PATH)/LatticeLib/ecp5u/v93
 
 # The Wine instance to use to run the Xilinx ISE toolchain
-#XILINX_WINE_EXEC ?= /Applications/Wine.app/Contents/Resources/wine/bin/wine64
+#XILINX_ISE_WINE_EXEC ?= /Applications/Wine.app/Contents/Resources/wine/bin/wine64
 # The prefix, the Xilinx ISE toolchain is installed in
-XILINX_WINEPREFIX ?= $(WINE_BOTTLE_PATH)/XilinxISE
+XILINX_ISE_WINEPREFIX ?= $(WINE_BOTTLE_PATH)/XilinxISE
 # The base dir, on macOS must start with the Wine prefix
-XILINX_BASE_DIR ?= $(XILINX_WINEPREFIX)/drive_c/Xilinx/14.7/ISE_DS
+XILINX_ISE_BASE_DIR ?= $(XILINX_ISE_WINEPREFIX)/drive_c/Xilinx/14.7/ISE_DS
 # The pre-compiled Xilinx libraries for GHDL and Yosys
-GHDL_XILINX_LIB ?= $(TOOLCHAIN_PATH)/XilinxLib/unisim/v93
+GHDL_XILINX_ISE_LIB ?= $(TOOLCHAIN_PATH)/XilinxLib/unisim/v93
 
 # The Yosys installations binary path
 YOSYS_BIN_PATH ?= $(TOOLCHAIN_PATH)/FPGA/bin
