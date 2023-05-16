@@ -27,18 +27,18 @@ recommended
 * Trigger a logic-analyzer via special script shortly before upload
 * Support for module builds, that use the same build setup, i. e. for Arduino module and core builds
 * Support for Makefile-based dependencies, that use their own build setup with the following types:
-** _Lib_: Libraries, required for compilation of the main target
-** _Exec_: Executable code for the main target, that may be loaded into memory
-** _Gateware_: Gateware to be deployed to the FPGA
-** _Tests_: Test build and execution, always targeting the build platform
-** _Tools_: Tools builds, always targeting the build platform
-** _Make_: All other Makefile-based build targets, currently used to build assets
+  * **Lib:** Libraries, required for compilation of the main target
+  * **Exec:** Executable code for the main target, that may be loaded into memory
+  * **Gateware:** Gateware to be deployed to the FPGA
+  * **Tests:** Test build and execution, always targeting the build platform
+  * **Tools:** Tools builds, always targeting the build platform
+  * **Make:** All other Makefile-based build targets, currently used to build assets
 * Compatible with multiple IDEs
-** _CLion_ tested and working nicely
-** _Sublime Text 3/4_ tested and fully working, use Advanced Build System for best results
-** _Xcode_ tested a while a go
-** _Eclipse_ previously worked well
-** Any other IDE with Makefile and parsing GCC and Clang style errors support should work as well,
+  * **CLion** tested and working nicely
+  * **Sublime Text 3/4** tested and fully working, use Advanced Build System for best results
+  * **Xcode** tested a while a go
+  * **Eclipse** previously worked well
+  * Any other IDE with Makefile and parsing GCC and Clang style errors support should work as well,
 but were not tested explicitly.
 * VHDL supported well, Verilog working on a compatibility-module basis
 * Simulator support using ISim or GHDL
@@ -48,7 +48,7 @@ licensing concerns, via Wine even on Linux and macOS
 
 ## Supported devices and platforms:
 
-The supported target devices are listed below, the configurations can be found in the _Targets_ directory.
+The supported target devices are listed below, the configurations can be found in the *Targets* directory.
 New devices can easily be added there, PRs are welcome. Devices with both an MCU and an FPGA should be split
 into MCU and FPGA configurations.
 
@@ -97,13 +97,13 @@ the ESP32)
 
 ## Setup
 
-To configure the build system, create a Config.mk file in the repositories root directory. You can find an example
-in _Documents/Config.examples.mk_. Can check the _Common.mk_ and _Toolchain.mk_ for variables, that are already
+To configure the build system, create a *Config.mk* file in the repositories root directory. You can find an example
+in *Documents/Config.examples.mk*. Can check the *Common.mk* and *Toolchain.mk* for variables, that are already
 available at that step to help you.
 
 ## Usage
 
-Projects will require a _Makefile_ set up. The Makefile should look something like the following examples:
+Projects will require a **Makefile** set up. The Makefile should look something like the following examples:
 
 ### MCU-based core project, triggering FPGA dependencies
 
@@ -116,7 +116,7 @@ all: dependencies binary-mcu stats-mcu
 install: all upload-fpga-late upload-mcu
 
 # Perform all cleanups
-clean: dependencies clean-dependencies clean-mcu
+clean: clean-dependencies clean-mcu
 
 .PHONY: all install recover clean
 
@@ -203,7 +203,7 @@ include $(MAKE_INC_PATH)/GHDLToolchain.mk
 include $(MAKE_INC_PATH)/GHDLTargets.mk
 ```
 
-With your _Makefile_ set up, you can run `make cfg-mcu` or `make cfg-fpga` to get an idea of how your build
+With your *Makefile* set up, you can run `make cfg-mcu` or `make cfg-fpga` to get an idea of how your build
 is configured and whether your build will perform as expected. To follow the build process in detail and
 debug issues, that arise, you can run `make VERBOSE=1` to get a detailed log of the build process.
 
@@ -219,17 +219,17 @@ is highly recommended once you set up your Makefile:
 - Install the OpenOCD plugin (not the ESP32 one, even if you are using an ESP32, it is broken).
 - For nice Serial support, install the Arduino plugin.
 - Set project updates to update any time the Makefile is changed from anywhere.
-- Remove all but the _all_, _install_, _clean_ and _simulate_ from the run target.
+- Remove all but the *all*, *install*, *clean* and *simulate* from the run target.
 - Configure the all target to use /usr/bin/true (or the Windows pendant) as an executable, then replace the pre-run
-task to point at the _install_ task. Now you can use the build and run buttons conveniently.
+task to point at the *install* task. Now you can use the build and run buttons conveniently.
 - Move the Run Window to a corner, it is going to run the /usr/bin/true executable anyway and would only interfere
 with the Serial Monitor coming to the foreground.
 - Set up a separate OpenOCD target using the all command, set init to reset and download to never, then replace the
-pre-run task to point to _install_ as well. Only use this target for debugging when using an ESP32, as the non-
+pre-run task to point to *install* as well. Only use this target for debugging when using an ESP32, as the non-
 debugging version will likely crash the device.
 - If you want to build the product and libraries from adjacent directory trees, you can also modify the project root
 - In case of a VHDL (sub)project, create another target for the all rule (if you have an MCU all rule already),
-and this time replace the pre-run task to point to the _simulate_ task and the executable to /usr/bin/true, now you
+and this time replace the pre-run task to point to the *simulate* task and the executable to /usr/bin/true, now you
 can compile your code or run the simulation using the appropriate buttons in the IDE. Build reports can be found in
 your build directory, so make sure your project root is well chosen to allow access form the IDE.
 
