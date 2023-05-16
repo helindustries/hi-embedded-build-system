@@ -33,3 +33,8 @@ ifneq ($(strip $(MCU_JTAG_UPLOAD_BY_IDE)), yes)
 endif
 
 upload_arm_jtag: $(MCU_TARGET)-$(MCU).hex.upload_arm_jtag.timestamp
+
+cfg-toolchain:
+	@$(MSG) "[CFG]" "$(MCU_TOOLCHAIN)"
+
+.PHONY: clean_arm upload_arm upload_arm_jtag cfg-toolchain
