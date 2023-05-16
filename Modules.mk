@@ -18,4 +18,20 @@ endif
 
 modules: $(MODULES_TARGETS) | silent
 
-.PHONY: modules
+clean-modules:
+ifneq ($(strip $(MODULES_BUILD_DIRS)),)
+	$(V)rm -fr $(MODULES_BUILD_DIRS)
+endif
+ifneq ($(strip $(CORE_BUILD_DIR)),)
+ifeq ($(strip $(CLEAN_CORE)),yes)
+	$(V)rm -fr $(CORE_BUILD_DIR)
+endif
+endif
+ifneq ($(strip $(MODULES_LIBS)),)
+	$(V)rm -f $(MODULES_LIBS)
+endif
+ifneq ($(strip $(CORE_LIB)),)
+	$(V)rm -f $(CORE_LIB)
+endif
+
+.PHONY: modules clean-modules

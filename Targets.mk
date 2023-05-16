@@ -19,20 +19,6 @@ $(BUILD_DIR)/%.s: %.s
 	$(V)"$(CC)" -c -x assembler-with-cpp  $(CFLAGS) $(CPPFLAGS) -o "$@" "$<"
 
 clean-base:
-ifneq ($(strip $(MODULES_BUILD_DIRS)),)
-	$(V)rm -fr $(MODULES_BUILD_DIRS)
-endif
-ifneq ($(strip $(CORE_BUILD_DIR)),)
-ifeq ($(strip $(CLEAN_CORE)),yes)
-	$(V)rm -fr $(CORE_BUILD_DIR)
-endif
-endif
-ifneq ($(strip $(MODULES_LIBS)),)
-	$(V)rm -f $(MODULES_LIBS)
-endif
-ifneq ($(strip $(CORE_LIB)),)
-	$(V)rm -f $(CORE_LIB)
-endif
 	$(V)rm -f $(OBJS) $(OBJS:%.o=%.d)
 
 begin:
