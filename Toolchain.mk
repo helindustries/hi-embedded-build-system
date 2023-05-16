@@ -10,9 +10,9 @@ IDE ?= sublime
 PROCESS_OUTPUT := 2>&1 | python3 "$(MAKE_INC_PATH)/Tools/process_output.py" -f $(IDE)
 
 # Prefer OpenOCD ESP32, as it is compatible with all other platforms as well
-OPENOCD ?= $(strip $(shell $(LS) "$(ARDUINO_USERPATH)/packages/esp32/tools/openocd-esp32/*/bin/openocd" 2>/dev/null | sort | tail -n 1))
+OPENOCD ?= $(strip $(shell $(LS) "$(ARDUINO_USERPATH)/packages/esp32/tools/openocd-esp32/"*"/bin/openocd" 2>/dev/null | sort | tail -n 1))
 ifeq ($(strip $(OPENOCD)),)
-OPENOCD ?= $(strip $(shell $(LS) "$(ARDUINO_USERPATH)/packages/arduino/tools/openocd/*/bin/openocd" 2>/dev/null | sort | tail -n 1))
+OPENOCD ?= $(strip $(shell $(LS) "$(ARDUINO_USERPATH)/packages/arduino/tools/openocd/"*"/bin/openocd" 2>/dev/null | sort | tail -n 1))
 endif
 
 OPENOCD_DEBUG := -d0
