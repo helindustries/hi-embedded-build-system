@@ -152,7 +152,7 @@ endif
 
 dependencies: $(DEPENDENCY_TARGETS)
 
-clean-dependencies:
+clean-dependencies: dependencies
 	$(V)rm -f $(DEPENDENCY_LIB_PATHS)
 
 .PHONY: dependencies clean-dependencies
