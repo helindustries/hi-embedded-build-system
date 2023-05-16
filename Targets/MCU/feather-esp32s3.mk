@@ -21,3 +21,5 @@ include $(MAKE_INC_PATH)/Targets/MCU/esp32base.mk
 upload_feather-esp32s3: upload_esp32s3
 
 upload_feather-esp32s3_jtag: upload_esp32s3_jtag
+
+.PHONY: upload_feather-esp32s3 upload_esp32s3_jtag

@@ -12,3 +12,5 @@ USB_ID = "Teensy\s3.2"
 include $(MAKE_INC_PATH)/Targets/MCU/teensybase.mk
 
 upload_teensy32: upload_teensy
+
+.PHONY: upload_teensy32

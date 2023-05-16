@@ -102,4 +102,4 @@ cfg-fpga:
 	@echo "TARGET:                 $(FPGA_TARGET)"
 	@echo "FPGA_BASE_LIBRARY_PATH: $(FPGA_BASE_LIBRARY_PATH)"
 
-.PHONY: roms synthesize layout upload-fpga clean-fpga upload_xilinx_jtag upload_fujprog upload_dfuutil
+.PHONY: roms synthesize layout upload-fpga clean-fpga upload_xilinx_jtag upload_fujprog upload_dfuutil cfg-fpga

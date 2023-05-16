@@ -72,4 +72,4 @@ endif
 
 upload_xilinx_jtag: $(FPGA_DEPLOY_TARGET).upload_jtag_xilinx.timestamp
 
-.PHONY: synthesize_xilinx layout_xilinx clean_xilinx
+.PHONY: synthesize_xilinx layout_xilinx clean_xilinx upload_xilinx_jtag

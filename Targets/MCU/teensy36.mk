@@ -15,3 +15,5 @@ include $(MAKE_INC_PATH)/Targets/MCU/teensybase.mk
 upload_teensy36: upload_teensy
 
 upload_teensy36_jtag: upload_arm_jtag
+
+.PHONY: upload_teensy36 upload_teensy36_jtag

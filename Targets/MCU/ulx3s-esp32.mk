@@ -17,3 +17,5 @@ include $(MAKE_INC_PATH)/Targets/MCU/esp32base.mk
 upload_ulx3s-esp32: upload_esp32
 
 upload_ulx3s-esp32_jtag: upload_esp32_jtag
+
+.PHONY: upload_ulx3s-esp32 upload_ulx3s-esp32_jtag

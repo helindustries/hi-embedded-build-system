@@ -71,4 +71,4 @@ clean_lattice: clean-modelsim
 	$(V)rm -f ".run_manager.ini"
 	$(V)rm -fr "$(LATTICE_BUILD_DIR)" "reports"
 
-.PHONY: synthesize_lattice layout_lattice clean_lattice
+.PHONY: synthesize_lattice layout_lattice upload_jtag_lattice clean_lattice

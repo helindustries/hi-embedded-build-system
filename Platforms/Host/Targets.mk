@@ -30,4 +30,4 @@ endif
 
 clean-host: clean-base
 
-.PHONY: serial binary-host library-host modules-host stats-host upload-host clean-host lib%.a.target
+.PHONY: binary-host library-host clean-host lib%.a.target

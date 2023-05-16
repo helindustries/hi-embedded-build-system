@@ -70,4 +70,4 @@ cfg-mcu: cfg-toolchain
 	@$(CFGMSG) "SIZE:" "$(SIZE)"
 	@$(CFGMSG) "OPENOCD:" "$(OPENOCD)"
 
-.PHONY: serial binary-mcu library-mcu modules-mcu stats-mcu upload-mcu clean-mcu lib%-$(MCU).a.target
+.PHONY: binary-mcu library-mcu stats-mcu upload-mcu clean-mcu cfg-mcu lib%-$(MCU).a.target

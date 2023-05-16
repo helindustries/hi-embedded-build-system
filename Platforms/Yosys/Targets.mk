@@ -34,3 +34,5 @@ ifneq ($(strip $(YOSYS_BUILD_DIR)),)
 	$(V)rm -fr "$(YOSYS_BUILD_DIR)"
 endif
 	$(V)rm -f "$(FPGA_TARGET).ysproj" "$(FPGA_TARGET).config"
+
+.PHONY: synthesize_yosys layout_yosys clean_yosys

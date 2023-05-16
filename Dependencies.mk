@@ -154,3 +154,5 @@ dependencies: $(DEPENDENCY_TARGETS)
 
 clean-dependencies:
 	$(V)rm -f $(DEPENDENCY_LIB_PATHS)
+
+.PHONY: dependencies clean-dependencies
