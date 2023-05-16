@@ -5,10 +5,10 @@ MODULE_CPP_FILES := $(filter-out $(MODULE_PATH)/examples/%,$(wildcard $(MODULE_P
 MODULE_ASM_FILES := $(filter-out $(MODULE_PATH)/examples/%,$(wildcard $(MODULE_PATH)/*.S $(MODULE_PATH)/src/*.S $(MODULE_PATH)/src/**/*.S))
 
 ifeq ($(strip $(MODULE_NAME)),Core)
-ifneq ($(strip $(USE_ARDUINO_MAIN)),yes)
-	MODULE_C_FILES := $(filter-out $(MODULE_PATH)/main.c,$(MODULE_C_FILES))
-	MODULE_CPP_FILES := $(filter-out $(MODULE_PATH)/main.cpp,$(MODULE_CPP_FILES))
-endif
+	ifneq ($(strip $(USE_ARDUINO_MAIN)),yes)
+		MODULE_C_FILES := $(filter-out $(MODULE_PATH)/main.c,$(MODULE_C_FILES))
+		MODULE_CPP_FILES := $(filter-out $(MODULE_PATH)/main.cpp,$(MODULE_CPP_FILES))
+	endif
 endif
 
 MODULE_SOURCES += $(MODULE_H_FILES) $(MODULE_C_FILES) $(MODULE_CPP_FILES) $(MODULE_ASM_FILES)
