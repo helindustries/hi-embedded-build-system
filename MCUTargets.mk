@@ -23,15 +23,15 @@ $(BUILD_DIR)/lib$(MCU_TARGET)-$(MCU).a: $(OBJS) $(DEPENDENCY_LIB_PATHS) $(MODULE
 
 lib%-$(MCU).a.target:
 ifeq ($(strip $(VERBOSE)),1)
-	$(V)$(VMSG) "Building Module lib$*-$(MCU).a.target"
-	$(V)$(VCFGMSG) "SUBTARGET_NAME:" "$*"
-	$(V)$(VCFGMSG) "SUBTARGET_PATH:" "$(MODULES_PATH_$*)"
-	$(V)$(VCFGMSG) "MAKE_INC_PATH:" "$(MAKE_INC_PATH)"
-	$(V)$(VCFGMSG) "BUILD_DIR:" "$(BUILD_DIR)"
-	$(V)$(VCFGMSG) "MCU:" "$(MCU)"
-	$(V)$(VCFGMSG) "CC:" "$(CC)"
-	$(V)$(VCFGMSG) "CXX:" "$(CXX)"
-	$(V)$(VCFGMSG) "AR:" "$(AR)"
+	@$(VMSG) "Building Module lib$*-$(MCU).a.target"
+	@$(VCFGMSG) "SUBTARGET_NAME:" "$*"
+	@$(VCFGMSG) "SUBTARGET_PATH:" "$(MODULES_PATH_$*)"
+	@$(VCFGMSG) "MAKE_INC_PATH:" "$(MAKE_INC_PATH)"
+	@$(VCFGMSG) "BUILD_DIR:" "$(BUILD_DIR)"
+	@$(VCFGMSG) "MCU:" "$(MCU)"
+	@$(VCFGMSG) "CC:" "$(CC)"
+	@$(VCFGMSG) "CXX:" "$(CXX)"
+	@$(VCFGMSG) "AR:" "$(AR)"
 endif
 	$(V)$(MAKE) --directory="$(MODULES_PATH_$*)" --file "$(MAKE_INC_PATH)/ModulesMakefile.mk" "SUBTARGET_NAME=$*" "SUBTARGET_PATH=$(MODULES_PATH_$*)" "MAKE_INC_PATH=$(MAKE_INC_PATH)" "BUILD_DIR=$(BUILD_DIR)" "MCU=$(MCU)" "CFLAGS=$(CFLAGS)" "CPPFLAGS=$(CPPFLAGS)" "CXXFLAGS=$(CXXFLAGS)" "LDFLAGS=$(LDFLAGS)" "CC=$(CC)" "CXX=$(CXX)" "AR=$(AR)" "V=$(V)" 'MSG=$(MSG)' all
 
@@ -46,25 +46,28 @@ ifneq ($(strip $(ELF_MAP)),)
 	$(V)rm -f $(BUILD_DIR)/$(ELF_MAP)
 endif
 
-cfg-mcu:
-	$(V)$(MSG) "[CFG]" "$(MCU_TARGET)"
-	$(V)$(CFGMSG) "BOARD:" "$(MCU_BOARD)"
-	$(V)$(CFGMSG) "PORT:" "$(MCU_BOARD_PORT)"
-	$(V)$(CFGMSG) "MCU:" "$(MCU)"
-	$(V)$(CFGMSG) "CPU_SPEED:" "$(CPU_SPEED) MHz"
-	$(V)$(CFGMSG) "BUS_SPEED:" "$(BUS_SPEED) MHz"
-	$(V)$(CFGMSG) "BUILD_DIR:" "$(BUILD_DIR)"
-	$(V)$(CFGMSG) "MODULES:" "$(MODULES_NAMES:%=$(strip %))"
-	$(V)$(CFGMSG) "MODULES_TARGETS:" "$(MODULES_TARGETS)"
-	$(V)$(CFGMSG) "TARGET:" "$(MCU_TARGET)"
-	$(V)$(CFGMSG) "CORE_PATH:" "$(CORE_PATH)"
-	$(V)$(CFGMSG) "ARDUINO_PATH:" "$(ARDUINO_PATH)"
-	$(V)$(CFGMSG) "ARDUINO_USERPATH:" "$(ARDUINO_USERPATH)"
-	$(V)$(CFGMSG) "CC:" "$(CC)"
-	$(V)$(CFGMSG) "CXX:" "$(CXX)"
-	$(V)$(CFGMSG) "AR:" "$(AR)"
-	$(V)$(CFGMSG) "OBJCOPY:" "$(OBJCOPY)"
-	$(V)$(CFGMSG) "OBJDUMP:" "$(OBJDUMP)"
-	$(V)$(CFGMSG) "SIZE:" "$(SIZE)"
+cfg-mcu: cfg-toolchain
+	@$(MSG) "[CFG]" "$(MCU_TARGET)"
+	@$(CFGMSG) "BOARD:" "$(MCU_BOARD)"
+	@$(CFGMSG) "PORT:" "$(MCU_BOARD_PORT)"
+	@$(CFGMSG) "MCU:" "$(MCU)"
+	@$(CFGMSG) "CPU_SPEED:" "$(CPU_SPEED) MHz"
+	@$(CFGMSG) "BUS_SPEED:" "$(BUS_SPEED) MHz"
+	@$(CFGMSG) "BUILD_DIR:" "$(BUILD_DIR)"
+	@$(CFGMSG) "MODULES:" "$(MODULES_NAMES:%=$(strip %))"
+	@$(CFGMSG) "MODULES_TARGETS:" "$(MODULES_TARGETS)"
+	@$(CFGMSG) "TARGET:" "$(MCU_TARGET)"
+	@$(CFGMSG) "CORE_PLATFORM:" "$(CORE_PLATFORM)"
+	@$(CFGMSG) "CORE_PATH:" "$(CORE_PATH)"
+	@$(CFGMSG) "CORE_LIB_PATH:" "$(CORE_LIB_PATH)"
+	@$(CFGMSG) "ARDUINO_PATH:" "$(ARDUINO_PATH)"
+	@$(CFGMSG) "ARDUINO_USERPATH:" "$(ARDUINO_USERPATH)"
+	@$(CFGMSG) "CC:" "$(CC)"
+	@$(CFGMSG) "CXX:" "$(CXX)"
+	@$(CFGMSG) "AR:" "$(AR)"
+	@$(CFGMSG) "OBJCOPY:" "$(OBJCOPY)"
+	@$(CFGMSG) "OBJDUMP:" "$(OBJDUMP)"
+	@$(CFGMSG) "SIZE:" "$(SIZE)"
+	@$(CFGMSG) "OPENOCD:" "$(OPENOCD)"
 
 .PHONY: serial binary-mcu library-mcu modules-mcu stats-mcu upload-mcu clean-mcu lib%-$(MCU).a.target
