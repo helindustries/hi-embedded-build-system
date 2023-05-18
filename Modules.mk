@@ -6,7 +6,6 @@ MODULES_PATHS := $(foreach mod,$(MODULES),$(lastword $(subst :, ,$(mod))))
 $(foreach mod,$(MODULES),$(eval MODULES_PATH_$(firstword $(subst :, ,$(mod))) = $(abspath $(lastword $(subst :, ,$(mod))))))
 $(foreach mod,$(MODULES),$(eval MODULES_FILES_$(firstword $(subst :, ,$(mod))) = $(foreach ext,c cpp S s h, $(wildcard $(abspath $(lastword $(subst :, ,$(mod))))/*.$(ext) $(abspath $(lastword $(subst :, ,$(mod))))/**/*.$(ext)))))
 $(foreach mod,$(MODULES),$(eval MODULES_FILES_$(firstword $(subst :, ,$(mod))) = $(filter-out Examples/%,$(filter-out examples/%,$(MODULES_FILES_$(firstword $(subst :, ,$(mod))))))))
-#MODULES_TARGETS = $(patsubst %,lib%-$(MCU).a.module, $(filter-out Core,$(MODULES_NAMES)))
 MODULES_TARGETS := $(patsubst %,lib%-$(MCU).a.module, $(MODULES_NAMES))
 MODULES_CFG_TARGETS := $(patsubst %,lib%-$(MCU).a.modulecfg, $(MODULES_NAMES))
 MODULES_LIBS := $(MODULES_NAMES:%=$(BUILD_DIR)/lib%-$(MCU).a)
@@ -17,6 +16,7 @@ ifeq ($(strip $(USE_ARDUINO_CORE)),yes)
 	CORE_BUILD_DIR := $(BUILD_DIR)/Core
 	CORE_LIB := $(BUILD_DIR)/libCore-$(MCU).a
 	MODULES_PATH_Core := $(CORE_PATH)
+	CPPFLAGS += -I$(CORE_PATH)
 endif
 
 modules: $(MODULES_TARGETS) | silent

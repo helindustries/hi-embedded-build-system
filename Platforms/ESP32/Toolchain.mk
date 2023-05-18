@@ -86,9 +86,6 @@ CPPFLAGS += -DCORE_DEBUG_LEVEL=$(ESP_DEBUG_LEVEL) -DARDUINO_RUNNING_CORE=$(ESP_M
 ifeq ($(strip $(ESP_WITH_PSRAM)), yes)
 	CPPFLAGS += -DBOARD_HAS_PSRAM
 endif
-ifneq ($(strip $(CORE_PATH)),)
-	CPPFLAGS += -I$(CORE_PATH)
-endif
 
 # compiler options for C++ only
 CXXFLAGS ?=
