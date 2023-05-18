@@ -8,6 +8,11 @@ ifeq ($(strip $(MODULE_NAME)),Core)
 	ifneq ($(strip $(USE_ARDUINO_MAIN)),yes)
 		MODULE_C_FILES := $(filter-out $(MODULE_PATH)/main.c,$(MODULE_C_FILES))
 		MODULE_CPP_FILES := $(filter-out $(MODULE_PATH)/main.cpp,$(MODULE_CPP_FILES))
+
+		ifeq ($(strip $(CORE_SKIP_NEW_O)),yes)
+			MODULE_C_FILES := $(filter-out $(MODULE_PATH)/new.c,$(MODULE_C_FILES))
+			MODULE_CPP_FILES := $(filter-out $(MODULE_PATH)/new.cpp,$(MODULE_CPP_FILES))
+		endif
 	endif
 endif
 
