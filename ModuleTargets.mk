@@ -33,3 +33,5 @@ cfg:
 
 # compiler generated dependency info
 -include $(OBJS:.o=.d)
+
+.PHONE: cfg

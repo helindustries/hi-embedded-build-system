@@ -33,7 +33,7 @@ ifeq ($(strip $(VERBOSE)),1)
 	@$(VCFGMSG) "CXX:" "$(CXX)"
 	@$(VCFGMSG) "AR:" "$(AR)"
 endif
-	$(V)$(MAKE) --directory="$(MODULES_PATH_$*)" --file "$(MAKE_INC_PATH)/ModulesMakefile.mk" "SUBTARGET_NAME=$*" "SUBTARGET_PATH=$(MODULES_PATH_$*)" "MAKE_INC_PATH=$(MAKE_INC_PATH)" "BUILD_DIR=$(BUILD_DIR)" "MCU=$(MCU)" "CFLAGS=$(CFLAGS)" "CPPFLAGS=$(CPPFLAGS)" "CORE_SKIP_NEW_O=$(CORE_SKIP_NEW_O)" "CXXFLAGS=$(CXXFLAGS)" "LDFLAGS=$(LDFLAGS)" "CC=$(CC)" "CXX=$(CXX)" "AR=$(AR)" "V=$(V)" 'MSG=$(MSG)' all
+	$(V)$(MAKE) --directory="$(MODULES_PATH_$*)" --file "$(MAKE_INC_PATH)/ModulesMakefile.mk" "SUBTARGET_NAME=$*" "SUBTARGET_PATH=$(MODULES_PATH_$*)" "MAKE_INC_PATH=$(MAKE_INC_PATH)" "BUILD_DIR=$(BUILD_DIR)" "MCU=$(MCU)" "CFLAGS=$(CFLAGS)" "CPPFLAGS=$(CPPFLAGS)" "CORE_SKIP_NEW_O=$(CORE_SKIP_NEW_O)" "CXXFLAGS=$(CXXFLAGS)" "LDFLAGS=$(LDFLAGS)" "CC=$(CC)" "CXX=$(CXX)" "AR=$(AR)" "V=$(V)" 'MSG=$(MSG)' $(MAKEFLAGS) all
 
 cfg-modules: --cfg-modules $(MODULES_CFG_TARGETS)
 --cfg-modules:
@@ -65,3 +65,4 @@ ifneq ($(strip $(CORE_LIB)),)
 endif
 
 .PHONY: modules clean-modules cfg-modules --cfg-modules
+.NOTPARALLEL: cfg-modules

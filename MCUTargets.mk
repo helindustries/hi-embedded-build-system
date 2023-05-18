@@ -60,3 +60,4 @@ cfg-mcu: cfg-toolchain --cfg-mcu
 	@$(CFGMSG) "OPENOCD:" "$(OPENOCD)"
 
 .PHONY: binary-mcu library-mcu stats-mcu upload-mcu clean-mcu cfg-mcu --cfg-mcu lib%-$(MCU).a.target
+.NOTPARALLEL: cfg-mcu

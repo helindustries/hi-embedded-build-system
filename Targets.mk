@@ -53,4 +53,4 @@ endif
 # compiler generated dependency info
 -include $(OBJS:.o=.d)
 
-.PHONY: clean-base debug_server debug_cli serial resetter
+.PHONY: clean-base begin end debug_server debug_cli serial resetter
