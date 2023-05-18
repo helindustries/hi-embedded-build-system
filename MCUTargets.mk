@@ -21,20 +21,6 @@ $(BUILD_DIR)/lib$(MCU_TARGET)-$(MCU).a: $(OBJS) $(DEPENDENCY_LIB_PATHS) $(MODULE
 	@mkdir -p $(shell dirname "$@")
 	$(V)$(AR) -rcsT $@ $(OBJS) $(MODULES_LIBS) $(DEPENDENCY_LIB_PATHS)
 
-lib%-$(MCU).a.target:
-ifeq ($(strip $(VERBOSE)),1)
-	@$(VMSG) "Building Module lib$*-$(MCU).a.target"
-	@$(VCFGMSG) "SUBTARGET_NAME:" "$*"
-	@$(VCFGMSG) "SUBTARGET_PATH:" "$(MODULES_PATH_$*)"
-	@$(VCFGMSG) "MAKE_INC_PATH:" "$(MAKE_INC_PATH)"
-	@$(VCFGMSG) "BUILD_DIR:" "$(BUILD_DIR)"
-	@$(VCFGMSG) "MCU:" "$(MCU)"
-	@$(VCFGMSG) "CC:" "$(CC)"
-	@$(VCFGMSG) "CXX:" "$(CXX)"
-	@$(VCFGMSG) "AR:" "$(AR)"
-endif
-	$(V)$(MAKE) --directory="$(MODULES_PATH_$*)" --file "$(MAKE_INC_PATH)/ModulesMakefile.mk" "SUBTARGET_NAME=$*" "SUBTARGET_PATH=$(MODULES_PATH_$*)" "MAKE_INC_PATH=$(MAKE_INC_PATH)" "BUILD_DIR=$(BUILD_DIR)" "MCU=$(MCU)" "CFLAGS=$(CFLAGS)" "CPPFLAGS=$(CPPFLAGS)" "CXXFLAGS=$(CXXFLAGS)" "LDFLAGS=$(LDFLAGS)" "CC=$(CC)" "CXX=$(CXX)" "AR=$(AR)" "V=$(V)" 'MSG=$(MSG)' all
-
 stats-mcu: $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).elf $(SOURCES)
 	@echo "ROM: $(shell $(SIZE) -A $< | egrep "\.(text)|(data)" | sed -E 's%\.[a-zA-Z0-9_\.\-]+\ +([0-9]+)\ +[0-9]+%\1%' | awk '{s+=$$1} END {print s}') b, RAM: $(shell $(SIZE) -A $< | egrep "\.((dmabuffers)|(usbbuffers)|(data)|(bss)|(usbdescriptortable))" | sed -E 's%\.[a-zA-Z0-9_\.\-]+\ +([0-9]+)\ +[0-9]+%\1%' | awk '{s+=$$1} END {print s}') b"
 
