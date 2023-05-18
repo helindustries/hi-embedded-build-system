@@ -94,7 +94,7 @@ endif
 CXXFLAGS ?=
 CXXFLAGS += -fno-exceptions
 #CXXFLAGS += -fexceptions
-CXXFLAGS += -std=gnu++17 -fno-rtti
+CXXFLAGS += -fno-rtti
 CXXFLAGS += -fpermissive -felide-constructors -fno-threadsafe-statics
 
 # compiler options for C only

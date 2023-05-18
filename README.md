@@ -127,7 +127,7 @@ MCU_BOARD = feather-esp32s3
 MCU_USE_JTAG = yes
 FPGA_BOARD = orangecrab-85f
 FPGA_USE_JTAG = yes
-CPP_FLAGS = --c++17
+CXXFLAGS = --c++17
 
 HEADERS := $(wildcard *.h **/*.h)
 C_FILES := $(wildcard *.c **/*.c)

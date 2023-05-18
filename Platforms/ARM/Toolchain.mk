@@ -17,7 +17,7 @@ END_GROUP := -Wl,--end-group -Wl,-EL
 CPPFLAGS +=  $(OPTIMIZE) -Wall -ffunction-sections -fdata-sections -nostdlib -MMD -mthumb -mcpu=$(CPUARCH) $(CPU_CPPFLAGS) -mfp16-format=alternative -Wno-error=narrowing -fsingle-precision-constant $(MCU_OPTIONS)
 
 # compiler options for C++ only
-CXXFLAGS += -fno-exceptions -fpermissive -felide-constructors -fno-threadsafe-statics -std=gnu++17 -fno-rtti
+CXXFLAGS += -fno-exceptions -fpermissive -felide-constructors -fno-threadsafe-statics -fno-rtti
 
 # compiler options for C only
 CFLAGS +=
