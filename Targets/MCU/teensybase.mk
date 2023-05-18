@@ -7,6 +7,8 @@ CORE_PATH := $(abspath $(ARDUINO_PATH)/hardware/teensy/avr/cores/teensy3)
 CORE_LIB_PATH := $(abspath $(ARDUINO_PATH)/hardware/teensy/avr/libraries)
 CORE_VARIANTS_PATH :=
 
+ARM_LD := $(CORE_PATH)/$(MCU).ld
+
 include $(MAKE_INC_PATH)/Platforms/ARM/Toolchain.mk
 include $(MAKE_INC_PATH)/Platforms/ARM/Targets.mk
 
