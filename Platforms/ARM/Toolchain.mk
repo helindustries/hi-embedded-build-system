@@ -29,3 +29,16 @@ LDFLAGS += -Wl,--check-sections,--unresolved-symbols=report-all,--warn-common,--
 
 # additional libraries to link
 LIBS += -lm -lstdc++
+
+ARM_CMSIS_PATH ?= $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/adafruit/tools/CMSIS"/*/"CMSIS" 2>/dev/null | sort | tail -n 1))
+ifeq ($(strip $(ARM_USE_CMSIS)),yes)
+	ARM_CMSIS_COMPONENTS ?= Core Driver DSP
+
+	HEADERS += $(wildcard $(ARM_CMSIS_COMPONENTS:%=$(ARM_CMSIS_PATH)/%/Include/*.h $(ARM_CMSIS_PATH)/%/Include/**/*.h))
+	C_FILES += $(wildcard $(ARM_CMSIS_COMPONENTS:%=$(ARM_CMSIS_PATH)/%/Source/*.c $(ARM_CMSIS_PATH)/%/Source/**/*.c))
+	CPP_FILES += $(wildcard $(ARM_CMSIS_COMPONENTS:%=$(ARM_CMSIS_PATH)/%/Source/*.cpp $(ARM_CMSIS_PATH)/%/Source/**/*.cpp))
+	ASM_FILES += $(wildcard $(ARM_CMSIS_COMPONENTS:%=$(ARM_CMSIS_PATH)/%/Source/*.S $(ARM_CMSIS_PATH)/%/Source/**/*.S))
+
+	CPPFLAGS += $(ARM_CMSIS_COMPONENTS:%=-I "$(ARM_CMSIS_PATH)/%/Include")
+	LDFLAGS += -L$(ARM_CMSIS_PATH)/Lib/GCC
+endif
