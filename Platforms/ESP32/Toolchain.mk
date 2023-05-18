@@ -76,7 +76,7 @@ ESP_EVENT_CORE ?= 1
 
 # CPPFLAGS = compiler options for C and C++
 CPPFLAGS ?=
-CPPFLAGS += $(OPTIMIZE) $(CPU_CPPFLAGS) $(MCU_OPTIONS) -mlongcalls -MMD -ggdb
+CPPFLAGS += $(OPTIMIZE) $(MCU_OPTIONS) -mlongcalls -MMD -ggdb
 CPPFLAGS += -I$(ESP_SDK_PATH)/$(MCU_TOOLCHAIN)/qio_qspi/include $(ESP_INCLUDE_DIRS:%=-I$(ESP_SDK_PATH)/$(MCU_TOOLCHAIN)/include/%)
 CPPFLAGS += -ffunction-sections -fdata-sections -freorder-blocks -fstack-protector -fstrict-volatile-bitfields -fno-jump-tables -fno-tree-switch-conversion -fno-lto -Wwrite-strings
 CPPFLAGS += -Wall -Wno-error=deprecated-declarations -Wno-unused-parameter  -Wno-error=narrowing -Wno-error=unused-function -Wno-error=unused-variable -Wno-error=unused-but-set-variable
@@ -122,5 +122,5 @@ ESP_LD_UNDEFINED := esp_kiss_fftndr_alloc esp_kiss_fftndri esp_kiss_fftndr
 ESP_LD_OPTIONS := --cref --gc-sections --wrap=esp_log_write --wrap=esp_log_writev --wrap=log_printf --wrap=longjmp --undefined=uxTopUsedPriority --defsym=__rtc_localtime=$(shell date +%s)
 LDFLAGS += $(ESP_LD_LIBRARY_SEARCH_DIRS:%=-L$(ESP_SDK_PATH)/$(MCU_TOOLCHAIN)/%) $(ESP_LD_LIBRARY_DEFS:%=-T %) $(OPTIMIZE) $(ESP_LD_OPTIONS:%=-Wl,%) $(ESP_LD_UNDEFINED:%=-Wl,-u,%)
 LDFLAGS += -mlongcalls -ffunction-sections -fdata-sections -freorder-blocks -fstack-protector -fstrict-volatile-bitfields -fno-jump-tables -fno-tree-switch-conversion -fno-rtti -fno-lto -Wwrite-strings
-LDFLAGS += $(ESP_LD_SYMBOLS:%=-u %) $(CPU_LDFLAGS)  $(CPU_CPPFLAGS) -fno-use-linker-plugin
+LDFLAGS += $(ESP_LD_SYMBOLS:%=-u %) -fno-use-linker-plugin
 LIBS += $(ESP_LD_LIBRARIES:%=-l%) -lc -lm -lstdc++
