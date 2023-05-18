@@ -18,15 +18,13 @@ $(MODULE_LIB): $(MODULE_OBJS) $(MODULE_SOURCES)
 	$(V)$(AR) -rcs $@ $(MODULE_OBJS)
 
 cfg:
-	@echo "MODULE_NAME:  $(MODULE_NAME)"
-	@echo "MODULE_PATH:  $(MODULE_PATH)"
-	@echo "BUILD_DIR:    $(BUILD_DIR)/$(MODULE_NAME)"
-	@echo "CFLAGS:       $(CFLAGS)"
-	@echo "CPPFLAGS:     $(CPPFLAGS)"
-	@echo "CXXFLAGS:     $(CXXFLAGS)"
-	@echo "LDFLAGS:      $(LDFLAGS)"
-	@echo "SOURCES:      $(MODULE_SOURCES)"
-	@echo "MODULE_LIB:   $(MODULE_LIB)"
+	@$(MSG) "[MOD]" "$(MODULE_NAME)"
+	@$(CFGMSG) "MODULE_PATH" "$(MODULE_PATH)"
+	@$(CFGMSG) "MODULE_LIB" "$(MODULE_LIB)"
+	@$(CFGMSG) "MODULE_H_FILES" "$(MODULE_H_FILES)"
+	@$(CFGMSG) "MODULE_C_FILES" "$(MODULE_C_FILES)"
+	@$(CFGMSG) "MODULE_CPP_FILES" "$(MODULE_CPP_FILES)"
+	@$(CFGMSG) "MODULE_ASM_FILES" "$(MODULE_ASM_FILES)"
 
 # compiler generated dependency info
 -include $(OBJS:.o=.d)
