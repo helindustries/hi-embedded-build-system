@@ -13,7 +13,12 @@ $(BUILD_DIR)/%.o: %.ino
 	@mkdir -p $(shell dirname "$@")
 	$(V)"$(CXX)" -c $(CXXFLAGS) $(CPPFLAGS) -o "$@" -x c++ "$<"
 
-$(BUILD_DIR)/%.s: %.s
+$(BUILD_DIR)/%.o: %.S
+	@$(MSG) "[S]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$<)"
+	@mkdir -p $(shell dirname "$@")
+	$(V)"$(CC)" -c -x assembler-with-cpp  $(CFLAGS) $(CPPFLAGS) -o "$@" "$<"
+
+$(BUILD_DIR)/%.o: %.s
 	@$(MSG) "[S]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$<)"
 	@mkdir -p $(shell dirname "$@")
 	$(V)"$(CC)" -c -x assembler-with-cpp  $(CFLAGS) $(CPPFLAGS) -o "$@" "$<"

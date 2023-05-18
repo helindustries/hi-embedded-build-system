@@ -13,6 +13,11 @@ $(BUILD_DIR)/$(MODULE_NAME)/%.o: $(MODULE_PATH)/%.S
 	@mkdir -p $(shell dirname "$@")
 	$(V)$(CC) -c -x assembler-with-cpp  $(CFLAGS) $(CPPFLAGS) -o $@ $<
 
+$(BUILD_DIR)/$(MODULE_NAME)/%.o: $(MODULE_PATH)/%.s
+	@$(MSG) "[S]" "$(MODULE_NAME)" "$(subst $(abspath $(MODULE_PATH))/,,$<)"
+	@mkdir -p $(shell dirname "$@")
+	$(V)$(CC) -c -x assembler-with-cpp  $(CFLAGS) $(CPPFLAGS) -o $@ $<
+
 $(MODULE_LIB): $(MODULE_OBJS) $(MODULE_SOURCES)
 	@$(MSG) "[A]" "$(MODULE_NAME)" "$(subst $(abspath .)/,,$@)"
 	$(V)$(AR) -rcs $@ $(MODULE_OBJS)
