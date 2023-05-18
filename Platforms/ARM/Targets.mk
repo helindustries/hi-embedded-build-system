@@ -8,6 +8,10 @@ else
 	$(V)"$(OBJCOPY)" -O ihex -R .eeprom "$<" "$@"
 endif
 
+$(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.elf $(BUILD_DIR)/%.eep $(SOURCES)
+	@$(MSG) "[BIN]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$@)"
+	$(V)"$(OBJCOPY)" -O binary "$<" "$@"
+
 $(BUILD_DIR)/%.eep: $(BUILD_DIR)/%.elf
 	@$(MSG) "[EEP]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$@)"
 	$(V)"$(OBJCOPY)" -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 "$<" "$@"
