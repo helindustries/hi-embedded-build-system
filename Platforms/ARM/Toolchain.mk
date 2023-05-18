@@ -25,6 +25,7 @@ CFLAGS +=
 
 # linker options (--specs=nano.specs)
 LDFLAGS += $(OPTIMIZE) -Wl,--gc-sections,--relax,--defsym=__rtc_localtime=$(shell date +%s) -mcpu=$(CPUARCH) -mthumb -fsingle-precision-constant
+LDFLAGS += -Wl,--check-sections,--unresolved-symbols=report-all,--warn-common,--warn-section-align -T$(ARM_LD)
 
 # additional libraries to link
 LIBS += -lm -lstdc++
