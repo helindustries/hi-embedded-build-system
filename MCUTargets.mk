@@ -46,7 +46,8 @@ ifneq ($(strip $(ELF_MAP)),)
 	$(V)rm -f $(BUILD_DIR)/$(ELF_MAP)
 endif
 
-cfg-mcu: cfg-toolchain
+cfg-mcu: cfg-toolchain --cfg-mcu
+--cfg-mcu:
 	@$(MSG) "[CFG]" "$(MCU_TARGET)"
 	@$(CFGMSG) "BOARD:" "$(MCU_BOARD)"
 	@$(CFGMSG) "PORT:" "$(MCU_BOARD_PORT)"
@@ -60,8 +61,10 @@ cfg-mcu: cfg-toolchain
 	@$(CFGMSG) "CORE_PLATFORM:" "$(CORE_PLATFORM)"
 	@$(CFGMSG) "CORE_PATH:" "$(CORE_PATH)"
 	@$(CFGMSG) "CORE_LIB_PATH:" "$(CORE_LIB_PATH)"
+	@$(CFGMSG) "CORE_VARIANTS_PATH:" "$(CORE_VARIANTS_PATH)"
 	@$(CFGMSG) "ARDUINO_PATH:" "$(ARDUINO_PATH)"
 	@$(CFGMSG) "ARDUINO_USERPATH:" "$(ARDUINO_USERPATH)"
+	@$(CFGMSG) "ARDUINO_VARIANT_NAME:" "$(ARDUINO_VARIANT_NAME)"
 	@$(CFGMSG) "CC:" "$(CC)"
 	@$(CFGMSG) "CXX:" "$(CXX)"
 	@$(CFGMSG) "AR:" "$(AR)"
@@ -70,4 +73,4 @@ cfg-mcu: cfg-toolchain
 	@$(CFGMSG) "SIZE:" "$(SIZE)"
 	@$(CFGMSG) "OPENOCD:" "$(OPENOCD)"
 
-.PHONY: binary-mcu library-mcu stats-mcu upload-mcu clean-mcu cfg-mcu lib%-$(MCU).a.target
+.PHONY: binary-mcu library-mcu stats-mcu upload-mcu clean-mcu cfg-mcu --cfg-mcu lib%-$(MCU).a.target
