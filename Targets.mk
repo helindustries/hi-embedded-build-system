@@ -9,7 +9,7 @@ $(BUILD_DIR)/%.o: %.cpp
 	$(V)"$(CXX)" -c $(CXXFLAGS) $(CPPFLAGS) -o "$@" "$<"
 
 $(BUILD_DIR)/%.o: %.ino
-	@$(MSG) "[CXX]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$<)"
+	@$(MSG) "[INO]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$<)"
 	@mkdir -p $(shell dirname "$@")
 	$(V)"$(CXX)" -c $(CXXFLAGS) $(CPPFLAGS) -o "$@" -x c++ "$<"
 
