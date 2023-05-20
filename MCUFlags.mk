@@ -11,11 +11,22 @@ ifeq ($(strip $(MCU_USE_JTAG)), yes)
 	MCU_JTAG_UPLOAD_TARGET = _jtag
 endif
 
-# Base Arduino compatibility
-HEADERS += $(wildcard $(MCU_BOARD)/*.h)
-CPP_FILES += $(wildcard $(MCU_BOARD)/*.cpp)
-C_FILES += $(wildcard $(MCU_BOARD)/*.c)
-ASM_FILES += $(wildcard $(MCU_BOARD)/*.s)
+# Project-specific board definitions
+ifneq ($(strip $(BOARDS_DIR)),)
+	HEADERS -= $(filter $(wildcard $(BOARDS_DIR)/*.h),$(HEADERS))
+	CPP_FILES -= $(filter $(wildcard $(BOARDS_DIR)/*.cpp),$(CPP_FILES))
+	C_FILES -= $(filter $(wildcard $(BOARDS_DIR)/*.c),$(C_FILES))
+	ASM_FILES -= $(filter $(wildcard $(BOARDS_DIR)/*.s),$(ASM_FILES))
+	ASM_FILES -= $(filter $(wildcard $(BOARDS_DIR)/*.S),$(ASM_FILES))
+
+	HEADERS += $(wildcard $(BOARDS_DIR)/$(MCU_BOARD)/*.h)
+	CPP_FILES += $(wildcard $(BOARDS_DIR)/$(MCU_BOARD)/*.cpp)
+	C_FILES += $(wildcard $(BOARDS_DIR)/$(MCU_BOARD)/*.c)
+	ASM_FILES += $(wildcard $(BOARDS_DIR)/$(MCU_BOARD)/*.s)
+	ASM_FILES += $(wildcard $(BOARDS_DIR)/$(MCU_BOARD)/*.S)
+
+	CPPFLAGS += -I "$(BOARDS_DIR)/$(MCU_BOARD)"
+endif
 
 include $(MAKE_INC_PATH)/Targets/MCU/$(MCU_BOARD).mk
 

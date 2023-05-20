@@ -10,17 +10,17 @@ ESP_TINYUF2_OFFSET ?= 0x2d0000
 
 ifeq ($(strip $(ARDUINO_VARIANT_NAME)),)
 	# Require the files to be in a variant subdirectory
-	ESP_BOOTLOADER_BIN ?= $(MCU_BOARD)/bootloader.bin
-	ESP_BOOT_BIN ?= $(MCU_BOARD)/boot_app0.bin
+	ESP_BOOTLOADER_BIN ?= $(BOARDS_DIR)/$(MCU_BOARD)/bootloader.bin
+	ESP_BOOT_BIN ?= $(BOARDS_DIR)/$(MCU_BOARD)/boot_app0.bin
 
 	ifeq ($(strip $(MCU_USE_TINYUF2)),yes)
-		ESP_TINYUF2_BIN ?= $(MCU_BOARD)/tinyuf2.bin
+		ESP_TINYUF2_BIN ?= $(BOARDS_DIR)/$(MCU_BOARD)/tinyuf2.bin
 	endif
 else
 	ifeq ($(strip $(MCU_USE_TINYUF2)),yes)
 		ESP_TINYUF2_BIN ?= $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/tinyuf2.bin
 		ifeq ($(strip $(shell $(LS) "$(ESP_TINYUF2_BIN)" 2>/dev/null)),)
-			ESP_TINYUF2_BIN ?= $(MCU_BOARD)/tinyuf2.bin
+			ESP_TINYUF2_BIN ?= $(BOARDS_DIR)/$(MCU_BOARD)/tinyuf2.bin
 			ifeq ($(strip $(shell $(LS) "$(ESP_TINYUF2_BIN)" 2>/dev/null)),)
 				MCU_USE_TINYUF2 := no
 			endif
@@ -28,7 +28,7 @@ else
 
 		ESP_BOOTLOADER_BIN ?= $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/bootloader-tinyuf2.bin
 		ifeq ($(strip $(shell $(LS) "$(ESP_BOOTLOADER_BIN)" 2>/dev/null)),)
-			ESP_BOOTLOADER_BIN ?= $(MCU_BOARD)/bootloader-tinyuf2.bin
+			ESP_BOOTLOADER_BIN ?= $(BOARDS_DIR)/$(MCU_BOARD)/bootloader-tinyuf2.bin
 			ifeq ($(strip $(shell $(LS) "$(ESP_BOOTLOADER_BIN)" 2>/dev/null)),)
 				MCU_USE_TINYUF2 := no
 			endif
@@ -36,7 +36,7 @@ else
 	endif
 
 	ifeq ($(strip $(shell $(LS) "$(ESP_BOOTLOADER_BIN)" 2>/dev/null)),)
-		ESP_BOOTLOADER_BIN ?= $(MCU_BOARD)/bootloader.bin
+		ESP_BOOTLOADER_BIN ?= $(BOARDS_DIR)/$(MCU_BOARD)/bootloader.bin
 		ESP_BOOTLOADER_ELF ?= $(ESP_SDK_PATH)/$(MCU)/bin/bootloader_$(ESP_FLASH_MODE)_$(ESP_FLASH_FREQ).elf
 	endif
 
@@ -44,7 +44,7 @@ else
 	ifeq ($(strip $(shell $(LS) "$(ESP_BOOT_BIN)" 2>/dev/null)),)
 		ESP_BOOT_BIN ?= $(strip $(shell $(LS) "$(ESP_BASE_PATH)/tools/partitions/boot_app0.bin" 2>/dev/null | sort | tail -n 1))
 		ifeq ($(strip $(shell $(LS) "$(ESP_BOOT_BIN)" 2>/dev/null)),)
-			ESP_BOOT_BIN ?= $(MCU_BOARD)/boot_app0.bin
+			ESP_BOOT_BIN ?= $(BOARDS_DIR)/$(MCU_BOARD)/boot_app0.bin
 		endif
 	endif
 endif
@@ -57,7 +57,7 @@ $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).bin: $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).elf
 	@$(MSG) "[BIN]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$@)"
 	$(V)"$(ESPTOOL)" --chip $(MCU) elf2image --flash_mode $(ESP_FLASH_MODE) --flash_freq $(ESP_FLASH_FREQ) --flash_size $(ESP_FLASH_SIZE) --elf-sha256-offset $(ESP_ELF_SHA256_OFFSET) -o "$@" "$<" $(PROCESS_OUTPUT)
 
-$(BUILD_DIR)/%-$(MCU).partitions.bin: $(MCU_BOARD)/%.partitions.csv
+$(BUILD_DIR)/%-$(MCU).partitions.bin: $(BOARDS_DIR)/$(MCU_BOARD)/%.partitions.csv
 	@$(MSG) "[PART]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$@)"
 	$(V)python3 "$(ESPGENPART_PY)" -q "$<" "$@" $(PROCESS_OUTPUT)
 
