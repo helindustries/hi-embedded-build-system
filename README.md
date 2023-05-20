@@ -128,7 +128,8 @@ MCU_BOARD = feather-esp32s3
 MCU_USE_JTAG = yes
 FPGA_BOARD = orangecrab-85f
 FPGA_USE_JTAG = yes
-CXXFLAGS = --c++17
+# Use GNU C++17 if using the SPI lib, the ESP version uses non-standard macros
+CXXFLAGS += -gnu++17
 
 HEADERS := $(wildcard *.h **/*.h)
 C_FILES := $(wildcard *.c **/*.c)
