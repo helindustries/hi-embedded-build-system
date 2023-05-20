@@ -10,13 +10,14 @@ MODULES_TARGETS := $(patsubst %,lib%-$(MCU).a.module, $(MODULES_NAMES))
 MODULES_CFG_TARGETS := $(patsubst %,lib%-$(MCU).a.modulecfg, $(MODULES_NAMES))
 MODULES_LIBS := $(MODULES_NAMES:%=$(BUILD_DIR)/lib%-$(MCU).a)
 MODULES_BUILD_DIRS := $(MODULES_NAMES:%=$(BUILD_DIR)/%)
+CPPFLAGS += $(MODULES_PATHS:%="-I%")
 
 ifeq ($(strip $(USE_ARDUINO_CORE)),yes)
 	CORE_TARGET := libCore-$(MCU).a.module
 	CORE_BUILD_DIR := $(BUILD_DIR)/Core
 	CORE_LIB := $(BUILD_DIR)/libCore-$(MCU).a
 	MODULES_PATH_Core := $(CORE_PATH)
-	CPPFLAGS += -I$(CORE_PATH)
+	CPPFLAGS += "-I$(CORE_PATH)"
 endif
 
 modules: $(MODULES_TARGETS) | silent

@@ -1,12 +1,11 @@
-MODULES_LIBS := $(MODULES_NAMES:%=$(BUILD_DIR)/lib%.a)
-CPPFLAGS += -I$(abspath .) -I$(abspath $(MCU_BOARD)) -I$(CORE_PATH)
-CPPFLAGS += $(MODULES_PATHS:%=-I%) $(MODULES_PATHS:%=-I%/src) $(MODULES_PATHS:%=-I%/Source)
-CPPFLAGS += $(DEPENDENCY_INCLUDE_PATHS:%=-I%) $(DEPENDENCY_INCLUDE_PATHS:%=-I%/src) $(DEPENDENCY_INCLUDE_PATHS:%=-I%/Source)
-
 ESP_PARTITION_OFFSET ?= 0x8000
 ESP_BOOT_OFFSET ?= 0xe000
 ESP_BIN_OFFSET ?= 0x10000
 ESP_TINYUF2_OFFSET ?= 0x2d0000
+
+CPPFLAGS += $(INCLUDE_PATHS:%=-I%)
+LDFLAGS += $(LIBRARY_PATHS:%=-L%)
+LIBS := $(LIBS:%=-l%)
 
 ifeq ($(strip $(ARDUINO_VARIANT_NAME)),)
 	# Require the files to be in a variant subdirectory

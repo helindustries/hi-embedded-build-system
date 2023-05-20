@@ -13,7 +13,6 @@ OBJDUMP := $(shell which objdump)
 SIZE := $(shell which size)
 
 # CPPFLAGS = compiler options for C and C++
-INCLUDES += -I. $(MODULES_PATHS:%=-I%) $(DEPENDENCY_PATHS:%=-I%)
 CPPFLAGS += $(OPTIMIZE) -Wall -ffunction-sections -fdata-sections -Wno-error=narrowing $(INCLUDES)
 #CPPFLAGS += -mavx512fp16
 
@@ -27,7 +26,7 @@ CFLAGS +=
 LDFLAGS += $(OPTIMIZE) -fsingle-precision-constant
 
 # additional libraries to link
-LIBS += -lm -lstdc++
+LIBS += m stdc++
 
 # automatically create lists of the sources and objects
 SOURCES := $(C_FILES) $(CPP_FILES) $(INO_FILES) $(ASM_FILES) $(HEADERS)

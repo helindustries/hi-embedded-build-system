@@ -5,8 +5,6 @@ BUS_SPEED = 48
 
 MCU = mk20dx256
 CPUARCH = cortex-m4
-CPU_CPPFLAGS =
-CPU_LDFLAGS =
 USB_ID = "Teensy\s3.2"
 
 include $(MAKE_INC_PATH)/Targets/MCU/teensybase.mk

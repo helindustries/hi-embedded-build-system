@@ -1,6 +1,3 @@
-MODULES_LIBS = $(MODULES_NAMES:%=$(BUILD_DIR)/lib%.a)
-MODULES_BUILD_DIRS = $(MODULES_NAMES:%=$(BUILD_DIR)/%)
-
 binary-host: modules $(BUILD_DIR)/$(MCU_TARGET) $(SOURCES) | silent
 
 library-host: modules $(BUILD_DIR)/lib$(MCU_TARGET)-host.a $(SOURCES) | silent

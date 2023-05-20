@@ -77,7 +77,6 @@ ESP_EVENT_CORE ?= 1
 # CPPFLAGS = compiler options for C and C++
 CPPFLAGS ?=
 CPPFLAGS += $(OPTIMIZE) $(MCU_OPTIONS) -mlongcalls -MMD -ggdb
-CPPFLAGS += -I$(ESP_SDK_PATH)/$(MCU_TOOLCHAIN)/qio_qspi/include $(ESP_INCLUDE_DIRS:%=-I$(ESP_SDK_PATH)/$(MCU_TOOLCHAIN)/include/%)
 CPPFLAGS += -ffunction-sections -fdata-sections -freorder-blocks -fstack-protector -fstrict-volatile-bitfields -fno-jump-tables -fno-tree-switch-conversion -fno-lto -Wwrite-strings
 CPPFLAGS += -Wall -Wno-error=deprecated-declarations -Wno-unused-parameter  -Wno-error=narrowing -Wno-error=unused-function -Wno-error=unused-variable -Wno-error=unused-but-set-variable
 CPPFLAGS += -DARDUINO_ARCH_ESP32 -DESP_PLATFORM -DHAVE_CONFIG_H -DUNITY_INCLUDE_CONFIG_H -D_GNU_SOURCE -DWITH_POSIX -D_POSIX_READER_WRITER_LOCKS -DARDUINO_PARTITION_default -Wno-sign-compare
@@ -86,6 +85,9 @@ CPPFLAGS += -DCORE_DEBUG_LEVEL=$(ESP_DEBUG_LEVEL) -DARDUINO_RUNNING_CORE=$(ESP_M
 ifeq ($(strip $(ESP_WITH_PSRAM)), yes)
 	CPPFLAGS += -DBOARD_HAS_PSRAM
 endif
+
+INCLUDE_PATHS += "$(ESP_SDK_PATH)/$(MCU_TOOLCHAIN)/qio_qspi/include"
+INCLUDE_PATHS += $(ESP_INCLUDE_DIRS:%="$(ESP_SDK_PATH)/$(MCU_TOOLCHAIN)/include/%")
 
 # compiler options for C++ only
 CXXFLAGS ?=
@@ -117,7 +119,9 @@ ESP_LD_SYMBOLS += include_esp_phy_override ld_include_highint_hdl start_app star
 ESP_LD_SYMBOLS += newlib_include_syscalls_impl newlib_include_pthread_impl newlib_include_assert_impl __cxa_guard_dummy
 ESP_LD_UNDEFINED := esp_kiss_fftndr_alloc esp_kiss_fftndri esp_kiss_fftndr
 ESP_LD_OPTIONS := --cref --gc-sections --wrap=esp_log_write --wrap=esp_log_writev --wrap=log_printf --wrap=longjmp --undefined=uxTopUsedPriority --defsym=__rtc_localtime=$(shell date +%s)
-LDFLAGS += $(ESP_LD_LIBRARY_SEARCH_DIRS:%=-L$(ESP_SDK_PATH)/$(MCU_TOOLCHAIN)/%) $(ESP_LD_LIBRARY_DEFS:%=-T %) $(OPTIMIZE) $(ESP_LD_OPTIONS:%=-Wl,%) $(ESP_LD_UNDEFINED:%=-Wl,-u,%)
+LDFLAGS += $(ESP_LD_LIBRARY_DEFS:%=-T %) $(OPTIMIZE) $(ESP_LD_OPTIONS:%=-Wl,%) $(ESP_LD_UNDEFINED:%=-Wl,-u,%)
 LDFLAGS += -mlongcalls -ffunction-sections -fdata-sections -freorder-blocks -fstack-protector -fstrict-volatile-bitfields -fno-jump-tables -fno-tree-switch-conversion -fno-rtti -fno-lto -Wwrite-strings
 LDFLAGS += $(ESP_LD_SYMBOLS:%=-u %) -fno-use-linker-plugin
-LIBS += $(ESP_LD_LIBRARIES:%=-l%) -lc -lm -lstdc++
+
+LIBRARY_PATHS += $(ESP_LD_LIBRARY_SEARCH_DIRS:%="$(ESP_SDK_PATH)/$(MCU_TOOLCHAIN)/%")
+LIBS += $(ESP_LD_LIBRARIES) c m stdc++

@@ -1,4 +1,6 @@
-CPPFLAGS += -I. $(MODULES_PATHS:%=-I%) $(DEPENDENCY_PATHS:%=-I%) -I$(CORE_PATH)
+CPPFLAGS += $(INCLUDE_PATHS:%=-I%)
+LDFLAGS += $(LIBRARY_PATHS:%=-L%)
+LIBS := $(LIBS:%=-l%)
 
 $(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.elf $(BUILD_DIR)/%.eep $(SOURCES)
 	@$(MSG) "[ELF]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$@)"

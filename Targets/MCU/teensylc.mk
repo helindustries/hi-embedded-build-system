@@ -5,8 +5,7 @@ BUS_SPEED = 24
 
 MCU = mkl26z64
 CPUARCH = cortex-m0plus
-CPU_CPPFLAGS =
-CPU_LDFLAGS = -larm_cortexM0l_math
+LIBS += arm_cortexM0l_math
 SERIAL_ID = "Teensy\sLC"
 MCU_BOARD_RATE = 57600
 

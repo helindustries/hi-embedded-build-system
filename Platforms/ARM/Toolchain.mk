@@ -1,6 +1,12 @@
 MCU_TOOLCHAIN := arm
-ARM_COMPILERPATH ?= $(ARDUINO_PATH)/hardware/tools/arm/bin
 MCU_TOOLCHAIN_OPTIONS := -DARDUINO_ARCH_ARM
+
+# Default to the Adafruit distribution instead of the Teensy version, the Teensy version
+# in hardware/tools/arm/bin is 2016 and does not support C++17
+ARM_COMPILERPATH ?= $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/adafruit/tools/arm-none-eabi-gcc"/*/"bin" 2>/dev/null | sort | tail -n 1))
+ifeq ($(strip $(ARM_COMPILERPATH)),)
+	ARM_COMPILERPATH ?= $(ARDUINO_PATH)/hardware/tools/arm/bin
+endif
 
 # compiler setup
 CC := $(ARM_COMPILERPATH)/arm-none-eabi-gcc
@@ -28,7 +34,7 @@ LDFLAGS += $(OPTIMIZE) -Wl,--gc-sections,--relax,--defsym=__rtc_localtime=$(shel
 LDFLAGS += -Wl,--check-sections,--unresolved-symbols=report-all,--warn-common,--warn-section-align -T$(ARM_LD)
 
 # additional libraries to link
-LIBS += -lm -lstdc++
+LIBS += m stdc++
 
 ARM_CMSIS_PATH ?= $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/adafruit/tools/CMSIS"/*/"CMSIS" 2>/dev/null | sort | tail -n 1))
 ifeq ($(strip $(ARM_USE_CMSIS)),yes)
@@ -39,6 +45,7 @@ ifeq ($(strip $(ARM_USE_CMSIS)),yes)
 	CPP_FILES += $(wildcard $(ARM_CMSIS_COMPONENTS:%=$(ARM_CMSIS_PATH)/%/Source/*.cpp $(ARM_CMSIS_PATH)/%/Source/**/*.cpp))
 	ASM_FILES += $(wildcard $(ARM_CMSIS_COMPONENTS:%=$(ARM_CMSIS_PATH)/%/Source/*.S $(ARM_CMSIS_PATH)/%/Source/**/*.S))
 
-	CPPFLAGS += $(ARM_CMSIS_COMPONENTS:%=-I "$(ARM_CMSIS_PATH)/%/Include")
-	LDFLAGS += -L$(ARM_CMSIS_PATH)/Lib/GCC
+	INCLUDE_PATHS += $(ARM_CMSIS_COMPONENTS:%="$(ARM_CMSIS_PATH)/%/Include")
+	INCLUDE_PATHS += "$(ARM_CMSIS_DEVICE_PATH)"
+	LIBRARY_PATHS += "$(ARM_CMSIS_PATH)/Lib/GCC"
 endif
