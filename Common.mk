@@ -5,6 +5,7 @@ ifneq "$(VERBOSE)" "1"
 	MSG = printf "  %-8s    %-20s  %s\n"
 	FMSG = /usr/bin/true
 	VMSG = /usr/bin/true
+	VCFGMSG = /usr/bin/true
 else
 	MSG = /usr/bin/true
 	FMSG = printf "%s\n"
