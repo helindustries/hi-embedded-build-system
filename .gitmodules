@@ -1,0 +1,3 @@
+[submodule "Tools/TeensyLoader"]
+	path = Tools/TeensyLoader
+	url = https://github.com/PaulStoffregen/teensy_loader_cli.git
