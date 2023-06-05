@@ -143,6 +143,8 @@ MCU_BOARD = feather-esp32s3
 MCU_USE_JTAG = yes
 FPGA_BOARD = orangecrab-85f
 FPGA_USE_JTAG = yes
+USE_ARDINO_CORE = yes
+ARDUINO_VARIANT_NAME = feather-esp32s3-tft
 # Use GNU C++17 if using the SPI lib, the ESP version uses non-standard macros
 CXXFLAGS += -gnu++17
 
