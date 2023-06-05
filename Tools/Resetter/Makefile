@@ -1,6 +1,6 @@
 all: binary-mcu stats-mcu
 
-install: binary-mcu upload-mcu
+install: binary-mcu #upload-mcu
 
 clean: clean-mcu
 
