@@ -27,6 +27,7 @@ stats-mcu: $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).elf $(SOURCES)
 upload-mcu: binary-mcu upload_$(MCU_BOARD)$(MCU_JTAG_UPLOAD_TARGET) | silent
 
 clean-mcu: clean-base clean-modules clean_${MCU_TOOLCHAIN}
+	@$(MSG) "[CLEAN]" "$(MCU_TARGET)"
 	$(V)rm -f $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).elf	$(BUILD_DIR)/$(MCU_TARGET)-$(MCU)
 ifneq ($(strip $(ELF_MAP)),)
 	$(V)rm -f $(BUILD_DIR)/$(ELF_MAP)

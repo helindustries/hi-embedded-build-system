@@ -30,6 +30,7 @@ synthesize_yosys: layout_yosys
 layout_yosys: $(FPGA_TARGET).ysproj
 
 clean_yosys:
+	@$(MSG) "[CLEAN]" "$(FPGA_TARGET)" "Yosys"
 ifneq ($(strip $(YOSYS_BUILD_DIR)),)
 	$(V)rm -fr "$(YOSYS_BUILD_DIR)"
 endif

@@ -87,6 +87,7 @@ endif
 upload_$(MCU_TOOLCHAIN)_jtag: $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).bin.upload_$(MCU_TOOLCHAIN)_jtag.timestamp
 
 clean_$(MCU_TOOLCHAIN):
+	@$(MSG) "[CLEAN]" "$(MCU_TARGET)" "$(MCU) ESP32"
 	$(V)rm -f "$(BUILD_DIR)/$(MCU_TARGET)-$(MCU).bin"
 	$(V)rm -f "$(BUILD_DIR)/$(MCU_TARGET)-$(MCU).partitions.bin"
 

@@ -7,6 +7,7 @@ layout: layout_${FPGA_TOOLCHAIN} $(FPGA_TARGET_DEPS) | silent
 upload-fpga: upload_$(FPGA_BOARD)$(FPGA_JTAG_UPLOAD_TARGET) $(FPGA_TARGET_DEPS) | silent
 
 clean-fpga: clean_${FPGA_TOOLCHAIN}
+	@$(MSG) "[CLEAN]" "$(FPGA_TARGET)"
 ifneq ($(strip $(FPGA_ROMS)),)
 	$(V)rm -f "$(FPGA_ROMS)"
 endif

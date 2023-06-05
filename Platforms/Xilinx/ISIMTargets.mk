@@ -14,9 +14,10 @@
 isim: $(FPGA_TARGET)_tb.wdb $(FPGA_TARGET_DEPS)
 
 clean-isim:
-	rm -f "$(FPGA_TARGET)_tb.prj" "$(FPGA_TARGET)_tb.exe" "$(FPGA_TARGET)_tb.wdb" "xilinxsim.ini"
-	rm -f "$(FPGA_TARGET)_tb_beh.prj" "$(FPGA_TARGET)_tb_isim_beh.exe" "$(FPGA_TARGET)_tb_isim_beh.wdb"
-	rm -f "isim.log" "isim.cmd" "fuse.log" "fuse.xmsgs" "fuseRelaunch.cmd"
-	rm -fr "isim"
+	@$(MSG) "[CLEAN]" "$(FPGA_TARGET)" "Xilinx ISIM"
+	$(V)rm -f "$(FPGA_TARGET)_tb.prj" "$(FPGA_TARGET)_tb.exe" "$(FPGA_TARGET)_tb.wdb" "xilinxsim.ini"
+	$(V)rm -f "$(FPGA_TARGET)_tb_beh.prj" "$(FPGA_TARGET)_tb_isim_beh.exe" "$(FPGA_TARGET)_tb_isim_beh.wdb"
+	$(V)rm -f "isim.log" "isim.cmd" "fuse.log" "fuse.xmsgs" "fuseRelaunch.cmd"
+	$(V)rm -fr "isim"
 
 .PHONY: isim clean-isim

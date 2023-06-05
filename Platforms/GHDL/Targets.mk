@@ -27,6 +27,7 @@ ghdl: $(FPGA_TARGET)_tb.ghw $(FPGA_TARGET)_tb.tcl $(FPGA_TARGET_DEPS)
 	$(V)$(GTKWAVE) -S "$(FPGA_TARGET)_tb.tcl" "$<"
 
 clean-ghdl:
+	@$(MSG) "[CLEAN]" "$(FPGA_TARGET)" "GHDL"
 	$(V)"$(GHDL)" --clean
 ifneq ($(strip $(GHDL_BUILD_DIR)),)
 	$(V)rm -fr "$(GHDL_BUILD_DIR)"

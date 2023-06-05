@@ -58,6 +58,7 @@ synthesize_xilinx: $(FPGA_TARGET).ngc $(FPGA_TARGET_DEPS)
 layout_xilinx: $(FPGA_TARGET).ngd $(FPGA_TARGET_DEPS)
 
 clean_xilinx: clean-isim
+	@$(MSG) "[CLEAN]" "$(FPGA_TARGET)" "Xilinx"
 	$(V)rm -f "$(FPGA_TARGET).bit" "$(FPGA_TARGET).ncd" "$(FPGA_TARGET)_map.ncd" "$(FPGA_TARGET)_map.ngm" "$(FPGA_TARGET).ngd"
 	$(V)rm -f "$(FPGA_TARGET).ngc" "$(FPGA_TARGET).ngr" "$(FPGA_TARGET).pcf" "$(FPGA_TARGET).deps"
 	$(V)rm -f "$(FPGA_TARGET).syr" "$(FPGA_TARGET).gise" "$(FPGA_TARGET).lso" "$(FPGA_TARGET)_summary.html"

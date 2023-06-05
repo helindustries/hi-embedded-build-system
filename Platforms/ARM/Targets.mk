@@ -27,7 +27,8 @@ $(BUILD_DIR)/%.sym: $(BUILD_DIR)/%.elf $(BUILD_DIR)/%.lst
 	$(V)"$(OBJDUMP)" -t -C "$<" > "$@"
 
 clean_arm:
-	rm -f "$(MCU_TARGET)-$(MCU).elf" "$(MCU_TARGET)-$(MCU).hex" "$(MCU_TARGET)-$(MCU).eep" "$(MCU_TARGET)-$(MCU).sym" "$(MCU_TARGET)-$(MCU).lst" "$(MCU_TARGET)-$(MCU).post"
+	@$(MSG) "[CLEAN]" "$(MCU_TARGET)" "ARM $(MCU)"
+	$(V)rm -f "$(MCU_TARGET)-$(MCU).elf" "$(MCU_TARGET)-$(MCU).hex" "$(MCU_TARGET)-$(MCU).eep" "$(MCU_TARGET)-$(MCU).sym" "$(MCU_TARGET)-$(MCU).lst" "$(MCU_TARGET)-$(MCU).post"
 
 upload_arm: $(MCU_TARGET)-$(MCU).eep $(MCU_TARGET)-$(MCU).hex $(MCU_TARGET)-$(MCU).lst $(MCU_TARGET)-$(MCU).sym
 

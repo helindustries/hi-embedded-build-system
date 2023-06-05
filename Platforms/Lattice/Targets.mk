@@ -67,6 +67,7 @@ endif
 upload_jtag_lattice: $(FPGA_DEPLOY_TARGET).upload_jtag_lattice.timestamp
 
 clean_lattice: clean-modelsim
+	@$(MSG) "[CLEAN]" "$(FPGA_TARGET)" "Lattice"
 	$(V)rm -f "$(FPGA_TARGET).prf" "$(FPGA_TARGET).synproj" "$(FPGA_TARGET).ldf" "$(FPGA_TARGET).ngd" "$(FPGA_TARGET)_map.ncd" "$(FPGA_TARGET).ncd" "$(FPGA_TARGET).$(FPGA_BOARD).bit" "$(FPGA_TARGET).$(FPGA_BOARD).bit.lattice.svf" "$(FPGA_TARGET).wcfg"
 	$(V)rm -f ".run_manager.ini"
 	$(V)rm -fr "$(LATTICE_BUILD_DIR)" "reports"
