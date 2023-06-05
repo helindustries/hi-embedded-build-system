@@ -79,7 +79,8 @@ hide_regex: list[str] = [
     "^make(\\[\\d+\\])?:\\sNothing\\sto\\sbe\\sdone\\sfor\\s(?P<message>.*)$",
     "^[A-Za-z]+\\s[A-Za-z]+\\s[0-9]+\\s[0-9]+\\:[0-9]+\\:[0-9]+\\s[0-9]+$",
     "^Start\\sNBR\\s",
-    "^.*std_logic_arith\\.vhdl.*\\(assertion\\swarning\\)\\:"
+    "^.*std_logic_arith\\.vhdl.*\\(assertion\\swarning\\)\\:",
+    "^make\\[2\\]:\\s`.*' is up to date.$"
 ]
 
 line_regex: list[str] = [
