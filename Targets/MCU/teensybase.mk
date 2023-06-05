@@ -17,6 +17,6 @@ include $(MAKE_INC_PATH)/Platforms/ARM/Targets.mk
 	@$(MSG) "[UPLOAD]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$<)"
 	$(V)set -o pipefail && $(TEENSY_LOADER) -mmcu=$(LOWER_MCU) -v -w $(MCU_TARGET).hex && touch "$@"
 
-upload_teensy: $(MCU_TARGET)-$(MCU).hex.upload_teensy.timestamp
+upload_teensy: $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).hex.upload_teensy.timestamp
 
 upload_teensylc: upload_teensy
