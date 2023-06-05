@@ -107,6 +107,21 @@ Projects will require a **Makefile** set up. The Makefile should look something 
 
 ### MCU-based core project, triggering FPGA dependencies
 
+The project structure for the examples is as follows:
+
+    Root
+    |- Build
+    |- Makefile, that just runs the sub-target in Source
+    |- Source
+    |   |- Makefile
+    |   \- main.cpp
+    |- MyLib
+    |   |- Makefile
+    |   \- lib.cpp
+    \- Gateware
+        |- Makefile
+        \- gateware.vhd
+
 ```Makefile
 # Make sure to define targets first, so included targets don't override the target, being executed without arguments
 # Perform all builds here
