@@ -20,6 +20,7 @@ error_regex: list[str] = [
     "^\\s*(Z:)?(?P<file>[\\/\\w\\d:\\\\\\.-][\\/\\s\\d\\w:\\\\\\.-]*):(?P<line>\\d+):(?P<column>\\d+):\\s*fatal\\serror\\:\\s*(?P<message>.*)$",
     "^\\s*(Z:)?(?P<file>[\\/\\w\\d:\\\\\\.-][\\/\\s\\d\\w:\\\\\\.-]*):(?P<line>\\d+):(?P<column>\\d+):\\s*error\\:\\s*(?P<message>.*)$",
     "^(?P<file>[\\/\\w\\d:\\\\\\.-][\\/\\s\\d\\w:\\\\\\.-]*):(?P<line>\\d+):(?P<column>\\d+):\\s*error\\:\\s*(?P<message>.*)$",
+    "^(?P<file>[\\/\\w\\d:\\\\\\.-][\\/\\s\\d\\w:\\\\\\.-]*):(?P<line>\\d+):\\s*error\\:\\s*(?P<message>.*)$",
     "^(?P<file>[\\/\\w\\d:\\\\\\.-][\\/\\s\\d\\w:\\\\\\.-]*):(?P<line>\\d+):\\s\\*\\*\\*\\s(?P<message>.*)",
     "^.*error\\:\\s*(?P<message>.*)\\sat\\s+(Z:)?(?P<file>[\\/\\w\\d:\\\\\\.-][\\/\\s\\d\\w:\\\\\\.-]*):(?P<line>\\d+)$",
     "^.*error\\:\\s*(?P<message>.*)\\sat\\s+(Z:)?(?P<file>[\\/\\w\\d:\\\\\\.-][\\/\\s\\d\\w:\\\\\\.-]*)\\sline\\s(?P<line>\\d+)$",
@@ -40,6 +41,7 @@ warning_regex: list[str] = [
     "^(?P<file>[\\/\\w\\d:\\\\\\.-][\\/\\s\\d\\w:\\\\\\.-]*):(?P<line>\\d+):\\s*Warning\\:\\s*(?P<message>.*)$",
     "^(.*?):(?P<file>[\\/\\w\\d:\\\\\\.-][\\/\\s\\d\\w:\\\\\\.-]*):(?P<line>\\d+):\\s*Warning\\:\\s*(?P<message>.*)$",
     "^\\s*(Z:)?(?P<file>[\\/\\w\\d:\\\\\\.-][\\/\\s\\d\\w:\\\\\\.-]*):(?P<line>\\d+):(?P<column>\\d+):\\s*warning\\:\\s*(?P<message>.*)$",
+    "^(?P<file>[\\/\\w\\d:\\\\\\.-][\\/\\s\\d\\w:\\\\\\.-]*):(?P<line>\\d+):\\s*warning\\:\\s*(?P<message>.*)$",
     "^.*warning\\:\\s*(?P<message>.*)\\sat\\s+(Z:)?(?P<file>[\\/\\w\\d:\\\\\\.-][\\/\\s\\d\\w:\\\\\\.-]*):(?P<line>\\d+)$",
     "^.*warning\\:\\s*(?P<message>.*)$",
     "^Warn\\s:[\\s\\t]+(?P<message>.*)"
@@ -53,6 +55,7 @@ message_regex: list[str] = [
     "^INFO:(.*?)\\s-\\s(?P<message>.*)",
     "^INFO:(?P<message>.*)",
     "^Info\\s:[\\s\\t]+(?P<message>.*)",
+    "^(?P<file>[\\/\\w\\d:\\\\\\.-][\\/\\s\\d\\w:\\\\\\.-]*):(?P<line>\\d+):\\s*note\\:\\s*(?P<message>.*)$",
     "^make(\\[\\d+\\])?:\\s(?P<message>.*)$",
     "^(?P<message>XAnalyzing\\s .*)$",
 ]
