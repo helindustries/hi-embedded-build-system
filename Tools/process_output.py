@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-from typing import Iterable, List, Tuple
+from typing import Iterable, Tuple, Self, Match, Pattern, List, Optional
 from dataclasses import dataclass
+from enum import StrEnum
 import re
 import os
 
-error_regex : List[str] = [
+error_regex: list[str] = [
     "^ERROR:(.*?)\\s-\\s\"(\\.\\.\\/\\.\\.\\/)?(Z:)?(?P<file>.*?)\"\\s[Ll]ine\\s(?P<line>\\d+)[\\:\\.]\\s(?P<message>.*)",
     "^ERROR:(.*?)\\s-\\s(?P<message_pre>.*?)((\\$n\\$)|(\\s))\\[(Z:)?(?P<file>.*?)\\((?P<line>\\d+)\\)\\]((\\:\\s)|(.\\$n\\$))(?P<message>.*)",
     "^ERROR:(.*?)\\s-\\s(?P<message>.*?)((\\$n\\$)|(\\s))\\[(Z:)?(?P<file>.*?)\\((?P<line>\\d+)\\)\\]",
@@ -26,7 +27,7 @@ error_regex : List[str] = [
     "^make\\:\\s+\\*\\*\\*\\s+(?P<message>.*)\\.\\s+Stop\\.$"
 ]
 
-warning_regex : List[str] = [
+warning_regex: list[str] = [
     "^(?P<file>[\\/\\w\\d:\\\\\\.-][\\/\\s\\d\\w:\\\\\\.-]*):(?P<line>\\d+):(?P<column>\\d+):\\s*warning\\:\\s*(?P<message>.*)$",
     "^WARNING:(.*?)\\s-\\s\"(\\.\\.\\/\\.\\.\\/)?(Z:)?(?P<file>.*?)\"\\s[Ll]ine\\s(?P<line>\\d+)[\\:\\.]\\s(?P<message>.*)",
     "^WARNING:(.*?)\\s-\\s(?P<message_pre>.*?)((\\$n\\$)|(\\s))\\[(Z:)?(?P<file>.*?)\\((?P<line>\\d+)\\)\\]((\\:\\s)|(.\\$n\\$))(?P<message>.*)",
@@ -44,7 +45,7 @@ warning_regex : List[str] = [
     "^Warn\\s:[\\s\\t]+(?P<message>.*)"
 ]
 
-message_regex : List[str] = [
+message_regex: list[str] = [
     "^(?P<message>Synthesizing Unit <.*>)\\..*$",
     "^INFO:(.*?)\\s-\\s\"(\\.\\.\\/\\.\\.\\/)?(Z:)?(?P<file>.*?)\"\\s[Ll]ine\\s(?P<line>\\d+)[\\:\\.]\\s(?P<message>.*)",
     "^INFO:(.*?)\\s-\\s(?P<message_pre>.*?)((\\$n\\$)|(\\s))\\[(Z:)?(?P<file>.*?)\\((?P<line>\\d+)\\)\\]((\\:\\s)|(.\\$n\\$))(?P<message>.*)",
@@ -60,7 +61,7 @@ message_regex : List[str] = [
 # "^\\s*(Z:)?(?P<file>[\\/\\w\\d:\\\\\\.-][\\/\\s\\d\\w:\\\\\\.-]*):(?P<line>\\d+):\\s*(?P<message>.*)$",
 # "^(?P<message>.*)$"
 
-hide_regex : List[str] = [
+hide_regex: list[str] = [
     "^WARNING\\s-\\ssynthesis:\\sSkipping\\spad\\sinsertion\\son\\sspi_.*\\sdue\\sto\\sblack_box_pad_pin\\sattribute.$",
     "^WARNING\\s-\\s(.*?)\\:\\s+(Z:)?(?P<file>.*)\\((?P<line>\\d+)\\)\\:\\sreplacing\\sexisting\\snetlist\\s.*",
     "^WARNING:Xst:737\\s",
@@ -78,39 +79,39 @@ hide_regex : List[str] = [
     "^.*std_logic_arith\\.vhdl.*\\(assertion\\swarning\\)\\:"
 ]
 
-line_regex : List[str] = [
+line_regex: list[str] = [
     "^Driver\\s(?P<message_pre>[0-9]+\\:)\\soutput\\ssignal\\s(?P<message>.*)\\.$"
 ]
 
-class OutputTypes:
-    CLion : str = "clion"
-    Sublime : str = "sublime"
+class OutputTypes(StrEnum):
+    CLion: str = "clion"
+    Sublime: str = "sublime"
 
-class SeverityTypes:
-    Info : str = "note"
-    Warning : str = "warning"
-    Error : str = "error"
-    FatalError : str = "fatal_error"
+class SeverityTypes(StrEnum):
+    Info: str = "note"
+    Warning: str = "warning"
+    Error: str = "error"
+    FatalError: str = "fatal_error"
 
 class Message:
-    def __init__(self, severity : str, match : re.Pattern, message_type : str) -> None:
-        self.severity = severity
-        self.message_type = message_type
+    def __init__(self: Self, severity: SeverityTypes, match: Match, message_type: str) -> None:
+        self.severity: SeverityTypes = severity
+        self.message_type: str = message_type
 
-        groups = match.groupdict()
-        self.message_pre = groups.get("message_pre", None)
-        self.message = groups.get("message", None)
-        self.file = groups.get("file", None)
+        groups: dict[str, Optional[str]] = match.groupdict()
+        self.message_pre: Optional[str] = groups.get("message_pre", None)
+        self.message: Optional[str] = groups.get("message", None)
+        self.file: Optional[str] = groups.get("file", None)
         if self.file is not None:
             self.file = self.casify_path(self.file)
-        self.line = groups.get("line", None)
-        self.column = groups.get("column", 0)
+        self.line: Optional[str] = groups.get("line", None)
+        self.column: Optional[str] = groups.get("column", "0")
 
-    def casify_path(self, path):
+    def casify_path(self: Self, path: str) -> str:
         path = os.path.abspath(path)
-        ref_path_elements = path.split(os.path.sep)
+        ref_path_elements: list[str] = path.split(os.path.sep)
         for i, e in enumerate(ref_path_elements):
-            ls = os.path.sep.join(ref_path_elements[:i + 1])
+            ls: str = os.path.sep.join(ref_path_elements[:i + 1])
             if ls.strip() == "":
                 continue
             for d in os.listdir(os.path.dirname(ls)):
@@ -119,7 +120,7 @@ class Message:
                     break;
         return os.path.sep.join(ref_path_elements)
 
-    def __str__(self) -> str:
+    def __str__(self: Self) -> str:
         line : str = ""
         if self.file is not None:
             line += f"{self.file}:"
@@ -132,11 +133,11 @@ class Message:
         line += f"{self.message}"
         return line
 
-def make_messages(type : str, matches : Iterable[Tuple[str, re.Match]]) -> Iterable[Message]:
+def make_messages(type : str, matches : Iterable[tuple[SeverityTypes, Match]]) -> Iterable[Message]:
     for severity, match in matches:
         yield Message(severity, match, type)
 
-def filter_message_categories(error_patterns : List[re.Pattern], warning_patterns : List[re.Pattern], info_patterns : List[re.Pattern], lines : Iterable[str]) -> Iterable[str]:
+def filter_message_categories(error_patterns : list[re.Pattern], warning_patterns : list[re.Pattern], info_patterns : list[re.Pattern], lines : Iterable[str]) -> Iterable[tuple[SeverityTypes, Match]]:
     for line in lines:
         for pattern in error_patterns:
             match = pattern.match(line)
@@ -156,7 +157,7 @@ def filter_message_categories(error_patterns : List[re.Pattern], warning_pattern
                         yield SeverityTypes.Info, match
                         break
 
-def filter_excludes(patterns : List[re.Pattern], lines : Iterable[str]) -> Iterable[str]:
+def filter_excludes(patterns : list[re.Pattern], lines : Iterable[str]) -> Iterable[str]:
     for line in lines:
         for pattern in patterns:
             if pattern.match(line):
@@ -164,8 +165,8 @@ def filter_excludes(patterns : List[re.Pattern], lines : Iterable[str]) -> Itera
         else:
             yield line
 
-def combine_lines(patterns : List[re.Pattern], lines : Iterable[str]) -> Iterable[str]:
-    last_line = ""
+def combine_lines(patterns : list[re.Pattern], lines : Iterable[str]) -> Iterable[str]:
+    last_line: str = ""
     for line in lines:
         for pattern in patterns:
             if pattern.match(line):
@@ -184,9 +185,9 @@ if __name__ == '__main__':
     import argparse
     import sys
 
-    parser = argparse.ArgumentParser()
+    parser: argparse.ArgumentParser = argparse.ArgumentParser()
     parser.add_argument('-f', '--format', help="The format to output", default=OutputTypes.CLion, choices=[OutputTypes.CLion, OutputTypes.Sublime])
-    args = parser.parse_args()
+    args: argparse.Namespace = parser.parse_args()
 
     for message in make_messages(args.format,
                    filter_message_categories([re.compile(p) for p in error_regex], [re.compile(p) for p in warning_regex], [re.compile(p) for p in message_regex],
