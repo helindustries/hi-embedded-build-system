@@ -2,3 +2,5 @@
 .DS_Store
 
 Config.mk
+
+Tools/Resetter/Build/
