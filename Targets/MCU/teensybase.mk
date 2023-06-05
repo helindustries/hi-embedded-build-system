@@ -12,6 +12,7 @@ ARM_LD := $(CORE_PATH)/$(MCU).ld
 include $(MAKE_INC_PATH)/Platforms/ARM/Toolchain.mk
 include $(MAKE_INC_PATH)/Platforms/ARM/Targets.mk
 
+TEENSY_LOADER=$(MAKE_INC_PATH)/Tools/TeensyLoader/teensy_loader_cli
 %.hex.upload_teensy.timestamp: %.hex upload_arm $(SOURCES) $(DEPENDENCY_LIB_PATHS) $(MODULES_LIBS) resetter
 	@$(FMSG) "INFO:Uploading $<"
 	@$(MSG) "[UPLOAD]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$<)"
