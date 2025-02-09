@@ -44,6 +44,15 @@ ASMFLAGS += -x assembler-with-cpp
 ifneq (BUS_SPEED,)
 	CPPFLAGS += -DF_BUS=$(F_BUS)
 endif
+ifeq ($(strip $(USB)),yes)
+    CPPFLAGS += -DUSBCON -DUSB_CONFIG_POWER=100 "-DUSB_NAME=\"$(USB_VENDOR)_$(USB_PRODUCT)\""
+    CPPFLAGS += -DUSB_VID=$(USB_VID) -DUSB_PID=$(USB_PID)
+    CPPFLAGS += "-DUSB_MANUFACTURER=\"$(USB_VENDOR)\"" "-DUSB_PRODUCT=\"$(USB_PRODUCT)\""
+else
+ifeq ($(strip $(USB)),nodefine)
+    CPPFLAGS += -DUSBCON -DUSB_CONFIG_POWER=100 "-DUSB_NAME=\"$(USB_VENDOR)_$(USB_PRODUCT)\""
+endif
+endif
 
 # Base Arduino compatibility
 ifeq ($(strip $(USE_ARDUINO_CORE)),yes)
