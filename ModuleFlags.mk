@@ -4,7 +4,7 @@ MODULE_C_FILES := $(filter-out $(MODULE_PATH)/examples/%,$(filter-out $(MODULE_P
 MODULE_CPP_FILES := $(filter-out $(MODULE_PATH)/examples/%,$(filter-out $(MODULE_PATH)/Examples/%,$(wildcard $(MODULE_PATH)/*.cpp $(MODULE_PATH)/*/*.cpp $(MODULE_PATH)/*/*/*.cpp $(MODULE_PATH)/*/*/*/*.cpp $(MODULE_PATH)*/*/*/*/*.cpp)))
 MODULE_ASM_FILES := $(filter-out $(MODULE_PATH)/examples/%,$(filter-out $(MODULE_PATH)/Examples/%,$(wildcard $(MODULE_PATH)/*.S $(MODULE_PATH)/*.s $(MODULE_PATH)/*/*.S $(MODULE_PATH)/*/*/*.S $(MODULE_PATH)/*/*/*/*.S $(MODULE_PATH)*/*/*/*/*.S $(MODULE_PATH)/*/*.s $(MODULE_PATH)/*/*/*.s $(MODULE_PATH)/*/*/*/*.s $(MODULE_PATH)*/*/*/*/*.s)))
 
-ifeq ($(strip $(MODULE_NAME)),Core)
+ifeq ($(strip $(MODULE_NAME)),ArduinoCore)
 	ifneq ($(strip $(USE_ARDUINO_MAIN)),yes)
 		MODULE_C_FILES := $(filter-out $(MODULE_PATH)/main.c,$(MODULE_C_FILES))
 		MODULE_CPP_FILES := $(filter-out $(MODULE_PATH)/main.cpp,$(MODULE_CPP_FILES))

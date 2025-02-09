@@ -13,11 +13,14 @@ MODULES_BUILD_DIRS := $(MODULES_NAMES:%=$(BUILD_DIR)/%)
 CPPFLAGS += $(MODULES_PATHS:%="-I%")
 
 ifeq ($(strip $(USE_ARDUINO_CORE)),yes)
-	CORE_TARGET := libCore-$(MCU).a.module
-	CORE_BUILD_DIR := $(BUILD_DIR)/Core
-	CORE_LIB := $(BUILD_DIR)/libCore-$(MCU).a
-	MODULES_PATH_Core := $(CORE_PATH)
-	CPPFLAGS += "-I$(CORE_PATH)"
+    CORE_TARGET := libArduinoCore-$(MCU).a.module
+    CORE_BUILD_DIR := $(BUILD_DIR)/ArduinoCore
+    CORE_LIB := $(BUILD_DIR)/libArduinoCore-$(MCU).a
+    MODULES_CFG_TARGETS += $(CORE_TARGET)cfg
+    MODULES_PATH_ArduinoCore := $(CORE_PATH)
+    ifneq ($(strip $(CORE_PATH)),)
+        CPPFLAGS += "-I$(CORE_PATH)"
+    endif
 endif
 
 modules: $(MODULES_TARGETS) | silent
