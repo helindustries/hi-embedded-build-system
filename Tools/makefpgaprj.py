@@ -5,8 +5,8 @@ import os.path
 import re
 import sys
 
-package_re: Pattern = re.compile("^[\ \t]*package (?P<name>[a-zA-Z0-9_-]+) is[\ \t]*((--).*)?\r?$")
-include_re: Pattern = re.compile("^[\ \t]*use (?P<library>[a-zA-Z0-9_-]+).(?P<package>[a-zA-Z0-9_-]+).[a-zA-Z0-9_-]+;[\ \t]*((--).*)?\r?$")
+package_re: Pattern = re.compile(r"^[\ \t]*package (?P<name>[a-zA-Z0-9_-]+) is[\ \t]*((--).*)?\r?$")
+include_re: Pattern = re.compile(r"^[\ \t]*use (?P<library>[a-zA-Z0-9_-]+).(?P<package>[a-zA-Z0-9_-]+).[a-zA-Z0-9_-]+;[\ \t]*((--).*)?\r?$")
 
 lse_top_template: str = """<?xml version="1.0" encoding="UTF-8"?>
 <BaliProject version="3.2" title="{top_module}" device="{package}" default_implementation="{top_module}">
@@ -24,6 +24,41 @@ lse_bottom_template: str = """    </Implementation>
     <Strategy name="Strategy" file="{top_module}.sty"/>
 </BaliProject>
 """
+
+class HardwareLibrary(object):
+    def __init__(self: Self, name: str, path: str) -> None:
+        super(HardwareLibrary, self).__init__()
+        self.name: str = name
+        self.key: str = name.lower()
+        self.path: str = path
+        self.modules: OrderedDict[str, HardwareModule] = OrderedDict()
+        self.modulesByPackage: OrderedDict[str, HardwareModule] = OrderedDict()
+
+    def add_module(self: Self, path: str) -> None:
+        module: HardwareModule = HardwareModule(self, path)
+        module.collect()
+        self.modules[module.key] = module
+        for package in module.packages:
+            self.modulesByPackage[package] = module
+
+    def collect(self: Self) -> None:
+        path: str = self.path
+        if path == "":
+            path = "."
+
+        self.modules = OrderedDict()
+        self.modulesByPackage = OrderedDict()
+        for name in os.listdir(path):
+            key: str = name.lower()
+            if key.endswith(".vhd") or key.endswith(".vhdl") or key.endswith(".v"):
+                self.add_module(name)
+
+    def __str__(self: Self) -> str:
+        return "%s:%s" % (self.name, self.path)
+
+    @classmethod
+    def parse(cls: type, in_str: str):
+        return cls(*in_str.split(":", 1))
 
 class HardwareInclude(object):
     def __init__(self: Self, library: str, name: str, line: int) -> None:
@@ -68,41 +103,6 @@ class HardwareModule(object):
 
     def __str__(self: Self) -> str:
         return self.name
-
-class HardwareLibrary(object):
-    def __init__(self: Self, name: str, path: str) -> None:
-        super(HardwareLibrary, self).__init__()
-        self.name: str = name
-        self.key: str = name.lower()
-        self.path: str = path
-        self.modules: OrderedDict[str, HardwareModule] = OrderedDict()
-        self.modulesByPackage: OrderedDict[str, HardwareModule] = OrderedDict()
-
-    def add_module(self: Self, path: str) -> None:
-        module: HardwareModule = HardwareModule(self, path)
-        module.collect()
-        self.modules[module.key] = module
-        for package in module.packages:
-            self.modulesByPackage[package] = module
-
-    def collect(self: Self) -> None:
-        path: str = self.path
-        if path == "":
-            path = "."
-
-        self.modules = OrderedDict()
-        self.modulesByPackage = OrderedDict()
-        for name in os.listdir(path):
-            key: str = name.lower()
-            if key.endswith(".vhd") or key.endswith(".vhdl") or key.endswith(".v"):
-                self.add_module(name)
-
-    def __str__(self: Self) -> str:
-        return "%s:%s" % (self.name, self.path)
-
-    @classmethod
-    def parse(cls: type, in_str: str) -> HardwareLibrary:
-        return cls(*in_str.split(":", 1))
 
 class HardwareDesignDependencies(object):
     def __init__(self: Self, main_path: str) -> None:
