@@ -9,7 +9,7 @@ LIBS += arm_cortexM0l_math
 SERIAL_ID = "Teensy\sLC"
 MCU_BOARD_RATE = 57600
 
-include $(MAKE_INC_PATH)/Targets/MCU/teensybase.mk
+include $(MAKE_INC_PATH)/Targets/MCU/Base/Teensy.mk
 
 upload_teensylc: upload_teensy
 

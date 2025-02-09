@@ -6,11 +6,12 @@ BUS_SPEED ?= 60
 
 MCU = mk66fx1m0
 CPUARCH = cortex-m4
-CPPFLAGS = -mfloat-abi=hard -mfpu=fpv4-sp-d16
+CPPFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
+LDFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
 LIBS += arm_cortexM4lf_math
 USB_ID = "Teensy\s3.6"
 
-include $(MAKE_INC_PATH)/Targets/MCU/teensybase.mk
+include $(MAKE_INC_PATH)/Targets/MCU/Base/Teensy.mk
 
 upload_teensy36: upload_teensy
 

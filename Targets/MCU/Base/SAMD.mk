@@ -8,23 +8,32 @@ CORE_SKIP_NEW_O := yes
 ARM_LD := $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/linker_scripts/gcc/flash_with_bootloader.ld
 ARM_CMSIS_DEVICE_PATH ?= $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/adafruit/tools/CMSIS-Atmel"/*/"CMSIS/Device/ATMEL" 2>/dev/null | sort | tail -n 1))
 ELF_MAP := $(MCU_TARGET).$(MCU_BOARD).map
+CPPFLAGS += -DARDUINO_SAMD_ADAFRUIT
+LDFLAGS += -Wl,--warn-section-align
 
 include $(MAKE_INC_PATH)/Platforms/ARM/Toolchain.mk
 
-LDFLAGS += -Wl,--cref -save-temps --specs=nano.specs --specs=nosys.specs
 INCLUDE_PATHS += "$(ARM_CMSIS_DEVICE_PATH)"
 INCLUDE_PATHS += "$(CORE_LIB_PATH)/Adafruit_TinyUSB_Arduino/src/arduino"
 INCLUDE_PATHS += "$(ARM_CMSIS_PATH)/Core/Include"
 INCLUDE_PATHS += "$(ARM_CMSIS_PATH)/DSP/Include"
-LIBRARY_PATHS += "$(ARM_CMSIS_PATH)/Lib/GCC"
+LIBRARY_PATHS += "$(ARM_CMSIS_PATH)/DSP/Lib/GCC"
+REMOVE_SECTIONS += eeprom
+ifneq ($(strip $(WRITE_FULL)),yes)
+    REMOVE_SECTIONS += fuse
+    REMOVE_SECTIONS += lock
+    REMOVE_SECTIONS += signature
+endif
 
 include $(MAKE_INC_PATH)/Platforms/ARM/Targets.mk
 
 BOSSAC ?= $(strip $(shell $(LS) "$(ARDUINO_USERPATH)/packages/arduino/tools/bossac"/*/bossac 2>/dev/null | sort | tail -n 1))
 MCU_BOARD_PORT ?= $(strip $(shell for port in $(shell cat "$(BUILD_DIR)/.last_samd_port" 2>/dev/null) "/dev/cu.usb"*; do if $(BOSSAC) --port="$port" -i > /dev/null 2>&1; then echo "$port"; break; fi; done))
-%.bin.upload_samd.timestamp: %.bin upload_arm $(SOURCES) $(DEPENDENCY_LIB_PATHS) $(MODULES_LIBS) resetter
+%.bin.upload_samd.timestamp: %.bin $(SOURCES) $(DEPENDENCY_LIB_PATHS) $(MODULES_LIBS) resetter
+ifneq ($(strip $(NO_FIRMWARE_UPLOAD)),yes)
 	@$(FMSG) "INFO:Uploading $<"
 	@$(MSG) "[UPLOAD]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$<)"
 	$(V)set -o pipefail && $(BOSSAC) -i -d --port="$(MCU_BOARD_PORT)" -U -i --offset="$(SAMD_EXEC_OFFSET)" -w -v "$<" -R && echo "$(MCU_BOARD_PORT)" > "$(BUILD_DIR)/.last_samd_port" && touch "$@"
+endif
 
 upload_samd: $(MCU_TARGET)-$(MCU).bin.upload_samd.timestamp

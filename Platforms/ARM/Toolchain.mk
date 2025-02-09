@@ -12,31 +12,35 @@ endif
 CC := $(ARM_COMPILERPATH)/arm-none-eabi-gcc
 CXX := $(ARM_COMPILERPATH)/arm-none-eabi-g++
 GDB := $(ARM_COMPILERPATH)/arm-none-eabi-gdb
-AR := $(ARM_COMPILERPATH)/arm-none-eabi-gcc-ar
 OBJCOPY := $(ARM_COMPILERPATH)/arm-none-eabi-objcopy
 OBJDUMP := $(ARM_COMPILERPATH)/arm-none-eabi-objdump
 SIZE := $(ARM_COMPILERPATH)/arm-none-eabi-size
+AR := $(ARM_COMPILERPATH)/arm-none-eabi-ar
+ifeq ($(strip $(shell $(LS) $(AR))),)
+AR := $(ARM_COMPILERPATH)/arm-none-eabi-gcc-ar
+endif
+
 START_GROUP := -Wl,--start-group
-END_GROUP := -Wl,--end-group -Wl,-EL
+END_GROUP ?= -Wl,--end-group
 
 # CPPFLAGS = compiler options for C and C++
-CPPFLAGS += $(OPTIMIZE) -Wall -ffunction-sections -fdata-sections -nostdlib -MMD -mthumb -mcpu=$(CPUARCH) -mfp16-format=alternative
-CPPFLAGS += --param max-inline-insns-single=500 -Wno-error=narrowing -fsingle-precision-constant $(MCU_OPTIONS)
+CPPFLAGS += $(OPTIMIZE) -mcpu=$(CPUARCH) -mthumb -mfp16-format=alternative -nostdlib -MMD --param max-inline-insns-single=500
+CPPFLAGS += -Wno-error=narrowing -Wall $(MCU_OPTIONS) -fsingle-precision-constant -ffunction-sections -fdata-sections
 
 # compiler options for C++ only
-CXXFLAGS += -fno-exceptions -fpermissive -felide-constructors -fno-threadsafe-statics -fno-rtti
-
-# compiler options for C only
-CFLAGS +=
+CXXFLAGS += -fno-exceptions -fno-rtti -fpermissive -felide-constructors
 
 # linker options (--specs=nano.specs)
-LDFLAGS += $(OPTIMIZE) -Wl,--gc-sections,--relax,--defsym=__rtc_localtime=$(shell date +%s) -mcpu=$(CPUARCH) -mthumb -fsingle-precision-constant
-LDFLAGS += -Wl,--check-sections,--unresolved-symbols=report-all,--warn-common,--warn-section-align -T$(ARM_LD)
+LDFLAGS += $(OPTIMIZE) -mcpu=$(CPUARCH) -mthumb -mfp16-format=alternative
+LDFLAGS += -save-temps --specs=nano.specs --specs=nosys.specs -T$(ARM_LD)
+LDFLAGS += -Wl,--cref,--relax,--gc-sections,--defsym=__rtc_localtime=$(shell date +%s),--check-sections
+LDFLAGS += -Wl,--unresolved-symbols=report-all,--warn-common
 
 # additional libraries to link
 LIBS += m stdc++
 
-ARM_CMSIS_PATH ?= $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/adafruit/tools/CMSIS"/*/"CMSIS" 2>/dev/null | sort | tail -n 1))
+ARM_CMSIS_PATH ?= $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/adafruit/tools/CMSIS"/*/"CMSIS/DSP/Lib" 2>/dev/null | sort | tail -n 1))
+ARM_CMSIS_PATH := $(abspath $(ARM_CMSIS_PATH)/../..)
 ifeq ($(strip $(ARM_USE_CMSIS)),yes)
 	ARM_CMSIS_COMPONENTS ?= Core Driver DSP
 
@@ -47,5 +51,4 @@ ifeq ($(strip $(ARM_USE_CMSIS)),yes)
 
 	INCLUDE_PATHS += $(ARM_CMSIS_COMPONENTS:%="$(ARM_CMSIS_PATH)/%/Include")
 	INCLUDE_PATHS += "$(ARM_CMSIS_DEVICE_PATH)"
-	LIBRARY_PATHS += "$(ARM_CMSIS_PATH)/Lib/GCC"
 endif

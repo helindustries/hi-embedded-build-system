@@ -7,7 +7,7 @@ MCU = mk20dx256
 CPUARCH = cortex-m4
 USB_ID = "Teensy\s3.2"
 
-include $(MAKE_INC_PATH)/Targets/MCU/teensybase.mk
+include $(MAKE_INC_PATH)/Targets/MCU/Base/Teensy.mk
 
 upload_teensy32: upload_teensy
 
