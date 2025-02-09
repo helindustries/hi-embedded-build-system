@@ -39,6 +39,14 @@ ifneq ($(strip $(ELF_MAP)),)
 	$(V)rm -f $(BUILD_DIR)/$(ELF_MAP)
 endif
 
+recover:
+	@$(MSG) "[RECOVER]" "Perform recovery"
+	bash "$(MAKE_INC_PATH)/Tools/FirmwareResetter/recover.sh" full $(MCU_BOARD) $(MCU_RESET_ARGS) > /dev/null 2>&1
+
+detect-recover:
+	@$(MSG) "[RECOVER]" "Check, if recovery is needed"
+	@bash "$(MAKE_INC_PATH)/Tools/FirmwareResetter/recover.sh" detect $(MCU_BOARD) $(MCU_RESET_ARGS) > /dev/null 2>&1
+
 cfg-mcu: cfg-toolchain --cfg-mcu
 --cfg-mcu:
 	@$(MSG) "[CFG]" "$(MCU_TARGET)"
