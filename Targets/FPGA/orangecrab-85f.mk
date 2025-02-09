@@ -6,7 +6,7 @@ FPGA_PACKAGE := CSFBGA285
 FPGA_SPEED := 8
 FPGA_ENV ?=
 
-include $(MAKE_INC_PATH)/Targets/FPGA/orangecrabbase.mk
+include $(MAKE_INC_PATH)/Targets/FPGA/Base/OrangeCrab.mk
 
 upload_orangecrab-85f: upload_orangecrab
 

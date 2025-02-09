@@ -9,7 +9,7 @@ FPGA_FLASH_SPI := 4               # config flash: 1:SPI (standard), 4:QSPI (quad
 FPGA_FLASH_READ_MHZ := 62.0       # 2.4 4.8 9.7 19.4 38.8 62.0
 FPGA_FLASH_READ_MODE := fast-read # fast-read dual-spi qspi
 
-include $(MAKE_INC_PATH)/Targets/FPGA/ulx3sbase.mk
+include $(MAKE_INC_PATH)/Targets/FPGA/Base/ULX3S.mk
 
 upload_ulx3s-85f: upload_ulx3s
 
