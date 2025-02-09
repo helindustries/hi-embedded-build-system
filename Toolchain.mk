@@ -27,5 +27,6 @@ OPENOCD_SERVER_OPTS := -c "gdb_port $(OPENOCD_PORT)"
 GDB_INIT ?= $(abspath gdbinit)
 GDB_TARGET := target extended-remote :$(OPENOCD_PORT)
 
+PORT_BY_IDS ?= $(abspath $(MAKE_INC_PATH)/Tools/port_by_ids.sh)
 RESETTER_PORT ?= $(shell "$(abspath $(ARDUINO_PATH)/hardware/tools/teensy_ports)" -L | egrep "\(Teensy\s3.2\)" | sed -E 's%[a-zA-Z0-9\:]+\ ([a-zA-Z0-9\/\.]+)\ .*%\1%')
 USE_RESETTER ?= no
