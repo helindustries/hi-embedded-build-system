@@ -16,12 +16,12 @@ $(BUILD_DIR)/%.o: %.ino
 $(BUILD_DIR)/%.o: %.S
 	@$(MSG) "[S]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$<)"
 	@mkdir -p $(shell dirname "$@")
-	$(V)"$(CC)" -c -x assembler-with-cpp  $(CFLAGS) $(CPPFLAGS) -o "$@" "$<"
+	$(V)"$(CC)" -c $(ASMFLAGS) $(CPPFLAGS) -o "$@" "$<"
 
 $(BUILD_DIR)/%.o: %.s
 	@$(MSG) "[S]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$<)"
 	@mkdir -p $(shell dirname "$@")
-	$(V)"$(CC)" -c -x assembler-with-cpp  $(CFLAGS) $(CPPFLAGS) -o "$@" "$<"
+	$(V)"$(CC)" -c $(ASMFLAGS) $(CPPFLAGS) -o "$@" "$<"
 
 clean-base:
 	$(V)rm -f $(OBJS) $(OBJS:%.o=%.d)

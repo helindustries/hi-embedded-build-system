@@ -1,26 +1,26 @@
 $(BUILD_DIR)/$(MODULE_NAME)/%.o: $(MODULE_PATH)/%.c
 	@$(MSG) "[CC]" "$(MODULE_NAME)" "$(subst $(abspath $(MODULE_PATH))/,,$<)"
 	@mkdir -p $(shell dirname "$@")
-	$(V)$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
+	$(V)"$(CC)" -c $(CFLAGS) $(CPPFLAGS) -o "$@" "$<"
 
 $(BUILD_DIR)/$(MODULE_NAME)/%.o: $(MODULE_PATH)/%.cpp
 	@$(MSG) "[CXX]" "$(MODULE_NAME)" "$(subst $(abspath $(MODULE_PATH))/,,$<)"
 	@mkdir -p $(shell dirname "$@")
-	$(V)$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) -o $@ $<
+	$(V)"$(CXX)" -c $(CXXFLAGS) $(CPPFLAGS) -o "$@" "$<"
 
 $(BUILD_DIR)/$(MODULE_NAME)/%.o: $(MODULE_PATH)/%.S
 	@$(MSG) "[S]" "$(MODULE_NAME)" "$(subst $(abspath $(MODULE_PATH))/,,$<)"
 	@mkdir -p $(shell dirname "$@")
-	$(V)$(CC) -c -x assembler-with-cpp  $(CFLAGS) $(CPPFLAGS) -o $@ $<
+	$(V)"$(CC)" -c $(ASMFLAGS) $(CPPFLAGS) -o "$@" "$<"
 
 $(BUILD_DIR)/$(MODULE_NAME)/%.o: $(MODULE_PATH)/%.s
 	@$(MSG) "[S]" "$(MODULE_NAME)" "$(subst $(abspath $(MODULE_PATH))/,,$<)"
 	@mkdir -p $(shell dirname "$@")
-	$(V)$(CC) -c -x assembler-with-cpp  $(CFLAGS) $(CPPFLAGS) -o $@ $<
+	$(V)"$(CC)" -c $(ASMFLAGS) $(CPPFLAGS) -o "$@" "$<"
 
 $(MODULE_LIB): $(MODULE_OBJS) $(MODULE_SOURCES)
 	@$(MSG) "[A]" "$(MODULE_NAME)" "$(subst $(abspath .)/,,$@)"
-	$(V)$(AR) -rcs $@ $(MODULE_OBJS)
+	$(V)$(AR) $(ARFLAGS) $@ $(MODULE_OBJS)
 
 cfg:
 	@$(MSG) "[MOD]" "$(MODULE_NAME)"
