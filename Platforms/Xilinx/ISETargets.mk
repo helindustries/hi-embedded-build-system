@@ -64,11 +64,20 @@ clean_xilinx: clean-isim
 	$(V)rm -f "$(FPGA_TARGET).syr" "$(FPGA_TARGET).gise" "$(FPGA_TARGET).lso" "$(FPGA_TARGET)_summary.html"
 	$(V)rm -fr "iseconfig" "reports"
 
-$(FPGA_DEPLOY_TARGET).upload_jtag_xilinx.timestamp: $(FPGA_DEPLOY_TARGET).lattice.svf $(FPGA_TARGET_DEPS)
+
+ifeq ($(strip $(FORCE_GATEWARE_UPLOAD)),yes)
+XILINX_CREATE_TIMESTAMP =
+upload_jtag_xilinx: $(FPGA_DEPLOY_TARGET).xilinx.svf $(FPGA_TARGET_DEPS)
+else
+XILINX_CREATE_TIMESTAMP = && touch "$@"
+upload_jtag_xilinx: $(FPGA_DEPLOY_TARGET).upload_jtag_xilinx.timestamp
+
+$(FPGA_DEPLOY_TARGET).upload_jtag_xilinx.timestamp: $(FPGA_DEPLOY_TARGET).xilinx.svf $(FPGA_TARGET_DEPS)
+endif
 ifneq ($(strip $(NO_GATEWARE_UPLOAD)),yes)
 	@$(FMSG) "INFO:Uploading $<"
 	@$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$<)"
-	$(V)set -o pipefail && "$(OPENOCD)" $(OPENOCD_DEBUG) -s "$(OPENOCD_CFG_DIR)" -f "$(OPENOCD_CFG_DIR)/$(FPGA_DEBUG_ADAPTER).cfg" -f "$(MAKE_INC_PATH)/Targets/FPGA/$(FPGA_BOARD).ocd.cfg" -c "init" -c "scan_chain" -c "svf $< -ignore_error" -c "shutdown" $(PROCESS_OUTPUT) && touch "$@"
+	$(V)set -o pipefail && "$(OPENOCD)" $(OPENOCD_DEBUG) -s "$(OPENOCD_CFG_DIR)" -f "$(OPENOCD_CFG_DIR)/$(FPGA_DEBUG_ADAPTER).cfg" -f "$(MAKE_INC_PATH)/Targets/FPGA/$(FPGA_BOARD).ocd.cfg" -c "init" -c "scan_chain" -c "svf $< -ignore_error" -c "shutdown" $(PROCESS_OUTPUT) $(XILINX_CREATE_TIMESTAMP)
 endif
 
 upload_xilinx_jtag: $(FPGA_DEPLOY_TARGET).upload_jtag_xilinx.timestamp

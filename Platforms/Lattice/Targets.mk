@@ -57,14 +57,24 @@ layout_lattice: $(FPGA_TARGET).ngd $(FPGA_TARGET_DEPS)
 	@$(MSG) "[SVF]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
 	$(V)$(LATTICE_WINE) $(LATTICE_DDTCMD) -oft -svfsingle -if "$<" -dev $(FPGA_DEVICE_UPPER) -op "Fast Program" -reset -of "$@" $(PROCESS_OUTPUT)
 
+ifeq ($(strip $(FORCE_GATEWARE_UPLOAD)),yes)
+LATTICE_CREATE_TIMESTAMP =
+upload_jtag_lattice: $(FPGA_DEPLOY_TARGET).lattice.svf $(FPGA_TARGET_DEPS)
+else
+LATTICE_CREATE_TIMESTAMP = && touch "$@"
+upload_jtag_lattice: $(FPGA_DEPLOY_TARGET).upload_jtag_lattice.timestamp
+
 $(FPGA_DEPLOY_TARGET).upload_jtag_lattice.timestamp: $(FPGA_DEPLOY_TARGET).lattice.svf $(FPGA_TARGET_DEPS)
+endif
 ifneq ($(strip $(NO_GATEWARE_UPLOAD)),yes)
 	@$(FMSG) "INFO:Uploading $<"
 	@$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$<)"
-	$(V)set -o pipefail && "$(OPENOCD)" $(OPENOCD_DEBUG) -s "$(OPENOCD_CFG_DIR)" -f "$(OPENOCD_CFG_DIR)/$(FPGA_DEBUG_ADAPTER).cfg" -f "$(MAKE_INC_PATH)/Targets/FPGA/$(FPGA_BOARD).ocd.cfg" -c "init" -c "scan_chain" -c "svf $< -ignore_error" -c "shutdown" $(PROCESS_OUTPUT) && touch "$@"
+	$(V)set -o pipefail && "$(OPENOCD)" $(OPENOCD_DEBUG) -s "$(OPENOCD_CFG_DIR)" -f "$(OPENOCD_CFG_DIR)/$(FPGA_DEBUG_ADAPTER).cfg" -f "$(MAKE_INC_PATH)/Targets/FPGA/$(FPGA_BOARD).ocd.cfg" -c "init" -c "scan_chain" -c "svf $< -ignore_error" -c "shutdown" $(PROCESS_OUTPUT) $(LATTICE_CREATE_TIMESTAMP)
 endif
 
-upload_jtag_lattice: $(FPGA_DEPLOY_TARGET).upload_jtag_lattice.timestamp
+selftest_jtag_lattice:
+	@$(MSG) "[SELFTEST]" "$(FPGA_TARGET)" "Lattice"
+	$(OPENOCD) $(OPENOCD_DEBUG) -s "$(OPENOCD_CFG_DIR)" -f "$(OPENOCD_CFG_DIR)/$(FPGA_DEBUG_ADAPTER).cfg" -f "$(MAKE_INC_PATH)/Targets/FPGA/$(FPGA_BOARD).ocd.cfg" -f $(MAKE_INC_PATH)/Targets/FPGA/ecp5check.cfg
 
 clean_lattice: clean-modelsim
 	@$(MSG) "[CLEAN]" "$(FPGA_TARGET)" "Lattice"
