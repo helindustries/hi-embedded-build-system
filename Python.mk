@@ -1,10 +1,21 @@
-#PYTHON_FILES := $(filter-out %_test.py,$(filter-out test_%.py,$(PYTHON_FILES)))
 PYTHON_BUILD_TARGETS := $(patsubst %.py,%.py.build.target,$(PYTHON_FILES))
 PYTHON_DOCTEST_TARGETS := $(patsubst %.py,%.py.doctest.target,$(PYTHON_FILES))
 PYTHON_PYTEST_TARGETS := $(patsubst %.py,%.py.pytest.target,$(PYTHON_TESTS))
-MYPY := $(shell which mypy)
-DOCTEST := python3 -m doctest
-PYTEST := $(shell which pytest)
+#PYTHON_FILES := $(filter-out %_test.py,$(filter-out test_%.py,$(PYTHON_FILES)))
+
+ifneq ($(strip $(PYTHON_ADDITIONAL_PATHS)),)
+PYTHON_PATH := $(subst $(tab),:,$(subst $(space),:,$(PYTHON_ADDITIONAL_PATHS:%=$(strip %))))
+ifeq ($(strip $(shell echo $$PYTHONPATH)),)
+PYTHON_ENV += PYTHONPATH="$(PYTHON_PATH)"
+else
+PYTHON_ENV += PYTHONPATH="$(shell echo $$PYTHONPATH):$(PYTHON_PATH)"
+endif
+endif
+
+PYTHON := $(PYTHON_ENV) $(shell which python)
+MYPY := $(PYTHON_ENV) $(shell which mypy)
+DOCTEST := $(PYTHON) -m doctest
+PYTEST := $(PYTHON_ENV) $(shell which pytest)
 
 # Use mypy.ini in the make file directory by default
 MYPY_CONFIG_PATH ?= $(wildcard mypy.ini)
