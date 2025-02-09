@@ -1,5 +1,8 @@
 # This is a special toolchain, coupled with a properly set up compatibility implementation,
 # this can be used to run the MCU code on the host system for testing and tools integration.
+MCU := Host
+CPU_SPEED := 1
+BUS_SPEED := 1
 MCU_TOOLCHAIN := host
 CORE_PLATFORM := Host
 
@@ -11,9 +14,19 @@ AR := $(shell which ar)
 OBJCOPY := $(shell which objcopy)
 OBJDUMP := $(shell which objdump)
 SIZE := $(shell which size)
+ARFLAGS := -rcs
+ifneq ($(strip $(LLVM_PREFIX)),)
+CC := $(LLVM_PREFIX)/bin/clang
+CXX := $(LLVM_PREFIX)/bin/clang++
+GDB := $(LLVM_PREFIX)/bin/lldb
+AR := $(LLVM_PREFIX)/bin/llvm-ar
+OBJCOPY := $(LLVM_PREFIX)/bin/llvm-objcopy
+OBJDUMP := $(LLVM_PREFIX)/bin/llvm-objdump
+SIZE := $(LLVM_PREFIX)/bin/llvm-size
+endif
 
 # CPPFLAGS = compiler options for C and C++
-CPPFLAGS += $(OPTIMIZE) -Wall -ffunction-sections -fdata-sections -Wno-error=narrowing $(INCLUDES)
+CPPFLAGS += $(OPTIMIZE) -Wall -ffunction-sections -fdata-sections -Wno-error=narrowing -DHOST_PLATFORM
 #CPPFLAGS += -mavx512fp16
 
 # compiler options for C++ only
