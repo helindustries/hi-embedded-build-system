@@ -24,6 +24,12 @@ $(BUILD_DIR)/lib$(MCU_TARGET)-$(MCU).a: $(OBJS) $(DEPENDENCY_LIB_PATHS) $(MODULE
 stats-mcu: $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).elf $(SOURCES)
 	@echo "ROM: $(shell $(SIZE) -A $< | egrep "\.(text)|(data)" | sed -E 's%\.[a-zA-Z0-9_\.\-]+\ +([0-9]+)\ +[0-9]+%\1%' | awk '{s+=$$1} END {print s}') b, RAM: $(shell $(SIZE) -A $< | egrep "\.((dmabuffers)|(usbbuffers)|(data)|(bss)|(usbdescriptortable))" | sed -E 's%\.[a-zA-Z0-9_\.\-]+\ +([0-9]+)\ +[0-9]+%\1%' | awk '{s+=$$1} END {print s}') b"
 
+section-sizes: $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).elf $(SOURCES)
+	$(V)$(SIZE) -A $< > $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).size
+
+symbol-sizes: $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).elf $(SOURCES)
+	$(V)$(OBJDUMP) -t $< | sort -n -k 5 > $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).sym
+
 upload-mcu: binary-mcu upload_$(MCU_BOARD)$(MCU_JTAG_UPLOAD_TARGET) | silent
 
 clean-mcu: clean-base clean-modules clean_${MCU_TOOLCHAIN}
