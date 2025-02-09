@@ -31,7 +31,10 @@ cfg:
 	@$(CFGMSG) "MODULE_CPP_FILES" "$(MODULE_CPP_FILES)"
 	@$(CFGMSG) "MODULE_ASM_FILES" "$(MODULE_ASM_FILES)"
 
+wnk: cfg | silent
+	@:
+
 # compiler generated dependency info
 -include $(OBJS:.o=.d)
 
-.PHONE: cfg
+.PHONE: cfg wnk

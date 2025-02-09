@@ -3,7 +3,7 @@ SHELL_BUILD_TARGETS := $(patsubst %.sh,%.sh.build.target,$(SHELL_FILES))
 
 SHELLCHECK_OPTS ?= -f gcc -a -x -Cnever
 
-build-shell: $(SHELL_BUILD_TARGETS)
+build-shell: $(SHELL_BUILD_TARGETS) | silent
 
 cfg-shell:
 	@$(MSG) "[CFG]" "Shell"

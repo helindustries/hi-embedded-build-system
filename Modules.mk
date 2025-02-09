@@ -69,4 +69,5 @@ ifneq ($(strip $(CORE_LIB)),)
 endif
 
 .PHONY: modules clean-modules cfg-modules --cfg-modules
+
 .NOTPARALLEL: cfg-modules

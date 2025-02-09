@@ -13,11 +13,11 @@ ifneq ($(strip $(MYPY_CONFIG_PATH)),)
 	MYPY_CONFIG_OPTS += --config-file="$(MYPY_CONFIG_PATH)"
 endif
 
-build-python: $(PYTHON_BUILD_TARGETS)
+build-python: $(PYTHON_BUILD_TARGETS) | silent
 
-test-python: build-python $(PYTHON_DOCTEST_TARGETS) $(PYTHON_PYTEST_TARGETS)
+test-python: build-python $(PYTHON_DOCTEST_TARGETS) $(PYTHON_PYTEST_TARGETS) | silent
 
-cfg-python:
+cfg-python: | silent
 	@$(MSG) "[CFG]" "Python"
 	@$(CFGMSG) "PYTHON_FILES:" "$(PYTHON_FILES)"
 
