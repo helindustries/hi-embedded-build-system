@@ -18,17 +18,17 @@ ifeq ($(strip $(ARDUINO_VARIANT_NAME)),)
 else
 	ifeq ($(strip $(MCU_USE_TINYUF2)),yes)
 		ESP_TINYUF2_BIN ?= $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/tinyuf2.bin
-		ifeq ($(strip $(shell $(LS) "$(ESP_TINYUF2_BIN)" 2>/dev/null)),)
+		ifeq ($(strip $(shell ls --color=never "$(ESP_TINYUF2_BIN)" 2>/dev/null)),)
 			ESP_TINYUF2_BIN ?= $(BOARDS_DIR)/$(MCU_BOARD)/tinyuf2.bin
-			ifeq ($(strip $(shell $(LS) "$(ESP_TINYUF2_BIN)" 2>/dev/null)),)
+			ifeq ($(strip $(shell ls --color=never "$(ESP_TINYUF2_BIN)" 2>/dev/null)),)
 				MCU_USE_TINYUF2 := no
 			endif
 		endif
 
 		ESP_BOOTLOADER_BIN ?= $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/bootloader-tinyuf2.bin
-		ifeq ($(strip $(shell $(LS) "$(ESP_BOOTLOADER_BIN)" 2>/dev/null)),)
+		ifeq ($(strip $(shell ls --color=never "$(ESP_BOOTLOADER_BIN)" 2>/dev/null)),)
 			ESP_BOOTLOADER_BIN ?= $(BOARDS_DIR)/$(MCU_BOARD)/bootloader-tinyuf2.bin
-			ifeq ($(strip $(shell $(LS) "$(ESP_BOOTLOADER_BIN)" 2>/dev/null)),)
+			ifeq ($(strip $(shell ls --color=never "$(ESP_BOOTLOADER_BIN)" 2>/dev/null)),)
 				MCU_USE_TINYUF2 := no
 			endif
 		endif
@@ -41,9 +41,9 @@ else
 
 	ESP_BOOT_BIN ?= $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/boot_app0.bin
 	ifeq ($(strip $(shell $(LS) "$(ESP_BOOT_BIN)" 2>/dev/null)),)
-		ESP_BOOT_BIN ?= $(strip $(shell $(LS) "$(ESP_BASE_PATH)/tools/partitions/boot_app0.bin" 2>/dev/null | sort | tail -n 1))
+		ESP_BOOT_BIN := $(strip $(shell $(LS) "$(ESP_BASE_PATH)/tools/partitions/boot_app0.bin" 2>/dev/null | sort | tail -n 1))
 		ifeq ($(strip $(shell $(LS) "$(ESP_BOOT_BIN)" 2>/dev/null)),)
-			ESP_BOOT_BIN ?= $(BOARDS_DIR)/$(MCU_BOARD)/boot_app0.bin
+			ESP_BOOT_BIN := $(BOARDS_DIR)/$(MCU_BOARD)/boot_app0.bin
 		endif
 	endif
 endif
@@ -63,28 +63,40 @@ $(BUILD_DIR)/%-$(MCU).partitions.bin: $(BOARDS_DIR)/$(MCU_BOARD)/%.partitions.cs
 $(ESP_BOOTLOADER_BIN): $(ESP_BOOTLOADER_ELF)
 	$(V)"$(ESPTOOL)" --chip "$(MCU)" elf2image --flash_mode $(ESP_FLASH_MODE) --flash_freq $(ESP_FLASH_FREQ) --flash_size $(ESP_FLASH_SIZE) -o "$@" "$<" $(PROCESS_OUTPUT)
 
+ifeq ($(strip $(FORCE_MCU_UPLOAD)),yes)
+ESP_CREATE_TIMESTAMP =
+upload_$(MCU_TOOLCHAIN): $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).bin $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).partitions.bin $(ESP_BOOTLOADER_BIN) $(ESP_BOOT_BIN) $(ESP_TINYUF2_BIN) resetter
+else
+ESP_CREATE_TIMESTAMP = && touch "$@"
+upload_$(MCU_TOOLCHAIN): $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).bin.upload_$(MCU_TOOLCHAIN).timestamp
+
 %.bin.upload_$(MCU_TOOLCHAIN).timestamp: %.bin %.partitions.bin $(ESP_BOOTLOADER_BIN) $(ESP_BOOT_BIN) $(ESP_TINYUF2_BIN) resetter
+endif
+ifneq ($(strip $(NO_FIRMWARE_UPLOAD)), yes)
 	@$(FMSG) "INFO:Uploading $<"
 	@$(MSG) "[UPLOAD]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$<)"
 ifneq ($(strip $(MCU_PASSTHROUGH_BIN)),)
 	# In case the MCU requires the FPGA to be loaded with a bitstream before uploading to the MCU
 	$(V)set -o pipefail && "$(OPENOCD)" $(OPENOCD_DEBUG) -s "$(OPENOCD_CFG_DIR)" -f "$(OPENOCD_CFG_DIR)/$(FPGA_DEBUG_ADAPTER).cfg" -f "$(MAKE_INC_PATH)/Targets/FPGA/$(FPGA_BOARD).ocd.cfg" -c "init" -c "scan_chain" -c "svf $(MCU_PASSTHROUGH_BIN) -ignore_error" -c "shutdown" $(PROCESS_OUTPUT)
 endif
-	$(V)set -o pipefail && "$(ESPTOOL)" --chip "$(MCU)" --port "$(MCU_BOARD_PORT)" --baud "$(MCU_BOARD_RATE)" --before default_reset --after hard_reset write_flash -z \
+	$(V)"$(ESPTOOL)" --chip "$(MCU)" --port "$(MCU_BOARD_PORT)" --baud "$(MCU_BOARD_RATE)" --before default_reset --after hard_reset write_flash -z \
 			--flash_mode "$(ESP_FLASH_MODE)" --flash_freq "$(ESP_FLASH_FREQ)" --flash_size "$(ESP_FLASH_SIZE)" \
 			"0x0" "$(ESP_BOOTLOADER_BIN)" "$(ESP_PARTITION_OFFSET)" "$(BUILD_DIR)/$(MCU_TARGET)-$(MCU).partitions.bin" "$(ESP_BOOT_OFFSET)" "$(ESP_BOOT_BIN)" "$(ESP_BIN_OFFSET)" "$(BUILD_DIR)/$(MCU_TARGET)-$(MCU).bin" \
-			"$(ESP_TINYUF2_OPTS)" $(PROCESS_OUTPUT) && echo "$(MCU_BOARD_PORT)" > "$(BUILD_DIR)/.last_esp32_port" && touch "$@"
-
-upload_$(MCU_TOOLCHAIN): $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).bin.upload_$(MCU_TOOLCHAIN).timestamp
-
-%.bin.upload_$(MCU_TOOLCHAIN)_jtag.timestamp: %.bin %.partitions.bin
-ifneq ($(strip $(MCU_JTAG_UPLOAD_BY_IDE)), yes)
-	@$(FMSG) "INFO:Uploading $<"
-	@$(MSG) "[UPLOAD]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	$(V)set -o pipefail && "$(OPENOCD)" $(OPENOCD_DEBUG) -s "$(OPENOCD_CFG_DIR)" -f "$(OPENOCD_CFG_DIR)/$(MCU_DEBUG_ADAPTER).cfg" -f "$(MAKE_INC_PATH)/Targets/MCU/$(MCU_BOARD).ocd.cfg" -c "program_esp $< $(ESP_BIN_OFFSET) verify reset exit" $(PROCESS_OUTPUT) && touch "$@"
+			$(ESP_TINYUF2_OPTS) $(PROCESS_OUTPUT) && echo "$(MCU_BOARD_PORT)" > "$(BUILD_DIR)/.last_esp32_port" $(ESP_CREATE_TIMESTAMP)
 endif
 
+ifeq ($(strip $(FORCE_MCU_UPLOAD)),yes)
+upload_$(MCU_TOOLCHAIN)_jtag: $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).bin $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).partitions.bin
+else
 upload_$(MCU_TOOLCHAIN)_jtag: $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).bin.upload_$(MCU_TOOLCHAIN)_jtag.timestamp
+
+%.bin.upload_$(MCU_TOOLCHAIN)_jtag.timestamp: %.bin %.partitions.bin
+endif
+ifneq ($(strip $(NO_FIRMWARE_UPLOAD)), yes)
+	@$(FMSG) "INFO:Uploading $<"
+	@$(MSG) "[UPLOAD]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$<)"
+	$(V)set -o pipefail && "$(OPENOCD)" $(OPENOCD_DEBUG) -s "$(OPENOCD_CFG_DIR)" -f "$(OPENOCD_CFG_DIR)/$(MCU_DEBUG_ADAPTER).cfg" -f "$(MAKE_INC_PATH)/Targets/MCU/$(MCU_BOARD).ocd.cfg" -c "program_esp $< $(ESP_BIN_OFFSET) verify reset exit" $(PROCESS_OUTPUT) $(ESP_CREATE_TIMESTAMP)
+endif
 
 clean_$(MCU_TOOLCHAIN):
 	@$(MSG) "[CLEAN]" "$(MCU_TARGET)" "$(MCU) ESP32"

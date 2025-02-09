@@ -10,7 +10,7 @@ MCU_BOARD_RATE = 921600
 MCU_PASSTHROUGH_BIN ?= $(strip $(shell $(LS) "$(ULX3S_PASSTHROUGH_BIN_PATH)/passthru-"*"-$(FPGA_DEVICE_SIZE)f/ulx3s_$(FPGA_DEVICE_SIZE)f_passthru.svf" 2>/dev/null | sort | tail -n 1))
 MCU_DEBUG_ADAPTER ?= ulx3s-builtin
 
-include $(MAKE_INC_PATH)/Targets/MCU/esp32base.mk
+include $(MAKE_INC_PATH)/Targets/MCU/Base/ESP32.mk
 
 upload_ulx3s-esp32: upload_esp32
 
