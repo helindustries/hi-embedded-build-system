@@ -1,0 +1,23 @@
+#!/bin/bash
+
+function check_recover()
+{
+    [ -d "/Volumes/FTHR840BOOT" ] && echo "yes"
+}
+
+function send_firmware()
+{
+    local RESET_PATH="$1"
+    local RECOVERY_IMAGE="$RESET_PATH/bootloader.zip"
+    shift 1
+    local NRFUTIL="$3"
+    local PORT="$4"
+    [ -z "$PORT" ] && PORT="$(get_port)"
+    if [ -z "$PORT" ]; then
+        echo "Missing port for NRF52 upload"
+        exit 1
+    fi
+
+    echo "Using port $PORT"
+    "$NRFUTIL" --verbose dfu serial -pkg "$RECOVERY_IMAGE" -p "$PORT" -b 115200 --touch 1200
+}

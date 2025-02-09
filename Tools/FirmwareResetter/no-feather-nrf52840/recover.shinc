@@ -1,0 +1,13 @@
+#!/bin/bash
+
+function get_port()
+{
+    local PORT="$(bash "$BASE_PATH/../port_by_ids.sh" 0x0029 0x239a 2>/dev/null)"
+    [ -z "$PORT" ] && PORT="$(bash "$BASE_PATH/../port_by_ids.sh" 0x8029 0x239a 2>/dev/null)"
+    echo "$PORT"
+}
+
+function get_mcu_base()
+{
+    echo "nrf52"
+}

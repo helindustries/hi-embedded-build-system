@@ -1,0 +1,39 @@
+#!/bin/bash
+
+function get_port()
+{
+    local ESPTOOL="$1"
+    for port in /dev/cu.usb*; do if $ESPTOOL --port $port chip_id > /dev/null 2>&1; then echo "$port"; break; fi; done
+}
+
+function check_recover()
+{
+    check_recover_drive
+}
+
+function send_firmware_esp32()
+{
+    local RESET_PATH="$1"
+    local BOOTLOADER_PATH="$RESET_PATH/cdc_jtag.bootloader.bin"
+    local PARTITIONS_PATH="$RESET_PATH/cdc_jtag.partitions.bin"
+    local BOOT_PARTITION_PATH="$RESET_PATH/boot_app0.bin"
+    local RESET_BINARY_PATH="$RESET_PATH/cdc_jtag.bin"
+    local TINY_UF2_PATH="$RESET_PATH/tinyuf2.bin"
+    local FLASH_MODE="$2"
+    local FLASH_FEQUENCY="$3"
+    local PARTITION_OFFSET="$4"
+    local BOOT_PARTITION_OFFSET="$5"
+    local RESET_BINARY_OFFSET="$6"
+    local TINY_UF2_OFFSET="$7"
+    shift 7
+    local ESPTOOL="$1"
+    local PORT="$2"
+    [ -z "$PORT" ] && PORT="$(get_port_$MCU_BASE "$@")"
+    if [ -z "$PORT" ]; then
+        echo "Missing port for ESP32 upload"
+        exit 1
+    fi
+
+    echo "Using port $PORT"
+    $ESPTOOL --chip esp32s3 --port "$PORT" --baud 921600 --before default_reset --after hard_reset write_flash -z --flash_mode "$FLASH_MODE" --flash_freq "$FLASH_FEQUENCY" --flash_size $FLASH_SIZE 0x0 "$BOOTLOADER_PATH" "$PARTITION_OFFSET" "$PARTITIONS_PATH" "$BOOT_PARTITION_OFFSET" "$BOOT_PARTITION_PATH" "$RESET_BINARY_OFFSET" "$RESET_BINARY_PATH" "$TINY_UF2_OFFSET" "$TINY_UF2_PATH"
+}

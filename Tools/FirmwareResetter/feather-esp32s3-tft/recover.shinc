@@ -1,0 +1,6 @@
+#!/bin/bash
+
+function alias_mcu_board()
+{
+    echo "feather-esp32s3"
+}

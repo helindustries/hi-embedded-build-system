@@ -1,0 +1,18 @@
+#!/bin/bash
+
+function get_mcu_base()
+{
+    echo "esp32"
+}
+
+function get_recover_drive()
+{
+    echo "/Volumes/FTHRS3BOOT"
+}
+
+function send_firmware()
+{
+    local RESET_PATH="$1"
+    shift 1
+    send_firmware_esp32 "$RESET_PATH" dio 80m 0x8000 0xe000 0x10000 0x2d0000 "$@"
+}
