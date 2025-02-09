@@ -1,3 +1,6 @@
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
 VERBOSE ?= 0
 CFGMSG = printf "    %-30s %s\n"
 ifneq "$(VERBOSE)" "1"
