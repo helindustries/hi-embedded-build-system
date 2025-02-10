@@ -51,12 +51,13 @@ endif
 ifeq ($(strip $(MCU_BOARD)),qtpy-esp32s3-psram)
     MCU_BOARD = qtpy-esp32s3
     ESP_WITH_PSRAM = yes
+    ARDUINO_VARIANT_NAME = adafruit_qtpy_esp32s3_n4p2
 endif
 ifeq ($(strip $(MCU_BOARD)),qtpy-esp32s3)
     FORCE_MCU_UPLOAD = yes
     MCU_USE_TINYUF2 = yes
     MCU_BOARD = qtpy-esp32s3
-    ARDUINO_VARIANT_NAME = adafruit_qtpy_esp32s3
+    ARDUINO_VARIANT_NAME = adafruit_qtpy_esp32s3_nopsram
 endif
 
 PROJECT_PATH := $(patsubst %/,%,$(abspath $(dir $(firstword $(MAKEFILE_LIST)))))
