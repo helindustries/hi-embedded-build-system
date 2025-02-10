@@ -4,3 +4,7 @@
 Config.mk
 
 Tools/TeensyResetter/Build/
+
+Tools/OpenOCD/ftjtag.sh
+
+Targets/FPGA/Base/ecp5check.cfg
