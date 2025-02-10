@@ -205,19 +205,17 @@ ARFLAGS := -rcsT
 ifneq ($(strip $(ESP_BUILD_MINIMAL)),yes)
 ifeq ($(strip $(ESP_SDK_VERSION)),2)
 	ESP_LD_LIBRARIES := esp_ringbuf efuse esp_ipc driver esp_pm mbedtls app_update bootloader_support spi_flash nvs_flash pthread esp_gdbstub espcoredump esp_phy esp_system esp_rom hal vfs
-	ESP_LD_LIBRARIES += esp_eth tcpip_adapter esp_netif esp_event  esp_wifi console lwip log heap soc esp_hw_support xtensa esp_common esp_timer freertos newlib cxx app_trace
-	ESP_LD_LIBRARIES += asio bt cbor unity cmock coap nghttp esp-tls esp_adc_cal esp_hid tcp_transport      protobuf-c
-	ESP_LD_LIBRARIES += protocomm esp_local_ctrl  esp_serial_slave_link  expat wear_levelling  freemodbus jsmn json libsodium mqtt openssl perfmon spiffs
+	ESP_LD_LIBRARIES += esp_eth tcpip_adapter esp_netif esp_event  esp_wifi console lwip log heap soc esp_hw_support xtensa esp_common esp_timer freertos newlib cxx app_trace mdns sdmmc
+	ESP_LD_LIBRARIES += asio bt cbor unity cmock coap nghttp esp-tls esp_adc_cal esp_hid tcp_transport esp_http_client esp_http_server esp_https_ota esp_https_server esp_lcd protobuf-c
+	ESP_LD_LIBRARIES += protocomm esp_local_ctrl  esp_serial_slave_link  expat wear_levelling  freemodbus jsmn json libsodium mqtt openssl perfmon spiffs esp_websocket_client fatfs fb_gfx
 	ESP_LD_LIBRARIES += usb ulp wifi_provisioning rmaker_common json_parser json_generator esp_schedule esp_rainmaker gpio_button qrcode  esp_diagnostics rtc_store esp_insights
-	ESP_LD_LIBRARIES += esp_littlefs  btdm_app arduino_tinyusb    mfn dl mbedtls_2 mbedcrypto mbedx509 coexist espnow mesh
-	ESP_LD_LIBRARIES += net80211 pp smartconfig wapi phy btbb xt_hal gcc
-	ESP_LD_LIBRARIES += espressif__esp-dsp espressif__esp_secure_cert_mgr
-	# Not required and potentially causing issues
-    #ESP_LD_LIBRARIES += wpa_supplicant esp_http_client esp_http_server esp_https_ota esp_https_server esp_lcd mdns sdmmc esp_websocket_client fatfs ws2812_led esp32-camera fb_gfx
-    #ESP_LD_LIBRARIES += cat_face_detect human_face_detect color_detect
-    # Unused includes
-    #ESP_LD_LIBRARIES += core
-    #ESP_LD_LIBRARIES += gcov
+	ESP_LD_LIBRARIES += esp_littlefs  btdm_app arduino_tinyusb    mfn dl mbedtls_2 mbedcrypto mbedx509 coexist espnow mesh ws2812_led esp32-camera cat_face_detect
+	ESP_LD_LIBRARIES += net80211 pp smartconfig wapi phy btbb xt_hal gcc human_face_detect color_detect core
+	ESP_LD_LIBRARIES += espressif__esp-dsp espressif__esp_secure_cert_mgr gcov
+	# This seems to be baked into multiple places, so we can skip it
+    #ESP_LD_LIBRARIES += wpa_supplicant
+    # These are missing from the list of default-included libraries, they might need replacements
+    #ESP_LD_LIBRARIES += esp-dsp esp-sr esp_audio_front_end esp_audio_processor multinet wakenet hufzip dl_lib c_speech_features esp_tts_chinese voice_set_xiaole
     # Old 2.0.7 includes
 	#ESP_LD_LIBRARIES := esp_ringbuf efuse esp_ipc driver esp_pm mbedtls app_update bootloader_support spi_flash nvs_flash pthread esp_gdbstub espcoredump esp_phy esp_system esp_rom hal vfs
     #ESP_LD_LIBRARIES += esp_eth tcpip_adapter esp_netif esp_event wpa_supplicant esp_wifi console lwip log heap soc esp_hw_support xtensa esp_common esp_timer freertos newlib cxx app_trace
