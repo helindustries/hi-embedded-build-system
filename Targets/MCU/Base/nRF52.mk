@@ -48,9 +48,9 @@ include $(MAKE_INC_PATH)/Platforms/ARM/Targets.mk
 	@$(MSG) "[ZIP]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$@)"
 	$(V)$(NRFUTIL) dfu genpkg --dev-type $(NRF52_DEV_TYPE) --sd-req $(NRF52_SD_SEQ) --application "$<" "$@" > /dev/null
 
-MCU_BOARD_PORT ?= $(strip $(shell bash $(PORT_BY_IDS) $(strip $(USB_PID)) $(strip $(USB_VID))))
+MCU_BOARD_PORT ?= $(strip $(shell $(PORTS_BY_IDS) $(strip $(USB_PID)) $(strip $(USB_VID)) | head -n 1))
 ifeq ($(strip $(MCU_BOARD_PORT)),)
-    MCU_BOARD_PORT := $(strip $(shell bash $(PORT_BY_IDS) $(strip $(USB_PROG_PID)) $(strip $(USB_VID))))
+    MCU_BOARD_PORT := $(strip $(shell $(PORTS_BY_IDS) $(strip $(USB_PROG_PID)) $(strip $(USB_VID)) | head -n 1))
 endif
 ifeq ($(strip $(MCU_BOARD_PORT)),)
     MCU_BOARD_PORT := $(shell cat "$(BUILD_DIR)/.last_nrf52_port" 2>/dev/null)
