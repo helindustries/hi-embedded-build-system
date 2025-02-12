@@ -69,9 +69,8 @@ endif
 	@$(FMSG) "INFO:Uploading $<"
 	@$(MSG) "[UPLOAD]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$<)"
 
-	$(V)$(NRFUTIL) dfu serial -pkg "$<" -p $(MCU_BOARD_PORT) -b 115200 --singlebank $(NRF52_TOUCH_ARG)
-	@echo "$(MCU_BOARD_PORT)" > "$(BUILD_DIR)/.last_nrf52_port"
-	@touch "$@"
+	$(V)$(NRFUTIL) dfu serial -pkg "$<" -p $(MCU_BOARD_PORT) -b 115200 --singlebank $(NRF52_TOUCH_ARG) \
+	    $(PROCESS_OUTPUT) && echo "$(MCU_BOARD_PORT)" > "$(BUILD_DIR)/.last_esp32_port" && touch "$@"
 endif
 
 upload_nrf52: $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).zip.upload_nrf52.timestamp | silent
