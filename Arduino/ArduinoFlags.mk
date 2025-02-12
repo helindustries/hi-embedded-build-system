@@ -64,6 +64,7 @@ PROJECT_PATH := $(patsubst %/,%,$(abspath $(dir $(firstword $(MAKEFILE_LIST)))))
 INO_FILE := $(shell pushd $(PROJECT_PATH) > /dev/null; ls --color=never *.ino | head -n 1; popd > /dev/null)
 MCU_TARGET := $(INO_FILE:%.ino=%)
 ARDUINO_BUILD_SYSTEM_PATH := $(patsubst %/,%,$(abspath $(dir $(lastword $(MAKEFILE_LIST)))))
+BOARDS_DIR := $(abspath Boards)
 
 ifneq ($(strip $(MCU_BOARD)),teensy32)
     # This is not the main MCU, it is a secondary Teensy board, used for controlling the
