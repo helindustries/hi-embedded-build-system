@@ -49,14 +49,14 @@ ifeq ($(strip $(MCU_BOARD)),feather-esp32s3-tft)
     CPPFLAGS += -DADAFRUIT_FEATHER_ESP32S3_TFT
 endif
 ifeq ($(strip $(MCU_BOARD)),qtpy-esp32s3-psram)
-    MCU_BOARD = qtpy-esp32s3
+	# This can not just fudge the MCU_BOARD to qtpy-esp32s3, because the flash layout is different
     ESP_WITH_PSRAM = yes
-    ARDUINO_VARIANT_NAME = adafruit_qtpy_esp32s3_n4p2
+    MCU_USE_TINYUF2 = yes
+    ARDUINO_VARIANT_NAME = adafruit_qtpy_esp32s3_n4r2
 endif
 ifeq ($(strip $(MCU_BOARD)),qtpy-esp32s3)
     FORCE_MCU_UPLOAD = yes
     MCU_USE_TINYUF2 = yes
-    MCU_BOARD = qtpy-esp32s3
     ARDUINO_VARIANT_NAME = adafruit_qtpy_esp32s3_nopsram
 endif
 
