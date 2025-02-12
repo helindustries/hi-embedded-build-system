@@ -1,49 +1,52 @@
-ESP_PARTITION_OFFSET ?= 0x8000
-ESP_BOOT_OFFSET ?= 0xe000
-ESP_BIN_OFFSET ?= 0x10000
-ESP_TINYUF2_OFFSET ?= 0x2d0000
-
 CPPFLAGS += $(INCLUDE_PATHS:%=-I%)
 LDFLAGS += $(LIBRARY_PATHS:%=-L%)
 LIBS := $(LIBS:%=-l%)
 
 ifeq ($(strip $(ARDUINO_VARIANT_NAME)),)
-	# Require the files to be in a variant subdirectory
-	ESP_BOOTLOADER_BIN ?= $(BOARDS_DIR)/$(MCU_BOARD)/bootloader.bin
-	ESP_BOOT_BIN ?= $(BOARDS_DIR)/$(MCU_BOARD)/boot_app0.bin
+    # Require the files to be in a variant subdirectory
+    ESP_BOOTLOADER_BIN ?= $(BOARDS_DIR)/$(MCU_BOARD)/bootloader.bin
+    ESP_BOOT_BIN ?= $(BOARDS_DIR)/$(MCU_BOARD)/boot_app0.bin
 
-	ifeq ($(strip $(MCU_USE_TINYUF2)),yes)
-		ESP_TINYUF2_BIN ?= $(BOARDS_DIR)/$(MCU_BOARD)/tinyuf2.bin
-	endif
+    ifeq ($(strip $(MCU_USE_TINYUF2)),yes)
+        ESP_TINYUF2_BIN ?= $(BOARDS_DIR)/$(MCU_BOARD)/tinyuf2.bin
+    endif
 else
-	ifeq ($(strip $(MCU_USE_TINYUF2)),yes)
-		ESP_TINYUF2_BIN ?= $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/tinyuf2.bin
-		ifeq ($(strip $(shell ls --color=never "$(ESP_TINYUF2_BIN)" 2>/dev/null)),)
-			ESP_TINYUF2_BIN ?= $(BOARDS_DIR)/$(MCU_BOARD)/tinyuf2.bin
-			ifeq ($(strip $(shell ls --color=never "$(ESP_TINYUF2_BIN)" 2>/dev/null)),)
-				MCU_USE_TINYUF2 := no
-			endif
-		endif
+    ifeq ($(strip $(MCU_USE_TINYUF2)),yes)
+        ESP_TINYUF2_BIN ?= $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/tinyuf2.bin
+        ifeq ($(strip $(shell ls --color=never "$(ESP_TINYUF2_BIN)" 2>/dev/null)),)
+            ESP_TINYUF2_BIN ?= $(BOARDS_DIR)/$(MCU_BOARD)/tinyuf2.bin
+            ifeq ($(strip $(shell ls --color=never "$(ESP_TINYUF2_BIN)" 2>/dev/null)),)
+                MCU_USE_TINYUF2 := no
+            endif
+        endif
 
-		ESP_BOOTLOADER_BIN ?= $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/bootloader-tinyuf2.bin
-		ifeq ($(strip $(shell ls --color=never "$(ESP_BOOTLOADER_BIN)" 2>/dev/null)),)
-			ESP_BOOTLOADER_BIN ?= $(BOARDS_DIR)/$(MCU_BOARD)/bootloader-tinyuf2.bin
-			ifeq ($(strip $(shell ls --color=never "$(ESP_BOOTLOADER_BIN)" 2>/dev/null)),)
-				MCU_USE_TINYUF2 := no
-			endif
-		endif
-	endif
+        ESP_BOOTLOADER_BIN ?= $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/bootloader-tinyuf2.bin
+        ifeq ($(strip $(shell ls --color=never "$(ESP_BOOTLOADER_BIN)" 2>/dev/null)),)
+            ESP_BOOTLOADER_BIN ?= $(BOARDS_DIR)/$(MCU_BOARD)/bootloader-tinyuf2.bin
+            ifeq ($(strip $(shell ls --color=never "$(ESP_BOOTLOADER_BIN)" 2>/dev/null)),)
+                MCU_USE_TINYUF2 := no
+            endif
+        endif
+    endif
 
-	ifeq ($(strip $(shell $(LS) "$(ESP_BOOTLOADER_BIN)" 2>/dev/null)),)
-		ESP_BOOTLOADER_BIN ?= $(BOARDS_DIR)/$(MCU_BOARD)/bootloader.bin
-		ESP_BOOTLOADER_ELF ?= $(ESP_SDK_PATH)/$(MCU)/bin/bootloader_$(ESP_FLASH_MODE)_$(ESP_FLASH_FREQ).elf
-	endif
+    ifeq ($(strip $(shell ls --color=never "$(ESP_BOOTLOADER_BIN)" 2>/dev/null)),)
+        ESP_BOOTLOADER_BIN ?= $(BOARDS_DIR)/$(MCU_BOARD)/bootloader.bin
+        ESP_BOOTLOADER_ELF ?= $(ESP_SDK_PATH)/$(MCU)/bin/bootloader_$(ESP_FLASH_MODE)_$(ESP_FLASH_FREQ).elf
+    endif
 
-	ESP_BOOT_BIN ?= $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/boot_app0.bin
-	ifeq ($(strip $(shell $(LS) "$(ESP_BOOT_BIN)" 2>/dev/null)),)
-		ESP_BOOT_BIN := $(strip $(shell $(LS) "$(ESP_BASE_PATH)/tools/partitions/boot_app0.bin" 2>/dev/null | sort | tail -n 1))
-		ifeq ($(strip $(shell $(LS) "$(ESP_BOOT_BIN)" 2>/dev/null)),)
-			ESP_BOOT_BIN := $(BOARDS_DIR)/$(MCU_BOARD)/boot_app0.bin
+    ESP_BOOT_BIN ?= $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/boot_app0.bin
+    ifeq ($(strip $(shell ls --color=never "$(ESP_BOOT_BIN)" 2>/dev/null)),)
+        ESP_BOOT_BIN := $(strip $(shell ls --color=never "$(ESP_BASE_PATH)/tools/partitions/boot_app0.bin" 2>/dev/null | sort | tail -n 1))
+        ifeq ($(strip $(shell $(LS) "$(ESP_BOOT_BIN)" 2>/dev/null)),)
+            ESP_BOOT_BIN := $(BOARDS_DIR)/$(MCU_BOARD)/boot_app0.bin
+        endif
+    endif
+
+    ESP_PARTITIONS_CSV_PATH ?= $(BOARDS_DIR)/$(MCU_BOARD)/$(MCU_TARGET).partitions.csv
+    ifeq ($(strip $(shell ls --color=never $(ESP_PARTITIONS_CSV_PATH) 2>/dev/null)),)
+	    ESP_PARTITIONS_CSV_PATH := $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/partitions-$(ESP_FLASH_SIZE)-tinyuf2.csv
+	    ifeq ($(strip $(shell ls --color=never $(ESP_PARTITIONS_CSV_PATH) 2>/dev/null)),)
+	    	ESP_PARTITIONS_CSV_PATH :=
 		endif
 	endif
 endif
@@ -56,12 +59,32 @@ $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).bin: $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).elf
 	@$(MSG) "[BIN]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$@)"
 	$(V)"$(ESPTOOL)" --chip $(MCU) elf2image --flash_mode $(ESP_FLASH_MODE) --flash_freq $(ESP_FLASH_FREQ) --flash_size $(ESP_FLASH_SIZE) --elf-sha256-offset $(ESP_ELF_SHA256_OFFSET) -o "$@" "$<" $(PROCESS_OUTPUT)
 
+ifeq ($(strip $(ESP_PARTITIONS_CSV_PATH)),)
 $(BUILD_DIR)/%-$(MCU).partitions.bin: $(BOARDS_DIR)/$(MCU_BOARD)/%.partitions.csv
 	@$(MSG) "[PART]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$@)"
 	$(V)python3 "$(ESPGENPART_PY)" -q "$<" "$@" $(PROCESS_OUTPUT)
+else
+$(BUILD_DIR)/%-$(MCU).partitions.bin: $(ESP_PARTITIONS_CSV_PATH)
+	@$(MSG) "[PART]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$@)"
+	$(V)python3 "$(ESPGENPART_PY)" -q "$<" "$@" $(PROCESS_OUTPUT)
+endif
 
 $(ESP_BOOTLOADER_BIN): $(ESP_BOOTLOADER_ELF)
 	$(V)"$(ESPTOOL)" --chip "$(MCU)" elf2image --flash_mode $(ESP_FLASH_MODE) --flash_freq $(ESP_FLASH_FREQ) --flash_size $(ESP_FLASH_SIZE) -o "$@" "$<" $(PROCESS_OUTPUT)
+
+MCU_BOARD_PORT ?= $(strip $(shell $(ESP32_PORTS) $(ESPTOOL) $(shell cat "$(BUILD_DIR)/.last_esp32_port" 2>/dev/null) /dev/cu.usb* | head -n 1))
+ifeq ($(strip $(MCU_BOARD_PORT)),)
+    MCU_BOARD_PORT := $(strip $(shell $(PORTS_BY_IDS) $(strip $(USB_PID)) $(strip $(USB_VID)) | head -n 1))
+endif
+ifeq ($(strip $(MCU_BOARD_PORT)),)
+    MCU_BOARD_PORT := $(strip $(shell $(PORTS_BY_IDS) $(strip $(USB_PROG_PID)) $(strip $(USB_VID)) | head -n 1))
+endif
+ifeq ($(strip $(MCU_BOARD_PORT)),)
+    MCU_BOARD_PORT := $(shell cat "$(BUILD_DIR)/.last_esp32_port" 2>/dev/null)
+endif
+ifneq ($(strip $(MCU_BOARD_PORT)),)
+   ESP_BOARD_PORT_OPTS :=--port "$(MCU_BOARD_PORT)"
+endif
 
 ifeq ($(strip $(FORCE_MCU_UPLOAD)),yes)
 ESP_CREATE_TIMESTAMP =
@@ -79,7 +102,7 @@ ifneq ($(strip $(MCU_PASSTHROUGH_BIN)),)
 	# In case the MCU requires the FPGA to be loaded with a bitstream before uploading to the MCU
 	$(V)set -o pipefail && "$(OPENOCD)" $(OPENOCD_DEBUG) -s "$(OPENOCD_CFG_DIR)" -f "$(OPENOCD_CFG_DIR)/$(FPGA_DEBUG_ADAPTER).cfg" -f "$(MAKE_INC_PATH)/Targets/FPGA/$(FPGA_BOARD).ocd.cfg" -c "init" -c "scan_chain" -c "svf $(MCU_PASSTHROUGH_BIN) -ignore_error" -c "shutdown" $(PROCESS_OUTPUT)
 endif
-	$(V)"$(ESPTOOL)" --chip "$(MCU)" --port "$(MCU_BOARD_PORT)" --baud "$(MCU_BOARD_RATE)" --before default_reset --after hard_reset write_flash -z \
+	$(V)"$(ESPTOOL)" --chip "$(MCU)" $(ESP_BOARD_PORT_OPTS) --baud "$(MCU_BOARD_RATE)" --before default_reset --after hard_reset write_flash -z \
 			--flash_mode "$(ESP_FLASH_MODE)" --flash_freq "$(ESP_FLASH_FREQ)" --flash_size "$(ESP_FLASH_SIZE)" \
 			"0x0" "$(ESP_BOOTLOADER_BIN)" "$(ESP_PARTITION_OFFSET)" "$(BUILD_DIR)/$(MCU_TARGET)-$(MCU).partitions.bin" "$(ESP_BOOT_OFFSET)" "$(ESP_BOOT_BIN)" "$(ESP_BIN_OFFSET)" "$(BUILD_DIR)/$(MCU_TARGET)-$(MCU).bin" \
 			$(ESP_TINYUF2_OPTS) $(PROCESS_OUTPUT) && echo "$(MCU_BOARD_PORT)" > "$(BUILD_DIR)/.last_esp32_port" $(ESP_CREATE_TIMESTAMP)
