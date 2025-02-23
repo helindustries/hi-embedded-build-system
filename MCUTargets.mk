@@ -35,6 +35,7 @@ upload-mcu: binary-mcu upload_$(MCU_BOARD)$(MCU_JTAG_UPLOAD_TARGET) | silent
 clean-mcu: clean-base clean-modules clean_${MCU_TOOLCHAIN}
 	@$(MSG) "[CLEAN]" "$(MCU_TARGET)"
 	$(V)rm -f $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).elf	$(BUILD_DIR)/lib$(MCU_TARGET)-$(MCU).a $(BUILD_DIR)/$(MCU_TARGET)-$(MCU)
+	$(V)rm -f $(BUILD_DIR)/$(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/*.d
 ifneq ($(strip $(ELF_MAP)),)
 	$(V)rm -f $(BUILD_DIR)/$(ELF_MAP)
 endif
