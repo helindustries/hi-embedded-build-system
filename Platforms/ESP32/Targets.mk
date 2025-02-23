@@ -72,18 +72,17 @@ endif
 $(ESP_BOOTLOADER_BIN): $(ESP_BOOTLOADER_ELF)
 	$(V)"$(ESPTOOL)" --chip "$(MCU)" elf2image --flash_mode $(ESP_FLASH_MODE) --flash_freq $(ESP_FLASH_FREQ) --flash_size $(ESP_FLASH_SIZE) -o "$@" "$<" $(PROCESS_OUTPUT)
 
-MCU_BOARD_PORT ?= $(strip $(shell $(ESP32_PORTS) $(ESPTOOL) $(shell cat "$(BUILD_DIR)/.last_esp32_port" 2>/dev/null) /dev/cu.usb* | head -n 1))
-ifeq ($(strip $(MCU_BOARD_PORT)),)
-    MCU_BOARD_PORT := $(strip $(shell $(PORTS_BY_IDS) $(strip $(USB_PID)) $(strip $(USB_VID)) | head -n 1))
+MCU_BOARD_PORT ?= $(strip $(shell $(ESP32_PORTS) $(ESPTOOL) $(strip $(USB_PID)) $(strip $(USB_VID)) $(shell cat "$(BUILD_DIR)/.last_esp32_port" 2>/dev/null) /dev/cu.usb* | head -n 1))
+ifeq ($(strip $(VERBOSE)),1)
+    $(info $(ESP32_PORTS) $(ESPTOOL) $(strip $(USB_PID)) $(strip $(USB_VID)) $(shell cat "$(BUILD_DIR)/.last_esp32_port" 2>/dev/null) /dev/cu.usb* | head -n 1)
+    $(info Result: $(MCU_BOARD_PORT))
 endif
 ifeq ($(strip $(MCU_BOARD_PORT)),)
-    MCU_BOARD_PORT := $(strip $(shell $(PORTS_BY_IDS) $(strip $(USB_PROG_PID)) $(strip $(USB_VID)) | head -n 1))
-endif
-ifeq ($(strip $(MCU_BOARD_PORT)),)
-    MCU_BOARD_PORT := $(shell cat "$(BUILD_DIR)/.last_esp32_port" 2>/dev/null)
-endif
-ifneq ($(strip $(MCU_BOARD_PORT)),)
-   ESP_BOARD_PORT_OPTS :=--port "$(MCU_BOARD_PORT)"
+    MCU_BOARD_PORT ?= $(strip $(shell $(ESP32_PORTS) $(ESPTOOL) $(strip $(USB_PROG_PID)) $(strip $(USB_VID)) $(shell cat "$(BUILD_DIR)/.last_esp32_port" 2>/dev/null) /dev/cu.usb* | head -n 1))
+    ifeq ($(strip $(VERBOSE)),1)
+        $(info $(ESP32_PORTS) $(ESPTOOL) $(strip $(USB_PID)) $(strip $(USB_VID)) $(shell cat "$(BUILD_DIR)/.last_esp32_port" 2>/dev/null) /dev/cu.usb* | head -n 1)
+        $(info Result: $(MCU_BOARD_PORT))
+    endif
 endif
 
 ifeq ($(strip $(FORCE_MCU_UPLOAD)),yes)
@@ -95,17 +94,27 @@ upload_$(MCU_TOOLCHAIN): $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).bin.upload_$(MCU_TOOL
 
 %.bin.upload_$(MCU_TOOLCHAIN).timestamp: %.bin %.partitions.bin $(ESP_BOOTLOADER_BIN) $(ESP_BOOT_BIN) $(ESP_TINYUF2_BIN) resetter
 endif
-ifneq ($(strip $(NO_FIRMWARE_UPLOAD)), yes)
+ifeq ($(strip $(MCU_WAIT_FOR_BOARD_PORT)),yes)
+	@$(FMSG) "INFO:Wait for serial on $(MCU_BOARD_PORT)"
+	@$(MSG) "[SERIAL]" "$(MCU_TARGET)" "$(MCU_BOARD_PORT)"
+ifeq ($(strip $(MCU_BOARD_PORT)),)
+	$(V)false
+else
+	@while [ ! -e "$(MCU_BOARD_PORT)" ]; do sleep 1; done;
+endif
+endif
+ifneq ($(strip $(NO_FIRMWARE_UPLOAD)),yes)
 	@$(FMSG) "INFO:Uploading $<"
 	@$(MSG) "[UPLOAD]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$<)"
 ifneq ($(strip $(MCU_PASSTHROUGH_BIN)),)
 	# In case the MCU requires the FPGA to be loaded with a bitstream before uploading to the MCU
 	$(V)set -o pipefail && "$(OPENOCD)" $(OPENOCD_DEBUG) -s "$(OPENOCD_CFG_DIR)" -f "$(OPENOCD_CFG_DIR)/$(FPGA_DEBUG_ADAPTER).cfg" -f "$(MAKE_INC_PATH)/Targets/FPGA/$(FPGA_BOARD).ocd.cfg" -c "init" -c "scan_chain" -c "svf $(MCU_PASSTHROUGH_BIN) -ignore_error" -c "shutdown" $(PROCESS_OUTPUT)
 endif
-	$(V)"$(ESPTOOL)" --chip "$(MCU)" $(ESP_BOARD_PORT_OPTS) --baud "$(MCU_BOARD_RATE)" --before default_reset --after hard_reset write_flash -z \
+	$(V)"$(ESPTOOL)" --chip "$(MCU)" --port "$(MCU_BOARD_PORT)" --baud "$(MCU_BOARD_RATE)" --before default_reset --after hard_reset write_flash -z \
 			--flash_mode "$(ESP_FLASH_MODE)" --flash_freq "$(ESP_FLASH_FREQ)" --flash_size "$(ESP_FLASH_SIZE)" \
 			"0x0" "$(ESP_BOOTLOADER_BIN)" "$(ESP_PARTITION_OFFSET)" "$(BUILD_DIR)/$(MCU_TARGET)-$(MCU).partitions.bin" "$(ESP_BOOT_OFFSET)" "$(ESP_BOOT_BIN)" "$(ESP_BIN_OFFSET)" "$(BUILD_DIR)/$(MCU_TARGET)-$(MCU).bin" \
-			$(ESP_TINYUF2_OPTS) $(PROCESS_OUTPUT) && echo "$(MCU_BOARD_PORT)" > "$(BUILD_DIR)/.last_esp32_port" $(ESP_CREATE_TIMESTAMP)
+			$(ESP_TINYUF2_OPTS) && echo "$(MCU_BOARD_PORT)" > "$(BUILD_DIR)/.last_esp32_port" $(ESP_CREATE_TIMESTAMP)
+			# $(PROCESS_OUTPUT)
 endif
 
 ifeq ($(strip $(FORCE_MCU_UPLOAD)),yes)
