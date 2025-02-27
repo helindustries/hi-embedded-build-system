@@ -195,7 +195,7 @@ CXXFLAGS += -fno-exceptions
 #CXXFLAGS += -fexceptions
 CXXFLAGS += -fno-rtti
 CXXFLAGS += -fpermissive -felide-constructors -fno-threadsafe-statics
-ASMFLAGS += x assembler-with-cpp
+ASMFLAGS += -x assembler-with-cpp
 
 # compiler options for C only
 CFLAGS ?=
