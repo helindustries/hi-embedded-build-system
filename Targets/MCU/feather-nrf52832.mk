@@ -8,18 +8,18 @@ CPPFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
 ASMFLAGS += -mabi=aapcs
 LDFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
 LIBS += arm_cortexM4lf_math
-ARM_LD = nrf52832_s140_v6.ld
+ARM_LD = nrf52832_s132_v6.ld
 
 USB = yes
 USB_VENDOR ?= Adafruit
 USB_PRODUCT ?= Feather\ NRF52832
-#USB_VID = 0x239A
-#USB_PID = 0x8029
-#USB_PROG_ID = 0x0029
+USB_VID = 0x10c4
+USB_PID = 0xea60
+USB_PROG_PID = 0xea60
 
 MCU_BOARD_RATE = 57600
-#NRF52_DEV_TYPE = 0x0052
-#NRF52_SD_SEQ = 0x00B6
+NRF52_DEV_TYPE = 0x0052
+NRF52_SD_SEQ = 0x00B7
 #NRF52_TOUCH_ARG = --touch 1200
 
 include $(MAKE_INC_PATH)/Targets/MCU/Base/nRF52.mk
