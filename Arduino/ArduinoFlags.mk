@@ -12,6 +12,10 @@ ifeq ($(strip $(MCU_BOARD)),feather-nrf52840)
     ARDUINO_VARIANT_NAME := feather_nrf52840_express
     MCU_WAIT_FOR_BOARD_PORT = yes
 endif
+ifeq ($(strip $(MCU_BOARD)),feather-nrf52832)
+    ARDUINO_VARIANT_NAME := feather_nrf52832
+    MCU_WAIT_FOR_BOARD_PORT = yes
+endif
 ifeq ($(strip $(MCU_BOARD)),feather-m0)
     ARDUINO_VARIANT_NAME := feather_m0
 endif
