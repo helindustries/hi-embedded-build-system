@@ -37,7 +37,7 @@ LDFLAGS += -Wl,--cref,--relax,--gc-sections,--defsym=__rtc_localtime=$(shell dat
 LDFLAGS += -Wl,--unresolved-symbols=report-all,--warn-common
 
 # additional libraries to link
-LIBS += m stdc++
+LIBS += c m stdc++
 
 ifeq ($(strip $(ARM_USE_CMSIS)),yes)
 	ARM_CMSIS_COMPONENTS ?= Core Driver DSP
