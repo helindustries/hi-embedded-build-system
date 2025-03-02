@@ -6,6 +6,7 @@ CORE_VARIANTS_PATH := $(SAMD_BASE_PATH)/variants
 CORE_SKIP_NEW_O := yes
 
 ARM_LD := $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/linker_scripts/gcc/flash_with_bootloader.ld
+ARM_CMSIS_PATH ?= $(abspath $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/adafruit/tools/CMSIS"/*/"CMSIS/DSP/Lib" 2>/dev/null | sort | tail -n 1))/../..)
 ARM_CMSIS_DEVICE_PATH ?= $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/adafruit/tools/CMSIS-Atmel"/*/"CMSIS/Device/ATMEL" 2>/dev/null | sort | tail -n 1))
 ELF_MAP := $(MCU_TARGET).$(MCU_BOARD).map
 CPPFLAGS += -DARDUINO_SAMD_ADAFRUIT

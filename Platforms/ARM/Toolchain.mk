@@ -39,8 +39,6 @@ LDFLAGS += -Wl,--unresolved-symbols=report-all,--warn-common
 # additional libraries to link
 LIBS += m stdc++
 
-ARM_CMSIS_PATH ?= $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/adafruit/tools/CMSIS"/*/"CMSIS/DSP/Lib" 2>/dev/null | sort | tail -n 1))
-ARM_CMSIS_PATH := $(abspath $(ARM_CMSIS_PATH)/../..)
 ifeq ($(strip $(ARM_USE_CMSIS)),yes)
 	ARM_CMSIS_COMPONENTS ?= Core Driver DSP
 

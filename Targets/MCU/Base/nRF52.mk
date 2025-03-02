@@ -5,6 +5,7 @@ CORE_LIB_PATH := $(NRF52_BASE_PATH)/libraries
 CORE_VARIANTS_PATH := $(NRF52_BASE_PATH)/variants
 CORE_SKIP_NEW_O := yes
 
+ARM_CMSIS_PATH ?= $(abspath $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/adafruit/tools/CMSIS"/*/"CMSIS/DSP/Lib" 2>/dev/null | sort | tail -n 1))/../..)
 ARM_CMSIS_DEVICE_PATH ?= $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/adafruit/tools/CMSIS"/*/"CMSIS/Device/ARM" 2>/dev/null | sort | tail -n 1))
 ELF_MAP := $(MCU_TARGET).$(MCU_BOARD).map
 NRFUTIL ?= $(NRF52_BASE_PATH)/tools/adafruit-nrfutil/macos/adafruit-nrfutil
