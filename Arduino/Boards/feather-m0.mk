@@ -1,0 +1,1 @@
+ARDUINO_VARIANT_NAME := feather_m0

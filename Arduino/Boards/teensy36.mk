@@ -1,0 +1,1 @@
+MCU_WAIT_FOR_BOARD_PORT = yes

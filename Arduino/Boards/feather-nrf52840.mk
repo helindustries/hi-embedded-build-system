@@ -1,0 +1,2 @@
+ARDUINO_VARIANT_NAME := feather_nrf52840_express
+MCU_WAIT_FOR_BOARD_PORT = yes
