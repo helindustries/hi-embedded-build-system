@@ -9,6 +9,7 @@ ARM_CMSIS_DEVICE_PATH ?= $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/
 ELF_MAP := $(MCU_TARGET).$(MCU_BOARD).map
 NRFUTIL ?= $(NRF52_BASE_PATH)/tools/adafruit-nrfutil/macos/adafruit-nrfutil
 MCU_RESET_ARGS = $(USB_PID) $(USB_VID) "$(NRFUTIL)"
+USE_DEFAULT_USB_SERIAL_DETECT := yes
 
 include $(MAKE_INC_PATH)/Platforms/ARM/Toolchain.mk
 
@@ -48,30 +49,8 @@ include $(MAKE_INC_PATH)/Platforms/ARM/Targets.mk
 	@$(MSG) "[ZIP]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$@)"
 	$(V)$(NRFUTIL) dfu genpkg --dev-type $(NRF52_DEV_TYPE) --sd-req $(NRF52_SD_SEQ) --application "$<" "$@" > /dev/null
 
-MCU_BOARD_PORT ?= $(strip $(shell $(PORTS_BY_IDS) $(strip $(USB_PID)) $(strip $(USB_VID)) $(shell cat "$(BUILD_DIR)/.last_nrf52_port" 2>/dev/null) /dev/cu.usb* | head -n 1))
-ifeq ($(strip $(VERBOSE)),1)
-    $(info $(PORTS_BY_IDS) $(strip $(USB_PID)) $(strip $(USB_VID)) $(shell cat "$(BUILD_DIR)/.last_nrf52_port" 2>/dev/null) /dev/cu.usb* | head -n 1)
-    $(info Result: $(MCU_BOARD_PORT))
-endif
-ifeq ($(strip $(MCU_BOARD_PORT)),)
-    MCU_BOARD_PORT := $(strip $(shell $(PORTS_BY_IDS) $(strip $(USB_PROG_PID)) $(strip $(USB_VID)) $(shell cat "$(BUILD_DIR)/.last_nrf52_port" 2>/dev/null) /dev/cu.usb* | head -n 1))
-    ifeq ($(strip $(VERBOSE)),1)
-        $(info $(PORTS_BY_IDS) $(strip $(USB_PROG_PID)) $(strip $(USB_VID)) $(shell cat "$(BUILD_DIR)/.last_nrf52_port" 2>/dev/null) /dev/cu.usb* | head -n 1)
-        $(info Result: $(MCU_BOARD_PORT))
-    endif
-endif
-
-%.zip.upload_nrf52.timestamp: %.zip | silent
+%.zip.upload_nrf52.timestamp: %.zip serial | silent
 ifneq ($(strip $(NO_FIRMWARE_UPLOAD)),yes)
-ifeq ($(strip $(MCU_WAIT_FOR_BOARD_PORT)),yes)
-	@$(FMSG) "INFO:Wait for serial on $(MCU_BOARD_PORT)"
-	@$(MSG) "[SERIAL]" "$(MCU_TARGET)" "$(MCU_BOARD_PORT)"
-ifeq ($(strip $(MCU_BOARD_PORT)),)
-	$(V)false
-else
-	@while [ ! -e "$(MCU_BOARD_PORT)" ]; do sleep 1; done;
-endif
-endif
 	@$(FMSG) "INFO:Uploading $<"
 	@$(MSG) "[UPLOAD]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$<)"
 

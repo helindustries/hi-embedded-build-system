@@ -10,6 +10,7 @@ ARM_CMSIS_DEVICE_PATH ?= $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/
 ELF_MAP := $(MCU_TARGET).$(MCU_BOARD).map
 CPPFLAGS += -DARDUINO_SAMD_ADAFRUIT
 LDFLAGS += -Wl,--warn-section-align
+USE_DEFAULT_USB_SERIAL_DETECT := no
 
 include $(MAKE_INC_PATH)/Platforms/ARM/Toolchain.mk
 

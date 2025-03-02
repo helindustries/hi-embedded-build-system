@@ -18,6 +18,7 @@ endif
 ARM_LD := $(CORE_PATH)/$(MCU).ld
 CPPFLAGS += -DTEENSYDUINO=151
 ARFLAGS := -rcs
+USE_DEFAULT_USB_SERIAL_DETECT := no
 
 include $(MAKE_INC_PATH)/Platforms/ARM/Toolchain.mk
 include $(MAKE_INC_PATH)/Platforms/ARM/Targets.mk

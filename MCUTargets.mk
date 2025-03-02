@@ -48,6 +48,37 @@ detect-recover:
 	@$(MSG) "[RECOVER]" "Check, if recovery is needed"
 	@bash "$(MAKE_INC_PATH)/Tools/FirmwareResetter/recover.sh" detect $(MCU_BOARD) $(MCU_RESET_ARGS) > /dev/null 2>&1
 
+ifeq ($(strip $(USE_DEFAULT_USB_SERIAL_DETECT)),yes)
+MCU_LAST_PORT_FILE := $(BUILD_DIR)/.last_$(shell echo $(CORE_PLATFORM) | tr '[:lower:]' '[:upper:]')_port
+MCU_BOARD_PORT ?= $(strip $(shell $(PORTS_BY_IDS) $(strip $(USB_PID)) $(strip $(USB_VID)) $(shell cat "$(MCU_LAST_PORT_FILE)" 2>/dev/null) /dev/cu.usb* | head -n 1))
+ifeq ($(strip $(VERBOSE)),1)
+    $(info $(PORTS_BY_IDS) $(strip $(USB_PID)) $(strip $(USB_VID)) $(shell cat "$(MCU_LAST_PORT_FILE)" 2>/dev/null) /dev/cu.usb* | head -n 1)
+    $(info Result: $(MCU_BOARD_PORT))
+endif
+ifeq ($(strip $(MCU_BOARD_PORT)),)
+    MCU_BOARD_PORT := $(strip $(shell $(PORTS_BY_IDS) $(strip $(USB_PROG_PID)) $(strip $(USB_VID)) $(shell cat "$(MCU_LAST_PORT_FILE)" 2>/dev/null) /dev/cu.usb* | head -n 1))
+    ifeq ($(strip $(VERBOSE)),1)
+        $(info $(PORTS_BY_IDS) $(strip $(USB_PROG_PID)) $(strip $(USB_VID)) $(shell cat "$(MCU_LAST_PORT_FILE)" 2>/dev/null) /dev/cu.usb* | head -n 1)
+        $(info Result: $(MCU_BOARD_PORT))
+    endif
+endif
+endif
+
+serial: | silent
+ifneq ($(strip $(NO_FIRMWARE_UPLOAD)),yes)
+ifeq ($(strip $(MCU_WAIT_FOR_BOARD_PORT)),yes)
+	@$(FMSG) "INFO:Wait for serial on $(MCU_BOARD_PORT)"
+	@$(MSG) "[SERIAL]" "$(MCU_TARGET)" "$(MCU_BOARD_PORT)"
+ifneq ($(strip $(MCU_BOARD_PORT)),)
+	@while [ ! -e "$(MCU_BOARD_PORT)" ]; do sleep 1; done;
+endif
+endif
+
+ifeq ($(strip $(MCU_BOARD_PORT)),)
+	@false
+endif
+endif
+
 cfg-mcu: cfg-toolchain --cfg-mcu
 --cfg-mcu:
 	@$(MSG) "[CFG]" "$(MCU_TARGET)"
