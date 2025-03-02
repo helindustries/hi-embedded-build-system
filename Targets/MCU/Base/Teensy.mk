@@ -31,6 +31,8 @@ ifneq ($(strip $(NO_FIRMWARE_UPLOAD)),yes)
 	$(V)set -o pipefail && $(TEENSY_LOADER) -mmcu=$(MCU) -v -w $(MCU_TARGET).hex && touch "$@"
 endif
 
-upload_teensy: $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).hex.upload_teensy.timestamp
+upload_teensy: $(BUILD_DIR)/$(MCU_TARGET)-$(MCU).hex.upload_teensy.timestamp | silent
+	@
 
-upload_teensylc: upload_teensy
+upload_teensylc: upload_teensy | silent
+	@
