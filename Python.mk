@@ -24,6 +24,10 @@ ifneq ($(strip $(MYPY_CONFIG_PATH)),)
 	MYPY_CONFIG_OPTS += --config-file="$(MYPY_CONFIG_PATH)"
 endif
 
+ifeq ($(strip $(PYTHON_EXEC_SPEC_FILE)),)
+    PYTHON_EXEC_ARGS := $(PYTHON_EXEC_PATHS:%=-p "%") --onefile
+endif
+
 build-python: $(PYTHON_BUILD_TARGETS) | silent
 
 test-python: build-python $(PYTHON_DOCTEST_TARGETS) $(PYTHON_PYTEST_TARGETS) | silent
@@ -43,5 +47,14 @@ cfg-python: | silent
 %.py.pytest.target: %.py
 	@$(MSG) "[TEST]" "$<"
 	$(V)$(PYTEST) $<
+
+python-exec: $(PYTHON_TARGET) | silent
+
+$(PYTHON_TARGET): $(PYTHON_EXEC_SPEC_FILE) $(PYTHON_TARGET).py $(PYTHON_FILES)
+	$(MSG) "[EXEC]" "$(PYTHON_TARGET)"
+	$(V)pyinstaller $(PYTHON_EXEC_ARGS) --distpath bin --workpath $(BUILD_DIR)/$(PYTHON_TARGET).pyinstaller --noconfirm "$<"
+
+clean-python-exec: | silent
+	rm -fr bin $(BUILD_DIR)/$(PYTHON_TARGET).pyinstaller
 
 .PHONY: %.py.build.target %.py.doctest.target %.py.pytest.target build-python test-python cfg-py
