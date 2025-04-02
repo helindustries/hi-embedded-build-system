@@ -1,28 +1,3 @@
-$(BUILD_DIR)/%.o: %.c
-	@$(MSG) "[CC]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	@mkdir -p $(shell dirname "$@")
-	$(V)"$(CC)" -c $(CFLAGS) $(CPPFLAGS) -o "$@" "$<"
-
-$(BUILD_DIR)/%.o: %.cpp
-	@$(MSG) "[CXX]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	@mkdir -p $(shell dirname "$@")
-	$(V)"$(CXX)" -c $(CXXFLAGS) $(CPPFLAGS) -o "$@" "$<"
-
-$(BUILD_DIR)/%.o: %.ino
-	@$(MSG) "[INO]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	@mkdir -p $(shell dirname "$@")
-	$(V)"$(CXX)" -c $(CXXFLAGS) $(CPPFLAGS) -o "$@" -x c++ "$<"
-
-$(BUILD_DIR)/%.o: %.S
-	@$(MSG) "[S]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	@mkdir -p $(shell dirname "$@")
-	$(V)"$(CC)" -c $(ASMFLAGS) $(CPPFLAGS) -o "$@" "$<"
-
-$(BUILD_DIR)/%.o: %.s
-	@$(MSG) "[S]" "$(MCU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	@mkdir -p $(shell dirname "$@")
-	$(V)"$(CC)" -c $(ASMFLAGS) $(CPPFLAGS) -o "$@" "$<"
-
 clean-base:
 	$(V)rm -f $(OBJS) $(OBJS:%.o=%.d)
 
@@ -32,11 +7,11 @@ end:
 	@$(VMSG) "Finished at $(MAKE_BASE_PATH) with '$(MAKECMDGOALS)'"
 
 debug_server:
-	"$(OPENOCD)" $(OPENOCD_DEBUG) -s "$(OPENOCD_CFG_DIR)" -f "$(OPENOCD_CFG_DIR)/$(MCU_DEBUG_ADAPTER).cfg" -f "$(OPENOCD_CFG_DIR)/$(MCU_DEBUG_TARGET).cfg" $(OPENOCD_SERVER_OPTS)
+	"$(OPENOCD)" $(OPENOCD_DEBUG) -s "$(OPENOCD_CFG_DIR)" -f "$(OPENOCD_CFG_DIR)/$(CPU_DEBUG_ADAPTER).cfg" -f "$(OPENOCD_CFG_DIR)/$(CPU_DEBUG_TARGET).cfg" $(OPENOCD_SERVER_OPTS)
 
 debug_cli:
-	"$(OPENOCD)" $(OPENOCD_DEBUG) -s "$(OPENOCD_CFG_DIR)" -f "$(OPENOCD_CFG_DIR)/$(MCU_DEBUG_ADAPTER).cfg" -f "$(OPENOCD_CFG_DIR)/$(MCU_DEBUG_TARGET).cfg" $(OPENOCD_SERVER_OPTS) -c 'log_output $(OPENOCD_LOG_PATH)' &
-	"$(GDB)" --tui -ex '$(GDB_TARGET)' -x '$(GDB_INIT)' '$(BUILD_DIR)/$(MCU_TARGET)-$(MCU).elf'
+	"$(OPENOCD)" $(OPENOCD_DEBUG) -s "$(OPENOCD_CFG_DIR)" -f "$(OPENOCD_CFG_DIR)/$(CPU_DEBUG_ADAPTER).cfg" -f "$(OPENOCD_CFG_DIR)/$(CPU_DEBUG_TARGET).cfg" $(OPENOCD_SERVER_OPTS) -c 'log_output $(OPENOCD_LOG_PATH)' &
+	"$(GDB)" --tui -ex '$(GDB_TARGET)' -x '$(GDB_INIT)' '$(BUILD_DIR)/$(CPU_TARGET)-$(CPU).elf'
 	killall openocd
 
 serial:

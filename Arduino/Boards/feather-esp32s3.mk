@@ -1,3 +1,3 @@
-FORCE_MCU_UPLOAD = yes
-MCU_USE_TINYUF2 = yes
+FORCE_CPU_UPLOAD = yes
+CPU_USE_TINYUF2 = yes
 ARDUINO_VARIANT_NAME = adafruit_feather_esp32s3

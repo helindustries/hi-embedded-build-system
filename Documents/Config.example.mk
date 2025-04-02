@@ -43,7 +43,7 @@ GHDL = "/opt/homebrew/bin/ghdl"
 GTKWAVE = "/Applications/GtkWave.app/Contents/Resources/bin/gtkwave"
 
 # The command of a tool, that triggers a reset on the development hardware. This executes before uploads to put
-# the MCU into a state, where it accepts uploads again, if necessary. May be required by some Arduino boards.
+# the CPU into a state, where it accepts uploads again, if necessary. May be required by some Arduino boards.
 # Will run on ESP32 boards as well as Teensy uploads by default, in other situations, use the resetter target.
 RESETTER_CMD ?= /usr/bin/env python3 "$(MAKE_INC_PATH)/Tools/Resetter/teensy_reset.py)" $(RESET_PORT)
 # The command of a tool, that triggers your favourite logic analyzer (Saleae Logic, Sigrok, etc.)

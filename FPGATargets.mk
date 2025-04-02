@@ -4,7 +4,7 @@ synthesize: synthesize_${FPGA_TOOLCHAIN} $(FPGA_TARGET_DEPS) | silent
 
 layout: layout_${FPGA_TOOLCHAIN} $(FPGA_TARGET_DEPS) | silent
 
-upload-fpga: upload_$(FPGA_BOARD)$(FPGA_JTAG_UPLOAD_TARGET) $(FPGA_TARGET_DEPS) | silent
+upload-fpga: upload_$(FPGA_DEVICE)$(FPGA_JTAG_UPLOAD_TARGET) $(FPGA_TARGET_DEPS) | silent
 
 clean-fpga: clean_${FPGA_TOOLCHAIN}
 	@$(MSG) "[CLEAN]" "$(FPGA_TARGET)"
@@ -49,13 +49,13 @@ ifneq ($(strip $(NO_GATEWARE_UPLOAD)),yes)
 	@#@if [ -n "$(strip $(FPGA_RAM_IMAGE))" ]; then              \
 	@#	$(FMSG) "INFO:Uploading RAM $(FPGA_RAM_IMAGE)";          \
 	@#	$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(FPGA_RAM_IMAGE)"   \
-	@#	$(FPGA_FUJPROG) -b "$(FPGA_BOARD)" --ram "$(FPGA_RAM_IMAGE)"; \
+	@#	$(FPGA_FUJPROG) -b "$(FPGA_DEVICE)" --ram "$(FPGA_RAM_IMAGE)"; \
 	@#fi
 
 	@#@if [ -n "$(strip $(FPGA_FLASH_IMAGE))" ]; then                \
 	@#	$(FMSG) "INFO:Uploading Flash $(FPGA_FLASH_IMAGE)";          \
 	@#	$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(FPGA_FLASH_IMAGE)"     \
-	@#	$(FPGA_FUJPROG) -b "$(FPGA_BOARD)" --flash "$(FPGA_FLASH_IMAGE)"; \
+	@#	$(FPGA_FUJPROG) -b "$(FPGA_DEVICE)" --flash "$(FPGA_FLASH_IMAGE)"; \
 	@#fi
 
 	@if [ "$(RUN_LOGIC)" = "yes" ]; then  \
@@ -76,13 +76,13 @@ ifneq ($(strip $(NO_GATEWARE_UPLOAD)),yes)
 	@#@if [ -n "$(strip $(FPGA_RAM_IMAGE))" ]; then              \
 	@#	$(FMSG) "INFO:Uploading RAM $(FPGA_RAM_IMAGE)";          \
 	@#	$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(FPGA_RAM_IMAGE)"   \
-	@#	$(FPGA_FUJPROG) -b "$(FPGA_BOARD)" --ram "$(FPGA_RAM_IMAGE)"; \
+	@#	$(FPGA_FUJPROG) -b "$(FPGA_DEVICE)" --ram "$(FPGA_RAM_IMAGE)"; \
 	@#fi
 
 	@#@if [ -n "$(strip $(FPGA_FLASH_IMAGE))" ]; then                \
 	@#	$(FMSG) "INFO:Uploading Flash $(FPGA_FLASH_IMAGE)";          \
 	@#	$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(FPGA_FLASH_IMAGE)"     \
-	@#	$(FPGA_FUJPROG) -b "$(FPGA_BOARD)" --flash "$(FPGA_FLASH_IMAGE)"; \
+	@#	$(FPGA_FUJPROG) -b "$(FPGA_DEVICE)" --flash "$(FPGA_FLASH_IMAGE)"; \
 	@#fi
 
 	@if [ "$(RUN_LOGIC)" = "yes" ]; then  \
@@ -98,7 +98,7 @@ endif
 upload_dfuutil: $(FPGA_DEPLOY_TARGET).upload_dfuutil.timestamp
 
 cfg-fpga:
-	@echo "BOARD:                  $(FPGA_BOARD)"
+	@echo "BOARD:                  $(FPGA_DEVICE)"
 	@echo "BUILD_DIR:              $(BUILD_DIR)"
 	@echo "TARGET:                 $(FPGA_TARGET)"
 	@echo "FPGA_BASE_LIBRARY_PATH: $(FPGA_BASE_LIBRARY_PATH)"

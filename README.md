@@ -49,8 +49,8 @@ licensing concerns, via Wine even on Linux and macOS
 ## Supported devices and platforms:
 
 The supported target devices are listed below, the configurations can be found in the *Targets* directory.
-New devices can easily be added there, PRs are welcome. Devices with both an MCU and an FPGA should be split
-into MCU and FPGA configurations.
+New devices can easily be added there, PRs are welcome. Devices with both an CPU and an FPGA should be split
+into CPU and FPGA configurations.
 
 ### Platforms
 
@@ -65,7 +65,7 @@ into MCU and FPGA configurations.
 Note, that Xilinx Vivado isn't yet supported, as I was not able to install it on macOS for the time being and
 had no reason to look into why.
 
-### MCU targets
+### CPU targets
 
 * PJRC Teensy 3.2 (tested ages ago, might need work)
 * PJRC Teensy 3.6 (tested ages ago, might need work)
@@ -105,7 +105,7 @@ available at that step to help you.
 
 Projects will require a **Makefile** set up. The Makefile should look something like the following examples:
 
-### MCU-based core project, triggering FPGA dependencies
+### CPU-based core project, triggering FPGA dependencies
 
 The project structure for the examples is as follows:
 
@@ -139,9 +139,9 @@ clean: clean-dependencies clean-mcu
 TARGET = MyTarget
 BUILD_DIR = ../Build
 BOARDS_DIR := $(abspath Boards)
-MCU_BOARD = feather-esp32s3
-MCU_USE_JTAG = yes
-FPGA_BOARD = orangecrab-85f
+CPU_DEVICE = feather-esp32s3
+CPU_USE_JTAG = yes
+FPGA_DEVICE = orangecrab-85f
 FPGA_USE_JTAG = yes
 USE_ARDINO_CORE = yes
 ARDUINO_VARIANT_NAME = feather-esp32s3-tft
@@ -156,7 +156,7 @@ ASM_FILES := $(wildcard *.s **/*.s)
 
 # Project definition includes, do this first, so paths like CORE_LIB_PATH are defined
 include ../BuildSystem/BuildSystem.mk
-include $(MAKE_INC_PATH)/MCUBoards.mk
+include $(MAKE_INC_PATH)/CPUBoards.mk
 
 # Define Arduino modules and dependencies
 MODULES += SPI:$(CORE_LIB_PATH)/SPI/src
@@ -167,17 +167,17 @@ DEPENDENCIES += Gateware:MyGateware:../MyGateware
 # Project target and post-config includes, do these only after you defined all remaining configs
 include $(MAKE_INC_PATH)/Dependencies.mk
 include $(MAKE_INC_PATH)/Modules.mk
-include $(MAKE_INC_PATH)/MCUTargets.mk
+include $(MAKE_INC_PATH)/CPUTargets.mk
 include $(MAKE_INC_PATH)/Targets.mk
 
 # This is an example for uplaoding gateware late, so any compile errors and any other issues
 # happen before, so you don't waste time on waiting for a gateware or dependency upload to later
-# discover, your MCU code doesn't compile. Your code should honour the NO_GATEWARE_UPLOAD variable.
+# discover, your CPU code doesn't compile. Your code should honour the NO_GATEWARE_UPLOAD variable.
 NO_GATEWARE_UPLOAD = yes
 upload-fpga-late:
 ifneq ($(strip $(NO_GATEWARE_DEPS)),yes)
     @# Gateware wasn't installed during dependency build, so install it now. Include
-    @# this before the MCU upload for debugging to be able to break on init properly
+    @# this before the CPU upload for debugging to be able to break on init properly
     $(V)$(MAKE) --directory=$(FRAMEWORK_PATH)/GPU --file=$(FRAMEWORK_PATH)/GPU/Makefile install
 endif
 ```
@@ -198,7 +198,7 @@ clean: clean-fpga clean-ghdl
 
 # Project config
 FPGA_TARGET := my_target
-FPGA_BOARD = orangecrab-85f
+FPGA_DEVICE = orangecrab-85f
 FPGA_USE_JTAG = yes
 # Some rom definitions, they need to either exist or have a python or bash-based file to generate them
 ROMS = rom/$(FPGA_TARGET)_rom.txt rom/$(FPGA_TARGET)_ram.txt rom/$(FPGA_TARGET)_host_ram.txt rom/$(FPGA_TARGET)_tb.txt
@@ -247,7 +247,7 @@ with the Serial Monitor coming to the foreground.
 pre-run task to point to *install* as well. Only use this target for debugging when using an ESP32, as the non-
 debugging version will likely crash the device.
 - If you want to build the product and libraries from adjacent directory trees, you can also modify the project root
-- In case of a VHDL (sub)project, create another target for the all rule (if you have an MCU all rule already),
+- In case of a VHDL (sub)project, create another target for the all rule (if you have an CPU all rule already),
 and this time replace the pre-run task to point to the *simulate* task and the executable to /usr/bin/true, now you
 can compile your code or run the simulation using the appropriate buttons in the IDE. Build reports can be found in
 your build directory, so make sure your project root is well chosen to allow access form the IDE.
@@ -279,6 +279,21 @@ the respective build variants.
 ## License
 
 This project is licensed under the MIT license, see LICENSE for details.
+
+## Naming convention
+
+- Target: The build target, usually used for the name of a binary or project
+- Module: A single file or a group of files that are compiled together within the same Makefile target
+- Core: The core module for a specific CPU or FPGA
+- Dependency: A separate sub-build, running in a separate Makefile
+- Toolchain: A manufacturer-specific toolchain, like the ESP-IDF or the STM32Cube****
+- Architecture: The architecture of the CPU or FPGA, defining the instruction set and core features
+- CPU: The CPU core, defining core features and peripherals
+- FPGA: The FPGA, defining core features and peripherals
+- Device: The carrier of a CPU or FPGA, usually a board or a module, but may also be a complete laptop
+- System: The complete, integrated system, containing 0 or more CPUs and FPGAs, as well as other components
+- Platform: A group of systems following similar designs and components and supporting the same targets
+- Project: A solution made of one or more targets
 
 ## Personal note from the maintainer
 

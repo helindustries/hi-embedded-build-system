@@ -1,15 +1,16 @@
 PYTHON_BUILD_TARGETS := $(patsubst %.py,%.py.build.target,$(PYTHON_FILES))
 PYTHON_DOCTEST_TARGETS := $(patsubst %.py,%.py.doctest.target,$(PYTHON_FILES))
 PYTHON_PYTEST_TARGETS := $(patsubst %.py,%.py.pytest.target,$(PYTHON_TESTS))
-#PYTHON_FILES := $(filter-out %_test.py,$(filter-out test_%.py,$(PYTHON_FILES)))
+PYTHON_FILES := $(filter-out %_test.py,$(filter-out test_%.py,$(PYTHON_FILES)))
 
 ifneq ($(strip $(PYTHON_ADDITIONAL_PATHS)),)
-PYTHON_PATH := $(subst $(tab),:,$(subst $(space),:,$(PYTHON_ADDITIONAL_PATHS:%=$(strip %))))
-ifeq ($(strip $(shell echo $$PYTHONPATH)),)
-PYTHON_ENV += PYTHONPATH="$(PYTHON_PATH)"
-else
-PYTHON_ENV += PYTHONPATH="$(shell echo $$PYTHONPATH):$(PYTHON_PATH)"
-endif
+    PYTHON_PATH := $(patsubst %::,%,$(subst $(tab),:,$(subst $(space),:,$(PYTHON_ADDITIONAL_PATHS:%=$(strip %)))))
+
+    ifeq ($(strip $(shell echo $$PYTHONPATH)),)
+        PYTHON_ENV += PYTHONPATH="$(PYTHON_PATH)"
+    else
+        PYTHON_ENV += PYTHONPATH="$(shell echo $$PYTHONPATH):$(PYTHON_PATH)"
+    endif
 endif
 
 PYTHON := $(PYTHON_ENV) $(shell which python)
