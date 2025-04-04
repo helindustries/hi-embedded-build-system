@@ -14,20 +14,20 @@ endif
 INCLUDE_PATHS += "$(abspath $(MAKE_BASE_PATH))"
 
 # Project-specific board definitions
-ifneq ($(strip $(BOARDS_DIR)),)
-    HEADERS -= $(filter $(wildcard $(BOARDS_DIR)/*.h),$(HEADERS))
-    CPP_FILES -= $(filter $(wildcard $(BOARDS_DIR)/*.cpp),$(CPP_FILES))
-    C_FILES -= $(filter $(wildcard $(BOARDS_DIR)/*.c),$(C_FILES))
-    ASM_FILES -= $(filter $(wildcard $(BOARDS_DIR)/*.s),$(ASM_FILES))
-    ASM_FILES -= $(filter $(wildcard $(BOARDS_DIR)/*.S),$(ASM_FILES))
+ifneq ($(strip $(DEVICES_DIR)),)
+    HEADERS -= $(filter $(wildcard $(DEVICES_DIR)/*.h),$(HEADERS))
+    CPP_FILES -= $(filter $(wildcard $(DEVICES_DIR)/*.cpp),$(CPP_FILES))
+    C_FILES -= $(filter $(wildcard $(DEVICES_DIR)/*.c),$(C_FILES))
+    ASM_FILES -= $(filter $(wildcard $(DEVICES_DIR)/*.s),$(ASM_FILES))
+    ASM_FILES -= $(filter $(wildcard $(DEVICES_DIR)/*.S),$(ASM_FILES))
 
-    HEADERS += $(wildcard $(BOARDS_DIR)/$(CPU_DEVICE)/*.h)
-    CPP_FILES += $(wildcard $(BOARDS_DIR)/$(CPU_DEVICE)/*.cpp)
-    C_FILES += $(wildcard $(BOARDS_DIR)/$(CPU_DEVICE)/*.c)
-    ASM_FILES += $(wildcard $(BOARDS_DIR)/$(CPU_DEVICE)/*.s)
-    ASM_FILES += $(wildcard $(BOARDS_DIR)/$(CPU_DEVICE)/*.S)
+    HEADERS += $(wildcard $(DEVICES_DIR)/$(CPU_DEVICE)/*.h)
+    CPP_FILES += $(wildcard $(DEVICES_DIR)/$(CPU_DEVICE)/*.cpp)
+    C_FILES += $(wildcard $(DEVICES_DIR)/$(CPU_DEVICE)/*.c)
+    ASM_FILES += $(wildcard $(DEVICES_DIR)/$(CPU_DEVICE)/*.s)
+    ASM_FILES += $(wildcard $(DEVICES_DIR)/$(CPU_DEVICE)/*.S)
 
-    INCLUDE_PATHS += "$(BOARDS_DIR)/$(CPU_DEVICE)"
+    INCLUDE_PATHS += "$(DEVICES_DIR)/$(CPU_DEVICE)"
 endif
 
 include $(MAKE_INC_PATH)/Devices/CPU/$(CPU_DEVICE).mk

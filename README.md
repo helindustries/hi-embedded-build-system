@@ -138,7 +138,7 @@ clean: clean-dependencies clean-mcu
 # Set up the basic configuration
 TARGET = MyTarget
 BUILD_DIR = ../Build
-BOARDS_DIR := $(abspath Boards)
+DEVICES_DIR := $(abspath Boards)
 CPU_DEVICE = feather-esp32s3
 CPU_USE_JTAG = yes
 FPGA_DEVICE = orangecrab-85f

@@ -4,17 +4,17 @@ LIBS := $(LIBS:%=-l%)
 
 ifeq ($(strip $(ARDUINO_VARIANT_NAME)),)
     # Require the files to be in a variant subdirectory
-    ESP_BOOTLOADER_BIN ?= $(BOARDS_DIR)/$(CPU_DEVICE)/bootloader.bin
-    ESP_BOOT_BIN ?= $(BOARDS_DIR)/$(CPU_DEVICE)/boot_app0.bin
+    ESP_BOOTLOADER_BIN ?= $(DEVICES_DIR)/$(CPU_DEVICE)/bootloader.bin
+    ESP_BOOT_BIN ?= $(DEVICES_DIR)/$(CPU_DEVICE)/boot_app0.bin
 
     ifeq ($(strip $(CPU_USE_TINYUF2)),yes)
-        ESP_TINYUF2_BIN ?= $(BOARDS_DIR)/$(CPU_DEVICE)/tinyuf2.bin
+        ESP_TINYUF2_BIN ?= $(DEVICES_DIR)/$(CPU_DEVICE)/tinyuf2.bin
     endif
 else
     ifeq ($(strip $(CPU_USE_TINYUF2)),yes)
         ESP_TINYUF2_BIN ?= $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/tinyuf2.bin
         ifeq ($(strip $(shell ls --color=never "$(ESP_TINYUF2_BIN)" 2>/dev/null)),)
-            ESP_TINYUF2_BIN ?= $(BOARDS_DIR)/$(CPU_DEVICE)/tinyuf2.bin
+            ESP_TINYUF2_BIN ?= $(DEVICES_DIR)/$(CPU_DEVICE)/tinyuf2.bin
             ifeq ($(strip $(shell ls --color=never "$(ESP_TINYUF2_BIN)" 2>/dev/null)),)
                 CPU_USE_TINYUF2 := no
             endif
@@ -22,7 +22,7 @@ else
 
         ESP_BOOTLOADER_BIN ?= $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/bootloader-tinyuf2.bin
         ifeq ($(strip $(shell ls --color=never "$(ESP_BOOTLOADER_BIN)" 2>/dev/null)),)
-            ESP_BOOTLOADER_BIN ?= $(BOARDS_DIR)/$(CPU_DEVICE)/bootloader-tinyuf2.bin
+            ESP_BOOTLOADER_BIN ?= $(DEVICES_DIR)/$(CPU_DEVICE)/bootloader-tinyuf2.bin
             ifeq ($(strip $(shell ls --color=never "$(ESP_BOOTLOADER_BIN)" 2>/dev/null)),)
                 CPU_USE_TINYUF2 := no
             endif
@@ -30,7 +30,7 @@ else
     endif
 
     ifeq ($(strip $(shell ls --color=never "$(ESP_BOOTLOADER_BIN)" 2>/dev/null)),)
-        ESP_BOOTLOADER_BIN ?= $(BOARDS_DIR)/$(CPU_DEVICE)/bootloader.bin
+        ESP_BOOTLOADER_BIN ?= $(DEVICES_DIR)/$(CPU_DEVICE)/bootloader.bin
         ESP_BOOTLOADER_ELF ?= $(ESP_SDK_PATH)/$(CPU)/bin/bootloader_$(ESP_FLASH_MODE)_$(ESP_FLASH_FREQ).elf
     endif
 
@@ -38,11 +38,11 @@ else
     ifeq ($(strip $(shell ls --color=never "$(ESP_BOOT_BIN)" 2>/dev/null)),)
         ESP_BOOT_BIN := $(strip $(shell ls --color=never "$(ESP_BASE_PATH)/tools/partitions/boot_app0.bin" 2>/dev/null | sort | tail -n 1))
         ifeq ($(strip $(shell $(LS) "$(ESP_BOOT_BIN)" 2>/dev/null)),)
-            ESP_BOOT_BIN := $(BOARDS_DIR)/$(CPU_DEVICE)/boot_app0.bin
+            ESP_BOOT_BIN := $(DEVICES_DIR)/$(CPU_DEVICE)/boot_app0.bin
         endif
     endif
 
-    ESP_PARTITIONS_CSV_PATH ?= $(BOARDS_DIR)/$(CPU_DEVICE)/$(CPU_TARGET).partitions.csv
+    ESP_PARTITIONS_CSV_PATH ?= $(DEVICES_DIR)/$(CPU_DEVICE)/$(CPU_TARGET).partitions.csv
     ifeq ($(strip $(shell ls --color=never $(ESP_PARTITIONS_CSV_PATH) 2>/dev/null)),)
 	    ESP_PARTITIONS_CSV_PATH := $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/partitions-$(ESP_FLASH_SIZE)-tinyuf2.csv
 	    ifeq ($(strip $(shell ls --color=never $(ESP_PARTITIONS_CSV_PATH) 2>/dev/null)),)
@@ -60,7 +60,7 @@ $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).bin: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).elf
 	$(V)"$(ESPTOOL)" --chip $(CPU) elf2image --flash_mode $(ESP_FLASH_MODE) --flash_freq $(ESP_FLASH_FREQ) --flash_size $(ESP_FLASH_SIZE) --elf-sha256-offset $(ESP_ELF_SHA256_OFFSET) -o "$@" "$<" $(PROCESS_OUTPUT)
 
 ifeq ($(strip $(ESP_PARTITIONS_CSV_PATH)),)
-$(BUILD_DIR)/%-$(CPU).partitions.bin: $(BOARDS_DIR)/$(CPU_DEVICE)/%.partitions.csv
+$(BUILD_DIR)/%-$(CPU).partitions.bin: $(DEVICES_DIR)/$(CPU_DEVICE)/%.partitions.csv
 	@$(MSG) "[PART]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
 	$(V)python3 "$(ESPGENPART_PY)" -q "$<" "$@" $(PROCESS_OUTPUT)
 else
