@@ -12,11 +12,11 @@ PROJECT_PATH := $(patsubst %/,%,$(abspath $(dir $(firstword $(MAKEFILE_LIST)))))
 INO_FILE := $(shell pushd $(PROJECT_PATH) > /dev/null; ls --color=never *.ino | head -n 1; popd > /dev/null)
 CPU_TARGET := $(INO_FILE:%.ino=%)
 ARDUINO_BUILD_SYSTEM_PATH := $(patsubst %/,%,$(abspath $(dir $(lastword $(MAKEFILE_LIST)))))
-DEVICES_DIR := $(abspath Boards)
+DEVICES_DIR := $(abspath Devices)
 CPU_WAIT_FOR_BOARD_PORT := yes
 CLEAN_CORE := yes
 
-include $(ARDUINO_BUILD_SYSTEM_PATH)/Boards/$(CPU_DEVICE).mk
+include $(ARDUINO_BUILD_SYSTEM_PATH)/Devices/$(CPU_DEVICE).mk
 include $(ARDUINO_BUILD_SYSTEM_PATH)/../BuildSystem.mk
 include $(MAKE_INC_PATH)/CPUFlags.mk
 
