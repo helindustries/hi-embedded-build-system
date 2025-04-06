@@ -25,6 +25,7 @@ else
 	PLATFORM = Windows
 endif
 endif
+CPU_BASE_TARGET ?= $(CPU_TARGET)
 
 silent:
 	@:

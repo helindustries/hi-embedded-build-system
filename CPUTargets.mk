@@ -3,9 +3,9 @@ SOURCES := $(C_FILES) $(CPP_FILES) $(INO_FILES) $(ASM_FILES) $(HEADERS)
 # $(wildcard $(MODULES_PATHS:%,%/*.c) $(MODULES:%,%/*.cpp) $(MODULES:%,%/*.S) $(MODULES:%,%/*.h))
 OBJS := $(C_FILES:%.c=$(BUILD_DIR)/%.o) $(CPP_FILES:%.cpp=$(BUILD_DIR)/%.o) $(INO_FILES:%.ino=$(BUILD_DIR)/%.o) $(ASM_FILES:%.s=$(BUILD_DIR)/%.o)
 
-binary-mcu: modules $(CORE_TARGET) $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).elf $(SOURCES) | silent
+binary-cpu: modules $(CORE_TARGET) $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).elf $(SOURCES) | silent
 
-library-mcu: modules $(BUILD_DIR)/lib$(CPU_TARGET)-$(CPU).a $(SOURCES) | silent
+library-cpu: modules $(BUILD_DIR)/lib$(CPU_TARGET)-$(CPU).a $(SOURCES) | silent
 
 $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).elf: $(BINARY_DEPS) $(OBJS) $(SOURCES) $(DEPENDENCY_LIB_PATHS) $(MODULES_LIBS)
 	@$(MSG) "[LD]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
@@ -21,7 +21,7 @@ $(BUILD_DIR)/lib$(CPU_TARGET)-$(CPU).a: $(OBJS) $(DEPENDENCY_LIB_PATHS) $(MODULE
 	@mkdir -p $(shell dirname "$@")
 	$(V)$(AR) $(ARFLAGS) $@ $(OBJS) $(MODULES_LIBS) $(DEPENDENCY_LIB_PATHS)
 
-stats-mcu: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).elf $(SOURCES)
+stats-cpu: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).elf $(SOURCES)
 	@echo "ROM: $(shell $(SIZE) -A $< | egrep "\.(text)|(data)" | sed -E 's%\.[a-zA-Z0-9_\.\-]+\ +([0-9]+)\ +[0-9]+%\1%' | awk '{s+=$$1} END {print s}') b, RAM: $(shell $(SIZE) -A $< | egrep "\.((dmabuffers)|(usbbuffers)|(data)|(bss)|(usbdescriptortable))" | sed -E 's%\.[a-zA-Z0-9_\.\-]+\ +([0-9]+)\ +[0-9]+%\1%' | awk '{s+=$$1} END {print s}') b"
 
 section-sizes: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).elf $(SOURCES)
@@ -30,9 +30,9 @@ section-sizes: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).elf $(SOURCES)
 symbol-sizes: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).elf $(SOURCES)
 	$(V)$(OBJDUMP) -t $< | sort -n -k 5 > $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).sym
 
-upload-mcu: binary-mcu upload_$(CPU_DEVICE)$(CPU_JTAG_UPLOAD_TARGET) | silent
+upload-cpu: binary-cpu upload_$(CPU_DEVICE)$(CPU_JTAG_UPLOAD_TARGET) | silent
 
-clean-mcu: clean-base clean-modules clean_${CPU_TOOLCHAIN}
+clean-cpu: clean-base clean-modules clean_${CPU_TOOLCHAIN}
 	@$(MSG) "[CLEAN]" "$(CPU_TARGET)"
 	$(V)rm -f $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).elf	$(BUILD_DIR)/lib$(CPU_TARGET)-$(CPU).a $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)
 	$(V)rm -f $(BUILD_DIR)/$(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/*.d
@@ -79,8 +79,8 @@ ifeq ($(strip $(CPU_DEVICE_PORT)),)
 endif
 endif
 
-cfg-mcu: cfg-toolchain --cfg-mcu
---cfg-mcu:
+cfg-cpu: cfg-toolchain --cfg-cpu
+--cfg-cpu:
 	@$(MSG) "[CFG]" "$(CPU_TARGET)"
 	@$(CFGMSG) "BOARD:" "$(CPU_DEVICE)"
 	@$(CFGMSG) "PORT:" "$(CPU_DEVICE_PORT)"
@@ -131,5 +131,5 @@ $(BUILD_DIR)/%.o: %.s
 	@mkdir -p $(shell dirname "$@")
 	$(V)"$(CC)" -c $(ASMFLAGS) $(CPPFLAGS) -o "$@" "$<"
 
-.PHONY: binary-mcu library-mcu stats-mcu upload-mcu clean-mcu cfg-mcu --cfg-mcu lib%-$(CPU).a.target
-.NOTPARALLEL: cfg-mcu
+.PHONY: binary-cpu library-cpu stats-cpu upload-cpu clean-cpu cfg-cpu --cfg-cpu lib%-$(CPU).a.target
+.NOTPARALLEL: cfg-cpu
