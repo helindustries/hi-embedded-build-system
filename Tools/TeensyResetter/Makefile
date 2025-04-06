@@ -1,10 +1,10 @@
-all: binary-mcu stats-mcu
+all: binary-cpu stats-cpu
 
-install: binary-mcu #upload-mcu
+install: binary-cpu #upload-cpu
 
-clean: clean-mcu
+clean: clean-cpu
 
-cfg: cfg-mcu
+cfg: cfg-cpu
 
 .PHONY: all install clean
 

@@ -1,16 +1,16 @@
-all: binary-mcu stats-mcu | silent
+all: binary-cpu stats-cpu | silent
 	@:
 
-install: detect-recover binary-mcu upload-mcu | silent
+install: detect-recover binary-cpu upload-cpu | silent
 	@:
 
 test: | silent
 	@:
 
-clean: clean-mcu | silent
+clean: clean-cpu | silent
 	@:
 
-cfg: cfg-mcu | silent
+cfg: cfg-cpu | silent
 	@:
 
 wnk: cfg | silent

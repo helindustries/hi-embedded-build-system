@@ -125,13 +125,13 @@ The project structure for the examples is as follows:
 ```Makefile
 # Make sure to define targets first, so included targets don't override the target, being executed without arguments
 # Perform all builds here
-all: dependencies binary-mcu stats-mcu
+all: dependencies binary-cpu stats-cpu
 
 # Perform all builds
-install: all upload-mcu upload-fpga-late
+install: all upload-cpu upload-fpga-late
 
 # Perform all cleanups
-clean: clean-dependencies clean-mcu
+clean: clean-dependencies clean-cpu
 
 .PHONY: all install recover clean
 
@@ -222,7 +222,7 @@ include $(MAKE_INC_PATH)/GHDLToolchain.mk
 include $(MAKE_INC_PATH)/GHDLTargets.mk
 ```
 
-With your *Makefile* set up, you can run `make cfg-mcu` or `make cfg-fpga` to get an idea of how your build
+With your *Makefile* set up, you can run `make cfg-cpu` or `make cfg-fpga` to get an idea of how your build
 is configured and whether your build will perform as expected. To follow the build process in detail and
 debug issues, that arise, you can run `make VERBOSE=1` to get a detailed log of the build process.
 
