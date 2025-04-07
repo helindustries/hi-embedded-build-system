@@ -1,12 +1,23 @@
 # This is a special toolchain, coupled with a properly set up compatibility implementation,
 # this can be used to run the CPU code on the host system for testing and tools integration.
-CPU := Host
+CPU := arm64
+CPUARCH := armv8-a
 CPU_SPEED := 1
 BUS_SPEED := 1
-CPU_TOOLCHAIN := host
-CORE_PLATFORM := Host
+CPU_TOOLCHAIN := $(PLATFORM_ID)
+CPU_TOOLCHAIN_UPPER := $(shell echo $(CPU_TOOLCHAIN) | tr '[:lower:]' '[:upper:]')
 
 # compiler setup
+ifeq ($(strip $(FORCE_GCC)),yes)
+CC := $(GCC_PREFIX)/bin/gcc
+CXX := $(GCC_PREFIX)/bin/g++
+GDB := $(GCC_PREFIX)/bin/gdb
+AR := $(GCC_PREFIX)/bin/ar
+OBJCOPY := $(GCC_PREFIX)/bin/objcopy
+OBJDUMP := $(GCC_PREFIX)/bin/objdump
+SIZE := $(GCC_PREFIX)/bin/size
+else
+ifeq ($(strip $(LLVM_PREFIX)),)
 CC := $(shell which clang)
 CXX := $(shell which clang++)
 GDB := $(shell which lldb)
@@ -14,8 +25,7 @@ AR := $(shell which ar)
 OBJCOPY := $(shell which objcopy)
 OBJDUMP := $(shell which objdump)
 SIZE := $(shell which size)
-ARFLAGS := -rcs
-ifneq ($(strip $(LLVM_PREFIX)),)
+else
 CC := $(LLVM_PREFIX)/bin/clang
 CXX := $(LLVM_PREFIX)/bin/clang++
 GDB := $(LLVM_PREFIX)/bin/lldb
@@ -24,19 +34,23 @@ OBJCOPY := $(LLVM_PREFIX)/bin/llvm-objcopy
 OBJDUMP := $(LLVM_PREFIX)/bin/llvm-objdump
 SIZE := $(LLVM_PREFIX)/bin/llvm-size
 endif
+endif
 
 # CPPFLAGS = compiler options for C and C++
-CPPFLAGS += $(OPTIMIZE) -Wall -ffunction-sections -fdata-sections -Wno-error=narrowing -DHOST_PLATFORM
+CPPFLAGS += $(OPTIMIZE) -Wall -ffunction-sections -fdata-sections -Wno-error=narrowing
+CPPFLAGS += -DARDUINO_ARCH_MACOS -D$(CPU_TOOLCHAIN_UPPER)=1
 #CPPFLAGS += -mavx512fp16
 
 # compiler options for C++ only
-CXXFLAGS += -fno-exceptions -fpermissive -felide-constructors -fno-threadsafe-statics -std=gnu++17 -fno-rtti
+CXXFLAGS += -fno-exceptions -fpermissive -felide-constructors -fno-threadsafe-statics -fno-rtti
 
 # compiler options for C only
 CFLAGS +=
 
 # linker options (--specs=nano.specs)
 LDFLAGS += $(OPTIMIZE) -fsingle-precision-constant
+
+ARFLAGS := -rcs
 
 # additional libraries to link
 LIBS += m stdc++
