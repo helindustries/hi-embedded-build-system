@@ -36,6 +36,7 @@ endif
 endif
 PLATFORM_ID = $(echo "$(PLATFORM)" | tr '[:upper:]' '[:lower:]')
 CPU_BASE_TARGET ?= $(CPU_TARGET)
+HAS_UPLOAD_TARGET := $(filter upload upload-% %-upload %upload% install install-% %-install %install%,$(MAKECMDGOALS))
 
 silent:
 	@:

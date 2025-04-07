@@ -72,16 +72,18 @@ endif
 $(ESP_BOOTLOADER_BIN): $(ESP_BOOTLOADER_ELF)
 	$(V)"$(ESPTOOL)" --chip "$(CPU)" elf2image --flash_mode $(ESP_FLASH_MODE) --flash_freq $(ESP_FLASH_FREQ) --flash_size $(ESP_FLASH_SIZE) -o "$@" "$<" $(PROCESS_OUTPUT)
 
-CPU_DEVICE_PORT ?= $(strip $(shell $(ESP32_PORTS) $(ESPTOOL) $(strip $(USB_PID)) $(strip $(USB_VID)) $(shell cat "$(BUILD_DIR)/.last_esp32_port" 2>/dev/null) /dev/cu.usb* | head -n 1))
-ifeq ($(strip $(VERBOSE)),1)
-    $(info $(ESP32_PORTS) $(ESPTOOL) $(strip $(USB_PID)) $(strip $(USB_VID)) $(shell cat "$(BUILD_DIR)/.last_esp32_port" 2>/dev/null) /dev/cu.usb* | head -n 1)
-    $(info Result: $(CPU_DEVICE_PORT))
-endif
-ifeq ($(strip $(CPU_DEVICE_PORT)),)
-    CPU_DEVICE_PORT ?= $(strip $(shell $(ESP32_PORTS) $(ESPTOOL) $(strip $(USB_PROG_PID)) $(strip $(USB_VID)) $(shell cat "$(BUILD_DIR)/.last_esp32_port" 2>/dev/null) /dev/cu.usb* | head -n 1))
+ifneq ($(strip $(HAS_UPLOAD_TARGET)),)
+    CPU_DEVICE_PORT ?= $(strip $(shell $(ESP32_PORTS) $(ESPTOOL) $(strip $(USB_PID)) $(strip $(USB_VID)) $(shell cat "$(BUILD_DIR)/.last_esp32_port" 2>/dev/null) /dev/cu.usb* | head -n 1))
     ifeq ($(strip $(VERBOSE)),1)
         $(info $(ESP32_PORTS) $(ESPTOOL) $(strip $(USB_PID)) $(strip $(USB_VID)) $(shell cat "$(BUILD_DIR)/.last_esp32_port" 2>/dev/null) /dev/cu.usb* | head -n 1)
         $(info Result: $(CPU_DEVICE_PORT))
+    endif
+    ifeq ($(strip $(CPU_DEVICE_PORT)),)
+        CPU_DEVICE_PORT ?= $(strip $(shell $(ESP32_PORTS) $(ESPTOOL) $(strip $(USB_PROG_PID)) $(strip $(USB_VID)) $(shell cat "$(BUILD_DIR)/.last_esp32_port" 2>/dev/null) /dev/cu.usb* | head -n 1))
+        ifeq ($(strip $(VERBOSE)),1)
+            $(info $(ESP32_PORTS) $(ESPTOOL) $(strip $(USB_PID)) $(strip $(USB_VID)) $(shell cat "$(BUILD_DIR)/.last_esp32_port" 2>/dev/null) /dev/cu.usb* | head -n 1)
+            $(info Result: $(CPU_DEVICE_PORT))
+        endif
     endif
 endif
 

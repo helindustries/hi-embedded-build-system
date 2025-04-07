@@ -48,6 +48,7 @@ detect-recover:
 	@$(MSG) "[RECOVER]" "Check, if recovery is needed"
 	@bash "$(MAKE_INC_PATH)/Tools/FirmwareResetter/recover.sh" detect $(CPU_DEVICE) $(CPU_RESET_ARGS) > /dev/null 2>&1
 
+ifneq ($(strip $(HAS_UPLOAD_TARGET)),)
 ifeq ($(strip $(USE_DEFAULT_USB_SERIAL_DETECT)),yes)
 CPU_LAST_PORT_FILE := $(BUILD_DIR)/.last_$(shell echo $(CORE_PLATFORM) | tr '[:lower:]' '[:upper:]')_port
 CPU_DEVICE_PORT ?= $(strip $(shell $(PORTS_BY_IDS) $(strip $(USB_PID)) $(strip $(USB_VID)) $(shell cat "$(CPU_LAST_PORT_FILE)" 2>/dev/null) /dev/cu.usb* | head -n 1))
@@ -60,6 +61,7 @@ ifeq ($(strip $(CPU_DEVICE_PORT)),)
     ifeq ($(strip $(VERBOSE)),1)
         $(info $(PORTS_BY_IDS) $(strip $(USB_PROG_PID)) $(strip $(USB_VID)) $(shell cat "$(CPU_LAST_PORT_FILE)" 2>/dev/null) /dev/cu.usb* | head -n 1)
         $(info Result: $(CPU_DEVICE_PORT))
+            endif
     endif
 endif
 endif
