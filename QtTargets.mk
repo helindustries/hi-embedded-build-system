@@ -1,3 +1,7 @@
+# Extend sources and object files by the Qt files, sources do not contain the generated sources
+SOURCES += $(QT_UI_FILES) $(QT_RESOURCES)
+OBJS += $(QT_FRAMEWORK_INCLUDES) $(QT_UIC_SOURCES:%.cpp=%.o) $(QT_MOC_SOURCES:%.cpp=%.o) $(QT_RCC_SOURCES:%.cpp=%.o)
+
 # Generate the U files
 $(BUILD_DIR)/%.ui.cpp: %.ui
 	$(V)$(UIC) -o $@ $<
