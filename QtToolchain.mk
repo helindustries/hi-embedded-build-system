@@ -2,7 +2,7 @@ QT_MODULES ?=
 INCLUDE_PATHS += $(QT_TOOLCHAIN_PATH)/include $(QT_MODULES:%=$(QT_TOOLCHAIN_PATH)/include/%)
 LIBRARY_PATHS += $(QT_TOOLCHAIN_PATH)/lib
 QT_FRAMEWORK_INCLUDES +=
-ifeq ($(PLATFORM_ID),macos)
+ifeq ($(strip $(PLATFORM_ID)),macos)
     QT_FRAMEWORK_INCLUDES := $(QT_MODULES:%=$(BUILD_DIR)/Frameworks/%.timestamp)
     CPPFLAGS += "-I$(BUILD_DIR)/Frameworks" $(QT_MODULES:%="-I$(BUILD_DIR)/Frameworks/%")
     LDFLAGS += -F$(QT_TOOLCHAIN_PATH)/lib $(QT_MODULES:%=-framework %)
