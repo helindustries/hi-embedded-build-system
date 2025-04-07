@@ -15,11 +15,11 @@ INCLUDE_PATHS += "$(abspath $(MAKE_BASE_PATH))"
 
 # Project-specific board definitions
 ifneq ($(strip $(DEVICES_DIR)),)
-    HEADERS -= $(filter $(wildcard $(DEVICES_DIR)/*.h),$(HEADERS))
-    CPP_FILES -= $(filter $(wildcard $(DEVICES_DIR)/*.cpp),$(CPP_FILES))
-    C_FILES -= $(filter $(wildcard $(DEVICES_DIR)/*.c),$(C_FILES))
-    ASM_FILES -= $(filter $(wildcard $(DEVICES_DIR)/*.s),$(ASM_FILES))
-    ASM_FILES -= $(filter $(wildcard $(DEVICES_DIR)/*.S),$(ASM_FILES))
+    HEADERS := $(filter-out $(DEVICES_DIR)/%,$(HEADERS))
+    CPP_FILES := $(filter-out $(DEVICES_DIR)/%,$(CPP_FILES))
+    C_FILES := $(filter-out $(DEVICES_DIR)/%,$(C_FILES))
+    ASM_FILES := $(filter-out $(DEVICES_DIR)/%,$(ASM_FILES))
+    ASM_FILES := $(filter-out $(DEVICES_DIR)/%,$(ASM_FILES))
 
     HEADERS += $(wildcard $(DEVICES_DIR)/$(CPU_DEVICE)/*.h)
     CPP_FILES += $(wildcard $(DEVICES_DIR)/$(CPU_DEVICE)/*.cpp)
