@@ -17,7 +17,7 @@ $(BUILD_DIR)/%.rcc.cpp: %.qrc
 $(BUILD_DIR)/Frameworks/%.timestamp: $(QT_TOOLCHAIN_PATH)/lib/%.framework/Headers
 	@$(MSG) "[FWK]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
 	@mkdir -p "$(shell dirname "$@")"
-	$(V)ln -fs $< "$(BUILD_DIR)/Frameworks/$*"
+	$(V)ln -fs "$<" "$(BUILD_DIR)/Frameworks/$*"
 	$(V)touch "$@"
 
 # Clean the build
