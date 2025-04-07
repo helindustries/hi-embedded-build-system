@@ -38,4 +38,4 @@ ifneq ($(strip $(NO_FIRMWARE_UPLOAD)),yes)
 	$(V)set -o pipefail && $(BOSSAC) -i -d --port="$(CPU_DEVICE_PORT)" -U -i --offset="$(SAMD_EXEC_OFFSET)" -w -v "$<" -R && echo "$(CPU_DEVICE_PORT)" > "$(BUILD_DIR)/.last_samd_port" && touch "$@"
 endif
 
-upload_samd: $(CPU_TARGET)-$(CPU).bin.upload_samd.timestamp
+upload_samd: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).bin.upload_samd.timestamp
