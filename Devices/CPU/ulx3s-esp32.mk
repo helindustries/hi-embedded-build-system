@@ -4,7 +4,6 @@ CPU_SPEED = 240
 BUS_SPEED = 80
 
 CPU = esp32
-CPUARCH = xtensa
 SERIAL_ID = "ESP32"
 CPU_DEVICE_RATE = 921600
 CPU_PASSTHROUGH_BIN ?= $(strip $(shell $(LS) "$(ULX3S_PASSTHROUGH_BIN_PATH)/passthru-"*"-$(FPGA_DEVICE_SIZE)f/ulx3s_$(FPGA_DEVICE_SIZE)f_passthru.svf" 2>/dev/null | sort | tail -n 1))
