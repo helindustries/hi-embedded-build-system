@@ -52,8 +52,8 @@ cfg-python: | silent
 python-exec: $(PYTHON_TARGET) | silent
 
 $(PYTHON_TARGET): $(PYTHON_EXEC_SPEC_FILE) $(PYTHON_TARGET).py $(PYTHON_FILES)
-	$(MSG) "[EXEC]" "$(PYTHON_TARGET)"
-	$(V)pyinstaller $(PYTHON_EXEC_ARGS) --distpath bin --workpath $(BUILD_DIR)/$(PYTHON_TARGET).pyinstaller --noconfirm "$<"
+	@$(MSG) "[EXEC]" "$(PYTHON_TARGET)"
+	$(V)pyinstaller $(PYTHON_EXEC_ARGS) --distpath bin --workpath $(BUILD_DIR)/$(PYTHON_TARGET).pyinstaller --noconfirm "$<" > /dev/null 2>&1
 
 clean-python-exec: | silent
 	rm -fr bin $(BUILD_DIR)/$(PYTHON_TARGET).pyinstaller
