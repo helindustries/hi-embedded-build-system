@@ -1,6 +1,6 @@
 USE_ARDUINO_MAIN = yes
 USE_ARDUINO_CORE = yes
-BUILD_DIR ?= $(patsubst %/,%,$(abspath $(shell pwd))/Build/$(CPU_TARGET))
+BUILD_DIR ?= $(patsubst %/,%,$(abspath $(shell pwd))/Build/$(CPU_TARGET)-$(CPU_DEVICE))
 
 HEADERS := $(wildcard *.h */*.h */*/*.h */*/*/*.h)
 C_FILES := $(wildcard *.c */*.c */*/*.c */*/*/*.c)
