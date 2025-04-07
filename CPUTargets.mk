@@ -10,9 +10,9 @@ library-cpu: modules $(BUILD_DIR)/lib$(CPU_TARGET)-$(CPU).a $(SOURCES) | silent
 $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).elf: $(BINARY_DEPS) $(OBJS) $(SOURCES) $(DEPENDENCY_LIB_PATHS) $(MODULES_LIBS)
 	@$(MSG) "[LD]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
 ifeq ($(strip $(ELF_MAP)),)
-	$(V)$(CC) $(LDFLAGS) -L$(CORE_LIB_PATH) $(OBJS) $(START_GROUP) $(DEPENDENCY_LIB_PATHS) $(CORE_LIB) $(MODULES_LIBS) $(LIBS) $(END_GROUP) -Wl,-EL -o "$@"
+	$(V)$(CC) $(LDFLAGS) -L$(CORE_LIB_PATH) $(OBJS) $(START_GROUP) $(DEPENDENCY_LIB_PATHS) $(CORE_LIB) $(MODULES_LIBS) $(LIBS) $(END_GROUP) -o "$@"
 else
-	$(V)$(CC) -Wl,--Map=$(BUILD_DIR)/$(ELF_MAP) $(LDFLAGS) -L$(CORE_LIB_PATH) $(OBJS) $(START_GROUP) $(DEPENDENCY_LIB_PATHS) $(CORE_LIB) $(MODULES_LIBS) $(LIBS) $(END_GROUP) -Wl,-EL -o "$@"
+	$(V)$(CC) -Wl,--Map=$(BUILD_DIR)/$(ELF_MAP) $(LDFLAGS) -L$(CORE_LIB_PATH) $(OBJS) $(START_GROUP) $(DEPENDENCY_LIB_PATHS) $(CORE_LIB) $(MODULES_LIBS) $(LIBS) $(END_GROUP) -o "$@"
 endif
 	$(V)ln -sf $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).elf $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)
 
@@ -49,21 +49,21 @@ detect-recover:
 	@bash "$(MAKE_INC_PATH)/Tools/FirmwareResetter/recover.sh" detect $(CPU_DEVICE) $(CPU_RESET_ARGS) > /dev/null 2>&1
 
 ifneq ($(strip $(HAS_UPLOAD_TARGET)),)
-ifeq ($(strip $(USE_DEFAULT_USB_SERIAL_DETECT)),yes)
-CPU_LAST_PORT_FILE := $(BUILD_DIR)/.last_$(shell echo $(CORE_PLATFORM) | tr '[:lower:]' '[:upper:]')_port
-CPU_DEVICE_PORT ?= $(strip $(shell $(PORTS_BY_IDS) $(strip $(USB_PID)) $(strip $(USB_VID)) $(shell cat "$(CPU_LAST_PORT_FILE)" 2>/dev/null) /dev/cu.usb* | head -n 1))
-ifeq ($(strip $(VERBOSE)),1)
-    $(info $(PORTS_BY_IDS) $(strip $(USB_PID)) $(strip $(USB_VID)) $(shell cat "$(CPU_LAST_PORT_FILE)" 2>/dev/null) /dev/cu.usb* | head -n 1)
-    $(info Result: $(CPU_DEVICE_PORT))
-endif
-ifeq ($(strip $(CPU_DEVICE_PORT)),)
-    CPU_DEVICE_PORT := $(strip $(shell $(PORTS_BY_IDS) $(strip $(USB_PROG_PID)) $(strip $(USB_VID)) $(shell cat "$(CPU_LAST_PORT_FILE)" 2>/dev/null) /dev/cu.usb* | head -n 1))
-    ifeq ($(strip $(VERBOSE)),1)
-        $(info $(PORTS_BY_IDS) $(strip $(USB_PROG_PID)) $(strip $(USB_VID)) $(shell cat "$(CPU_LAST_PORT_FILE)" 2>/dev/null) /dev/cu.usb* | head -n 1)
-        $(info Result: $(CPU_DEVICE_PORT))
+    ifeq ($(strip $(USE_DEFAULT_USB_SERIAL_DETECT)),yes)
+        CPU_LAST_PORT_FILE := $(BUILD_DIR)/.last_$(shell echo $(CORE_PLATFORM) | tr '[:lower:]' '[:upper:]')_port
+        CPU_DEVICE_PORT ?= $(strip $(shell $(PORTS_BY_IDS) $(strip $(USB_PID)) $(strip $(USB_VID)) $(shell cat "$(CPU_LAST_PORT_FILE)" 2>/dev/null) /dev/cu.usb* | head -n 1))
+        ifeq ($(strip $(VERBOSE)),1)
+            $(info $(PORTS_BY_IDS) $(strip $(USB_PID)) $(strip $(USB_VID)) $(shell cat "$(CPU_LAST_PORT_FILE)" 2>/dev/null) /dev/cu.usb* | head -n 1)
+            $(info Result: $(CPU_DEVICE_PORT))
+        endif
+        ifeq ($(strip $(CPU_DEVICE_PORT)),)
+            CPU_DEVICE_PORT := $(strip $(shell $(PORTS_BY_IDS) $(strip $(USB_PROG_PID)) $(strip $(USB_VID)) $(shell cat "$(CPU_LAST_PORT_FILE)" 2>/dev/null) /dev/cu.usb* | head -n 1))
+            ifeq ($(strip $(VERBOSE)),1)
+                $(info $(PORTS_BY_IDS) $(strip $(USB_PROG_PID)) $(strip $(USB_VID)) $(shell cat "$(CPU_LAST_PORT_FILE)" 2>/dev/null) /dev/cu.usb* | head -n 1)
+                $(info Result: $(CPU_DEVICE_PORT))
             endif
+        endif
     endif
-endif
 endif
 
 serial: | silent

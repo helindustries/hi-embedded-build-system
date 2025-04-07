@@ -21,7 +21,7 @@ AR := $(ARM_COMPILERPATH)/arm-none-eabi-gcc-ar
 endif
 
 START_GROUP := -Wl,--start-group
-END_GROUP ?= -Wl,--end-group
+END_GROUP ?= -Wl,--end-group -Wl,-EL
 
 # CPPFLAGS = compiler options for C and C++
 CPPFLAGS += $(OPTIMIZE) -mcpu=$(CPUARCH) -mthumb -mfp16-format=alternative -nostdlib -MMD --param max-inline-insns-single=500

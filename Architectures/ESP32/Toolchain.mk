@@ -17,7 +17,7 @@ OBJCOPY := $(ESP_COMPILERPATH)/xtensa-$(CPU)-elf-objcopy
 OBJDUMP := $(ESP_COMPILERPATH)/xtensa-$(CPU)-elf-objdump
 SIZE := $(ESP_COMPILERPATH)/xtensa-$(CPU)-elf-size
 START_GROUP := -Wl,--start-group
-END_GROUP := -Wl,--end-group
+END_GROUP := -Wl,--end-group -Wl,-EL
 
 ESP_SDK_PATH ?= $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/esp32/tools/esp32-arduino-libs"/* 2>/dev/null | sort | tail -n 1))
 ESP_BASE_PATH ?= $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/esp32/hardware/esp32"/* 2>/dev/null | sort | tail -n 1))
