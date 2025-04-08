@@ -11,7 +11,7 @@ debug_server:
 
 debug_cli:
 	"$(OPENOCD)" $(OPENOCD_DEBUG) -s "$(OPENOCD_CFG_DIR)" -f "$(OPENOCD_CFG_DIR)/$(CPU_DEBUG_ADAPTER).cfg" -f "$(OPENOCD_CFG_DIR)/$(CPU_DEBUG_TARGET).cfg" $(OPENOCD_SERVER_OPTS) -c 'log_output $(OPENOCD_LOG_PATH)' &
-	"$(GDB)" --tui -ex '$(GDB_TARGET)' -x '$(GDB_INIT)' '$(BUILD_DIR)/$(CPU_TARGET)-$(CPU).elf'
+	"$(GDB)" --tui -ex '$(GDB_TARGET)' -x '$(GDB_INIT)' '$(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT)'
 	killall openocd
 
 serial:

@@ -6,6 +6,7 @@ CPU_SPEED := 1
 BUS_SPEED := 1
 CPU_TOOLCHAIN := $(PLATFORM_ID)
 CPU_TOOLCHAIN_UPPER := $(shell echo $(CPU_TOOLCHAIN) | tr '[:lower:]' '[:upper:]')
+CPU_BINARY_EXT := .mach-o
 
 # compiler setup
 ifeq ($(strip $(FORCE_GCC)),yes)

@@ -1,4 +1,5 @@
 CPU_TOOLCHAIN := $(CPU)
+CPU_BINARY_EXT := .elf
 ESP_COMPILERPATH ?= $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/esp32/tools/esp-x32"/*/bin 2>/dev/null | sort | tail -n 1))
 ifeq ($(strip $(ESP_COMPILERPATH)),)
     # Arduino plugin v2.x

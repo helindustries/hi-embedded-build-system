@@ -1,5 +1,6 @@
 CPU_TOOLCHAIN := arm
 CPU_TOOLCHAIN_OPTIONS := -DARDUINO_ARCH_ARM
+CPU_BINARY_EXT := .elf
 
 # Default to the Adafruit distribution instead of the Teensy version, the Teensy version
 # in hardware/tools/arm/bin is 2016 and does not support C++17

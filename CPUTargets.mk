@@ -3,38 +3,38 @@ SOURCES += $(C_FILES) $(CPP_FILES) $(INO_FILES) $(ASM_FILES) $(HEADERS)
 # $(wildcard $(MODULES_PATHS:%,%/*.c) $(MODULES:%,%/*.cpp) $(MODULES:%,%/*.S) $(MODULES:%,%/*.h))
 OBJS += $(C_FILES:%.c=$(BUILD_DIR)/%.o) $(CPP_FILES:%.cpp=$(BUILD_DIR)/%.o) $(INO_FILES:%.ino=$(BUILD_DIR)/%.o) $(ASM_FILES:%.s=$(BUILD_DIR)/%.o)
 
-binary-cpu: modules $(CORE_TARGET) $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).elf $(SOURCES) | silent
+binary-cpu: modules $(CORE_TARGET) $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT) $(SOURCES) | silent
 
 library-cpu: modules $(BUILD_DIR)/lib$(CPU_TARGET)-$(CPU).a $(SOURCES) | silent
 
-$(BUILD_DIR)/$(CPU_TARGET)-$(CPU).elf: $(BINARY_DEPS) $(OBJS) $(SOURCES) $(DEPENDENCY_LIB_PATHS) $(MODULES_LIBS)
+$(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT): $(BINARY_DEPS) $(OBJS) $(SOURCES) $(DEPENDENCY_LIB_PATHS) $(MODULES_LIBS)
 	@$(MSG) "[LD]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
 ifeq ($(strip $(ELF_MAP)),)
 	$(V)$(CC) $(LDFLAGS) -L$(CORE_LIB_PATH) $(OBJS) $(START_GROUP) $(DEPENDENCY_LIB_PATHS) $(CORE_LIB) $(MODULES_LIBS) $(LIBS) $(END_GROUP) -o "$@"
 else
 	$(V)$(CC) -Wl,--Map=$(BUILD_DIR)/$(ELF_MAP) $(LDFLAGS) -L$(CORE_LIB_PATH) $(OBJS) $(START_GROUP) $(DEPENDENCY_LIB_PATHS) $(CORE_LIB) $(MODULES_LIBS) $(LIBS) $(END_GROUP) -o "$@"
 endif
-	$(V)ln -sf $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).elf $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)
+	$(V)ln -sf $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT) $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)
 
 $(BUILD_DIR)/lib$(CPU_TARGET)-$(CPU).a: $(OBJS) $(DEPENDENCY_LIB_PATHS) $(MODULES_LIBS) $(SOURCES)
 	@$(MSG) "[A]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
 	@mkdir -p $(shell dirname "$@")
 	$(V)$(AR) $(ARFLAGS) $@ $(OBJS) $(MODULES_LIBS) $(DEPENDENCY_LIB_PATHS)
 
-stats-cpu: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).elf $(SOURCES)
+stats-cpu: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT) $(SOURCES)
 	@echo "ROM: $(shell $(SIZE) -A $< | egrep "\.(text)|(data)" | sed -E 's%\.[a-zA-Z0-9_\.\-]+\ +([0-9]+)\ +[0-9]+%\1%' | awk '{s+=$$1} END {print s}') b, RAM: $(shell $(SIZE) -A $< | egrep "\.((dmabuffers)|(usbbuffers)|(data)|(bss)|(usbdescriptortable))" | sed -E 's%\.[a-zA-Z0-9_\.\-]+\ +([0-9]+)\ +[0-9]+%\1%' | awk '{s+=$$1} END {print s}') b"
 
-section-sizes: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).elf $(SOURCES)
+section-sizes: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT) $(SOURCES)
 	$(V)$(SIZE) -A $< > $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).size
 
-symbol-sizes: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).elf $(SOURCES)
+symbol-sizes: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT) $(SOURCES)
 	$(V)$(OBJDUMP) -t $< | sort -n -k 5 > $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).sym
 
 upload-cpu: binary-cpu upload_$(CPU_DEVICE)$(CPU_JTAG_UPLOAD_TARGET) | silent
 
 clean-cpu: clean-base clean-modules clean_${CPU_TOOLCHAIN}
 	@$(MSG) "[CLEAN]" "$(CPU_TARGET)"
-	$(V)rm -f $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).elf	$(BUILD_DIR)/lib$(CPU_TARGET)-$(CPU).a $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)
+	$(V)rm -f $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT)	$(BUILD_DIR)/lib$(CPU_TARGET)-$(CPU).a $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)
 	$(V)rm -f $(BUILD_DIR)/$(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/*.d
 ifneq ($(strip $(ELF_MAP)),)
 	$(V)rm -f $(BUILD_DIR)/$(ELF_MAP)

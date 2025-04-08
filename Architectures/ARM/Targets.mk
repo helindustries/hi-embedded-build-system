@@ -3,29 +3,29 @@ LDFLAGS += $(LIBRARY_PATHS:%=-L%)
 LIBS := $(LIBS:%=-l%)
 OBJCOPYFLAGS := $(REMOVE_SECTIONS:%=-R .%)
 
-$(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.elf $(SOURCES)
+$(BUILD_DIR)/%.hex: $(BUILD_DIR)/%$(CPU_BINARY_EXT) $(SOURCES)
 	@$(MSG) "[ELF]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
 	$(V)"$(OBJCOPY)" -O ihex $(OBJCOPYFLAGS) "$<" "$@"
 
-$(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.elf $(SOURCES)
+$(BUILD_DIR)/%.bin: $(BUILD_DIR)/%$(CPU_BINARY_EXT) $(SOURCES)
 	@$(MSG) "[BIN]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
 	$(V)"$(OBJCOPY)" -O binary "$<" "$@"
 
-$(BUILD_DIR)/%.eep: $(BUILD_DIR)/%.elf
+$(BUILD_DIR)/%.eep: $(BUILD_DIR)/%$(CPU_BINARY_EXT)
 	@$(MSG) "[EEP]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
 	$(V)"$(OBJCOPY)" -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 "$<" "$@"
 
-$(BUILD_DIR)/%.lst: $(BUILD_DIR)/%.elf
+$(BUILD_DIR)/%.lst: $(BUILD_DIR)/%$(CPU_BINARY_EXT)
 	@$(MSG) "[LST]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
 	$(V)"$(OBJDUMP)" -d -S -C "$<" > "$@"
 
-$(BUILD_DIR)/%.sym: $(BUILD_DIR)/%.elf
+$(BUILD_DIR)/%.sym: $(BUILD_DIR)/%$(CPU_BINARY_EXT)
 	@$(MSG) "[SYM]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
 	$(V)"$(OBJDUMP)" -t -C "$<" > "$@"
 
 clean_arm:
 	@$(MSG) "[CLEAN]" "$(CPU_TARGET)" "ARM $(CPU)"
-	$(V)rm -f "$(CPU_TARGET)-$(CPU).elf" "$(CPU_TARGET)-$(CPU).hex" "$(CPU_TARGET)-$(CPU).eep" "$(CPU_TARGET)-$(CPU).sym" "$(CPU_TARGET)-$(CPU).lst" "$(CPU_TARGET)-$(CPU).post" "$(CPU_TARGET)-$(CPU).zip"
+	$(V)rm -f "$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT)" "$(CPU_TARGET)-$(CPU).hex" "$(CPU_TARGET)-$(CPU).eep" "$(CPU_TARGET)-$(CPU).sym" "$(CPU_TARGET)-$(CPU).lst" "$(CPU_TARGET)-$(CPU).post" "$(CPU_TARGET)-$(CPU).zip"
 
 upload_arm: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).hex $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).eep $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).lst $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).sym
 

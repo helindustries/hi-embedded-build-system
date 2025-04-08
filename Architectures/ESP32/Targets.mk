@@ -55,7 +55,7 @@ ifeq ($(strip $(CPU_USE_TINYUF2)),yes)
 	ESP_TINYUF2_OPTS := "$(ESP_TINYUF2_OFFSET)" "$(ESP_TINYUF2_BIN)"
 endif
 
-$(BUILD_DIR)/$(CPU_TARGET)-$(CPU).bin: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).elf
+$(BUILD_DIR)/$(CPU_TARGET)-$(CPU).bin: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT)
 	@$(MSG) "[BIN]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
 	$(V)"$(ESPTOOL)" --chip $(CPU) elf2image --flash_mode $(ESP_FLASH_MODE) --flash_freq $(ESP_FLASH_FREQ) --flash_size $(ESP_FLASH_SIZE) --elf-sha256-offset $(ESP_ELF_SHA256_OFFSET) -o "$@" "$<" $(PROCESS_OUTPUT)
 
