@@ -30,3 +30,4 @@ clean-qt:
 	rm -f $(QT_UIC_SOURCES) $(QT_MOC_SOURCES) $(QT_RCC_SOURCES) $(QT_FRAMEWORK_INCLUDES) $(QT_FRAMEWORK_INCLUDES:%.timestamp=%)
 
 .PHONY: clean-qt
+.PRECIOUS: %.ui.cpp %.moc.cpp %.rcc.cpp
