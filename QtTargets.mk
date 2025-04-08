@@ -14,6 +14,11 @@ $(BUILD_DIR)/%.moc.cpp: %.h
 $(BUILD_DIR)/%.rcc.cpp: %.qrc
 	$(V)$(RCC) -o "$@" "$<"
 
+$(BUILD_DIR)/%.o: $(BUILD_DIR)/%.cpp
+	@$(MSG) "[CXX]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
+	@mkdir -p $(shell dirname "$@")
+	$(V)"$(CXX)" -c $(CXXFLAGS) $(CPPFLAGS) -o "$@" "$<"
+
 $(BUILD_DIR)/Frameworks/%.timestamp: $(QT_TOOLCHAIN_PATH)/lib/%.framework/Headers
 	@$(MSG) "[FWK]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
 	@mkdir -p "$(shell dirname "$@")"
