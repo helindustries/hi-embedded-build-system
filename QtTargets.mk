@@ -4,15 +4,15 @@ OBJS += $(QT_FRAMEWORK_INCLUDES) $(QT_UIC_SOURCES:%.cpp=%.o) $(QT_MOC_SOURCES:%.
 
 # Generate the U files
 $(BUILD_DIR)/%.ui.cpp: %.ui
-	$(V)$(UIC) -o $@ $<
+	$(V)$(UIC) -o "$@" "$<"
 
 # Generate the MOC files
 $(BUILD_DIR)/%.moc.cpp: %.h
-	$(V)$(MOC) -o $@ $<
+	$(V)$(MOC) -o "$@" "$<"
 
 # Generate the RCC files
 $(BUILD_DIR)/%.rcc.cpp: %.qrc
-	$(V)$(RCC) -o $@ $<
+	$(V)$(RCC) -o "$@" "$<"
 
 $(BUILD_DIR)/Frameworks/%.timestamp: $(QT_TOOLCHAIN_PATH)/lib/%.framework/Headers
 	@$(MSG) "[FWK]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
