@@ -6,25 +6,35 @@ DEPENDENCY_LIB_PATHS := $(foreach dep,$(DEPENDENCY_LIB_NAMES),$(BUILD_DIR)/$(dep
 DEPENDENCY_EXEC_NAMES := $(foreach dep,$(filter Exec:%,$(DEPENDENCIES)),$(word 2,$(subst :, ,$(dep))))
 DEPENDENCY_EXEC_TARGETS := $(DEPENDENCY_EXEC_NAMES:%=%-$(CPU).exec.dependency)
 
-ifneq ($(strip $(NO_GATEWARE_DEPS)),yes)
+ifeq ($(strip $(NO_GATEWARE_DEPS)),yes)
+unexport DEPENDENCY_GATEWARE_TARGETS
+else
 DEPENDENCY_GATEWARE_NAMES := $(foreach dep,$(filter Gateware:%,$(DEPENDENCIES)),$(word 2,$(subst :, ,$(dep))))
 DEPENDENCY_GATEWARE_TARGETS := $(DEPENDENCY_GATEWARE_NAMES:%=%-$(FPGA_DEVICE).gateware.dependency)
 endif
 
-ifneq ($(strip $(NO_TOOLS_DEPS)),yes)
+ifeq ($(strip $(NO_TOOLS_DEPS)),yes)
+unexport DEPENDENCY_TOOL_TARGETS
+else
 DEPENDENCY_TOOL_NAMES := $(foreach dep,$(filter Tool:%,$(DEPENDENCIES)),$(word 2,$(subst :, ,$(dep))))
 DEPENDENCY_TOOL_TARGETS := $(DEPENDENCY_TOOL_NAMES:%=%.tool.dependency)
 endif
 
-ifneq ($(strip $(NO_TESTS_DEPS)),yes)
+ifeq ($(strip $(NO_TESTS_DEPS)),yes)
+unexport DEPENDENCY_TEST_TARGETS
+else
 DEPENDENCY_TEST_NAMES := $(foreach dep,$(filter Test:%,$(DEPENDENCIES)),$(word 2,$(subst :, ,$(dep))))
 DEPENDENCY_TEST_TARGETS := $(DEPENDENCY_TEST_NAMES:%=%.test.dependency)
 endif
 
+ifeq ($(strip $(NO_MAKE_DEPS)),yes)
+unexport DEPENDENCY_MAKE_TARGETS
+else
 DEPENDENCY_MAKE_NAMES := $(foreach dep,$(filter Make:%,$(DEPENDENCIES)),$(word 2,$(subst :, ,$(dep))))
 DEPENDENCY_MAKE_TARGETS := $(DEPENDENCY_MAKE_NAMES:%=%.make.dependency)
 DEPENDENCY_TARGETS := $(DEPENDENCY_TOOL_TARGETS) $(DEPENDENCY_LIB_TARGETS) $(DEPENDENCY_EXEC_TARGETS) $(DEPENDENCY_GATEWARE_TARGETS) $(DEPENDENCY_MAKE_TARGETS) $(DEPENDENCY_TEST_TARGETS)
 $(foreach mod,$(DEPENDENCIES),$(eval DEPENDENCY_PATH_$(word 2,$(subst :, ,$(mod))) = $(abspath $(lastword $(subst :, ,$(mod))))))
+endif
 
 # Libs need to be placed in the build dir after building. This is different than a module, it requires a makefile to be present,
 # so it is not viable to be used with Arduino libs.
