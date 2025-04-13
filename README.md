@@ -57,8 +57,8 @@ into CPU and FPGA configurations.
 * Native host platform (tested and currently working)
 * ARM (tested ages ago, might need work)
 * ESP32 (tested and currently working)
-* Xilinx ISE (tested ages ago, might need work)
-* Lattice Diamond (tested and currently working)
+* Xilinx ISE (tested ages ago, might need work, must install in default location)
+* Lattice Diamond (tested and currently working, must install in default location)
 * Yosys+GHDL (tested ages ago, might need work)
 * GHDL (tested and currently working)
 
