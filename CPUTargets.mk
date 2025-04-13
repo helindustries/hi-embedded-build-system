@@ -44,19 +44,17 @@ $(BUILD_DIR)/lib$(CPU_TARGET)-$(CPU).a: $(OBJS) $(DEPENDENCY_LIB_PATHS) $(MODULE
 			pushd $(shell dirname "$@")/.temp > /dev/null; \
 			for lib in $(MODULES_LIBS) $(DEPENDENCY_LIB_PATHS); do \
 				$(AR) -x $$lib; \
-				echo "Extracting $$lib to `ls`"; \
 				$(AR) $(ARFLAGS) $@ *.o; \
 				rm -f *.o; \
 			done; \
 			popd > /dev/null; \
 		fi
-	#$(V)$(AR) $(ARFLAGS) $@ $(OBJS) $(MODULES_LIBS:%=$(shell dirname "$@")/.extracted_libs/%/*.o) $(DEPENDENCY_LIB_PATHS:%=$(shell dirname "$@")/.extracted_libs/%/*.o)
-	#$(V)rm -rf $(shell dirname "$@")/.extracted_libs
-	#$(V)$(AR) $(ARFLAGS) $@ $(OBJS) $(MODULES_LIBS) $(DEPENDENCY_LIB_PATHS)
 
 stats-cpu: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT) $(SOURCES)
 ifneq ($(strip $(PLATFORM_ID)),macos)
 	@echo "ROM: $(shell $(SIZE) -A $< | egrep "\.(text)|(data)" | sed -E 's%\.[a-zA-Z0-9_\.\-]+\ +([0-9]+)\ +[0-9]+%\1%' | awk '{s+=$$1} END {print s}') b, RAM: $(shell $(SIZE) -A $< | egrep "\.((dmabuffers)|(usbbuffers)|(data)|(bss)|(usbdescriptortable))" | sed -E 's%\.[a-zA-Z0-9_\.\-]+\ +([0-9]+)\ +[0-9]+%\1%' | awk '{s+=$$1} END {print s}') b"
+else
+	@:
 endif
 
 section-sizes: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT) $(SOURCES)
