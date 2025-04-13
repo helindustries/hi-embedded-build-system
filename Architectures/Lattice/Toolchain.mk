@@ -12,23 +12,23 @@ LATTICE_DDTCMD := "$(LATTICE_BIN_DIR)/ddtcmd.exe"
 
 LATTICE_SYNTHESIS_OPTS =
 
-ifeq ($(shell uname -s),Darwin)
-ifeq ($(strip $(LATTICE_WINE_USE_CROSSOVER)),yes)
-LATTICE_WINE_BASE_PATH ?= /Applications/CrossOver.app/Contents/SharedSupport/CrossOver
-LATTICE_WINE := "$(LATTICE_WINE_BASE_PATH)/bin/wine" --bottle $(shell basename "$(LATTICE_WINEPREFIX)")
+ifeq ($(strip $(PLATFORM_ID)),macos)
+    ifeq ($(strip $(LATTICE_WINE_USE_CROSSOVER)),yes)
+        LATTICE_WINE_BASE_PATH ?= /Applications/CrossOver.app/Contents/SharedSupport/CrossOver
+        LATTICE_WINE := "$(LATTICE_WINE_BASE_PATH)/bin/wine" --bottle $(shell basename "$(LATTICE_WINEPREFIX)")
+    else
+        LATTICE_WINE := WINEPREFIX="$(LATTICE_WINEPREFIX)" "$(LATTICE_WINE_BASE_PATH)/bin/wine64"
+    endif
+
+    LATTICE_NATIVE_BASE_DIR := $(subst $(LATTICE_WINEPREFIX)/drive_c,c:,$(LATTICE_BASE_DIR))
+
+    export WINEPATH := "$(LATTICE_BIN_DIR)";"$(LATTICE_TOOLS_DIR)"
+    export DYLD_FALLBACK_LIBRARY_PATH=$$DYLD_FALLBACK_LIBRARY_PATH:/usr/lib:"$(LATTICE_WINE_BASE_PATH)/lib64":"$(LATTICE_WINE_BASE_PATH)/lib":"/opt/X11/lib":"/usr/X11/lib"
 else
-LATTICE_WINE := WINEPREFIX="$(LATTICE_WINEPREFIX)" "$(LATTICE_WINE_BASE_PATH)/bin/wine64"
-endif
+    LATTICE_WINE :=
+    LATTICE_NATIVE_BASE_DIR := $(LATTICE_BASE_DIR)
 
-LATTICE_NATIVE_BASE_DIR := $(subst $(LATTICE_WINEPREFIX)/drive_c,c:,$(LATTICE_BASE_DIR))
-
-export WINEPATH := "$(LATTICE_BIN_DIR)";"$(LATTICE_TOOLS_DIR)"
-export DYLD_FALLBACK_LIBRARY_PATH=$$DYLD_FALLBACK_LIBRARY_PATH:/usr/lib:"$(LATTICE_WINE_BASE_PATH)/lib64":"$(LATTICE_WINE_BASE_PATH)/lib":"/opt/X11/lib":"/usr/X11/lib"
-else
-LATTICE_WINE :=
-LATTICE_NATIVE_BASE_DIR := $(LATTICE_BASE_DIR)
-
-export PATH := $(LATTICE_BIN_DIR):$(LATTICE_TOOLS_DIR):$$PATH
+    export PATH := $(LATTICE_BIN_DIR):$(LATTICE_TOOLS_DIR):$$PATH
 endif
 
 export LSC_DIAMOND = true
