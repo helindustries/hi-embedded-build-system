@@ -1,5 +1,6 @@
 CPPFLAGS += $(INCLUDE_PATHS:%=-I%)
-LDFLAGS += $(LIBRARY_PATHS:%=-L%) $(LIBS:%=-l%)
+LIBS := $(LIBS:%=-l%)
+LDFLAGS += $(LIBRARY_PATHS:%=-L%)
 
 ifeq ($(strip $(ARDUINO_VARIANT_NAME)),)
     # Require the files to be in a variant subdirectory

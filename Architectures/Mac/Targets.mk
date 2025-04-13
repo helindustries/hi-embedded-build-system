@@ -1,5 +1,6 @@
 CPPFLAGS += $(INCLUDE_PATHS:%=-I%)
-LDFLAGS += $(LIBRARY_PATHS:%=-L%) $(LIBS:%=-l%)
+LIBS := $(LIBS:%=-l%)
+LDFLAGS += $(LIBRARY_PATHS:%=-L%)
 
 upload_macos: binary-cpu
 
