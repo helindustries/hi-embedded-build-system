@@ -3,6 +3,24 @@ SOURCES += $(C_FILES) $(CPP_FILES) $(INO_FILES) $(ASM_FILES) $(HEADERS)
 # $(wildcard $(MODULES_PATHS:%,%/*.c) $(MODULES:%,%/*.cpp) $(MODULES:%,%/*.S) $(MODULES:%,%/*.h))
 OBJS += $(C_FILES:%.c=$(BUILD_DIR)/%.o) $(CPP_FILES:%.cpp=$(BUILD_DIR)/%.o) $(INO_FILES:%.ino=$(BUILD_DIR)/%.o) $(ASM_FILES:%.s=$(BUILD_DIR)/%.o)
 
+# We allow Makefiles to define CPU_*FLAGS, and either override or include IN_*FLAGS and we pass them around, and we
+# then only create the final version of the flags here, not anywere before for clarity
+CPU_CFLAGS ?= $(IN_CFLAGS)
+CFLAGS := $(CFLAGS) $(CPU_CFLAGS)
+CPU_CXXFLAGS ?= $(IN_CXXFLAGS)
+CXXFLAGS := $(CXXFLAGS) $(CPU_CXXFLAGS)
+CPU_CPPFLAGS ?= $(IN_CPPFLAGS)
+CPPFLAGS := $(CPPFLAGS) $(CPU_CPPFLAGS)
+CPU_ASMFLAGS ?= $(IN_ASMFLAGS)
+ASMFLAGS := $(ASMFLAGS) $(CPU_ASMFLAGS)
+CPU_ARFLAGS ?= $(IN_ARFLAGS)
+ARFLAGS := $(ARFLAGS) $(CPU_ARFLAGS)
+CPU_LDFLAGS ?= $(IN_LDFLAGS)
+LDFLAGS := $(LDFLAGS) $(CPU_LDFLAGS)
+CPU_OBJCOPYFLAGS ?= $(IN_OBJCOPYFLAGS)
+OBJCOPYFLAGS := $(OBJCOPYFLAGS) $(CPU_OBJCOPYFLAGS)
+
+
 binary-cpu: modules $(CORE_TARGET) $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT) $(SOURCES) | silent
 
 library-cpu: modules $(BUILD_DIR)/lib$(CPU_TARGET)-$(CPU).a $(SOURCES) | silent

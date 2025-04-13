@@ -295,6 +295,36 @@ This project is licensed under the MIT license, see LICENSE for details.
 - Platform: A group of systems following similar designs and components and supporting the same targets
 - Project: A solution made of one or more targets
 
+## Variables
+Due to the way Makefiles handle variables and because we want to have passing be as intuitive as possible, variables
+are split into five groups, common default variables, settings, parameter variables, configuration variables and
+special module and dependency variables.
+
+### Default variables
+These are the well-known variables, used as parameters for build commands. They are what IDEs will use to parse and
+process project build options, they will accumulate all options and flags, but should not be passed around between
+Makefiles or otherwise outside of platform or target definitions. These are i. e. CFLAGS or LDFLAGS.
+
+### Settings variables
+These are variables the Makefile wants to define for its own build, they will be integrated and may override the
+values defined in platform or target definitions and will be integrated in the target file as the last step.
+These are i. e. CPU_CFLAGS or CPU_LDFLAGS.
+
+### Parameter variables
+These variables are specifically meant as parameters for the sub-Makefile, the sub-Makefile is responsible for using
+them by: Not doing anything with them and leaving it to the target scripts to integrate them via ?= operators, or
+use them in specifically set options when setting or adding their base variable, i. e. via CPU_CFLAGS += $(IN_CFLAGS),
+or define a full override, discarding the parameter value.
+
+### Configuration variables ###
+These variables are passed through every Makefile, expecting the first version to be the only relevant on, so they
+should not be platform-specific and should not differ for different build targets. These variables will not have the
+IN_ prefix.
+
+### Special module and dependency variables
+These variables are passed specifically to a single module or dependency, they can be specified only in the module
+that is also defining the dependency or module as DEPENDENCY_OPTS_<name> or MODULE_OPTS_<name>.
+
 ## Personal note from the maintainer
 
 Please note, that this is what I use for projects, PRs are welcome, but don't expect this to be fully

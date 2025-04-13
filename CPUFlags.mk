@@ -1,6 +1,16 @@
-CPU_DEVICE ?= teensy36
-CPU_TARGET ?= $(basename $(realpath $(abspath .)))
-OPTIMIZE ?= -Os
+CPU_DEVICE ?= IN_CPU_DEVICE
+CPU_EXEC_OFFSET ?= IN_CPU_EXEC_OFFSET
+CPU_DEVICE_OPTS ?= IN_CPU_DEVICE_OPTS
+
+ifeq ($(strip $(CPU_DEVICE)),)
+    $(error "CPU_DEVICE not set")
+endif
+ifeq ($(strip $(CPU_TARGET)),)
+    $(error "CPU_TARGET not set")
+endif
+
+IN_OPTIMIZE ?= -Os
+OPTIMIZE ?= $(IN_OPTIMIZE)
 ELF_MAP ?=
 BINARY_DEPS ?=
 

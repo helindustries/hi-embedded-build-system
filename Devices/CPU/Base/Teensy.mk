@@ -1,6 +1,6 @@
 CPU_DEVICE_PORT ?= $(shell "$(abspath $(ARDUINO_PATH)/hardware/tools/teensy_ports)" -L | egrep "\($(SERIAL_ID)\)" | sed -E 's%[a-zA-Z0-9\:]+\ ([a-zA-Z0-9\/\.]+)\ .*%\1%')
 CPU_DEVICE_RATE ?= 57600
-CPU_DEVICE_OPTS ?= -DUSB_SERIAL -DLAYOUT_US_ENGLISH
+CPU_CPPFLAGS ?= -DUSB_SERIAL -DLAYOUT_US_ENGLISH
 
 CORE_PLATFORM := Kinetis
 CORE_PATH := $(abspath $(ARDUINO_PATH)/hardware/teensy/avr/cores/teensy3)
