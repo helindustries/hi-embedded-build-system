@@ -1,3 +1,8 @@
+NO_TESTS_DEPS ?= $(IN_NO_TESTS_DEPS)
+NO_GATEWARE_UPLOAD ?= $(IN_NO_GATEWARE_UPLOAD)
+NO_GATEWARE_DEPS ?= $(IN_NO_GATEWARE_DEPS)
+NO_TOOLS_DEPS ?= $(IN_NO_TOOLS_DEPS)
+
 DEPENDENCY_LIB_NAMES := $(foreach dep,$(filter Lib:%,$(DEPENDENCIES)),$(word 2,$(subst :, ,$(dep))))
 DEPENDENCY_LIBS := $(DEPENDENCY_LIB_NAMES:%=lib%-$(CPU).a)
 DEPENDENCY_LIB_TARGETS := $(DEPENDENCY_LIBS:%=%.dependency)
@@ -35,11 +40,6 @@ DEPENDENCY_MAKE_TARGETS := $(DEPENDENCY_MAKE_NAMES:%=%.make.dependency)
 DEPENDENCY_TARGETS := $(DEPENDENCY_TOOL_TARGETS) $(DEPENDENCY_LIB_TARGETS) $(DEPENDENCY_EXEC_TARGETS) $(DEPENDENCY_GATEWARE_TARGETS) $(DEPENDENCY_MAKE_TARGETS) $(DEPENDENCY_TEST_TARGETS)
 $(foreach mod,$(DEPENDENCIES),$(eval DEPENDENCY_PATH_$(word 2,$(subst :, ,$(mod))) = $(abspath $(lastword $(subst :, ,$(mod))))))
 endif
-
-NO_TESTS_DEPS ?= $(IN_NO_TESTS_DEPS)
-NO_GATEWARE_UPLOAD ?= $(IN_NO_GATEWARE_UPLOAD)
-NO_GATEWARE_DEPS ?= $(IN_NO_GATEWARE_DEPS)
-NO_TOOLS_DEPS ?= $(IN_NO_TOOLS_DEPS)
 
 # Libs need to be placed in the build dir after building. This is different than a module, it requires a makefile to be present,
 # so it is not viable to be used with Arduino libs.
