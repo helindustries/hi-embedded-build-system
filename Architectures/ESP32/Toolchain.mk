@@ -200,7 +200,7 @@ ASMFLAGS += -x assembler-with-cpp
 
 # compiler options for C only
 CFLAGS ?=
-ARFLAGS := -rcsT
+ARFLAGS := -rcs
 
 # additional libraries to link
 ifneq ($(strip $(ESP_BUILD_MINIMAL)),yes)
