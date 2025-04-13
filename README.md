@@ -325,6 +325,13 @@ IN_ prefix.
 These variables are passed specifically to a single module or dependency, they can be specified only in the module
 that is also defining the dependency or module as DEPENDENCY_OPTS_<name> or MODULE_OPTS_<name>.
 
+For overriding variables, when a Makefile is called from another Makefile in the build script using a new process,
+there is a basic rule: If the Makefile should override a variable in the old Makefile, it needs to set the new
+variable by using the ?= or := operator before including *Flags.mk or *Toolchain.mk. If it wants to default to a
+value but keep it overridable, it needs to use the ?= operator in the IN_-prefixed variable before including the 
+*Flags.mk or *Toolchain.mk and can rely on those scripts to override the value if its underlying value was not
+explicitly passed to the Makefile.
+
 ## Personal note from the maintainer
 
 Please note, that this is what I use for projects, PRs are welcome, but don't expect this to be fully
