@@ -8,9 +8,12 @@ ifeq ($(strip $(PLATFORM_ID)),windows)
     ARDUINO_PATH ?= C:/Program Files (x86)/Arduino/java
     # The Arduino user path
     ARDUINO_USERPATH ?= C:/Users/pschulze/AppData/Local/Arduino15
+    # The path to the Qt toolchain
     QT_TOOLCHAIN_PATH ?= C:/Program Files (x86)/Qt/6.8.1/clang_64
 
+	# The path to the Lattice Diamond installation
     LATTICE_BASE_DIR ?= C:/lscc/diamond/3.12
+    # The path to the Xilinx ISE installation
     XILINX_BASE_DIR ?= C:/Xilinx/14.7/ISE_DS
 
     # The path to the GHDL executable
@@ -20,7 +23,9 @@ ifeq ($(strip $(PLATFORM_ID)),windows)
     # The path to the XSLoad tool for use with the XuLA2 board
     XSLOAD ?= "C:/Program Files/Python/bin/xsload"
 
+	# The prefix for the LLVM toolchain
     LLVM_PREFIX := C:/Program Files/LLVM/bin
+    	# The prefix for the GCC toolchain
     GCC_PREFIX := C:/Program Files/GCC/bin
 else
 ifeq ($(strip $(PLATFORM_ID)),linux)
@@ -92,5 +97,3 @@ XULALIB_PATH ?= $(EMBEDDED_HOME)/XuLA2/Projects/XuLALib
 
 # The path to the passthrough binaries for the ULX3S board. They can be downloaded from the ULX3S repository.
 ULX3S_PASSTHROUGH_BIN_PATH = $(EMBEDDED_HOME)/Boards/ULX3S/Binaries/passthru
-# --- The required setup ---
-#LLVM_PREFIX := /opt/homebrew/opt/llvm
