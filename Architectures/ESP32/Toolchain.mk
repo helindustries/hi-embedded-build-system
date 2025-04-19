@@ -188,7 +188,7 @@ ifeq ($(strip $(ESP_WITH_PSRAM)), yes)
 endif
 
 INCLUDE_PATHS += "$(ESP_SDK_PATH)/$(CPU_TOOLCHAIN)/qio_qspi/include"
-INCLUDE_PATHS += $(ESP_INCLUDE_DIRS:%="$(ESP_SDK_PATH)/$(CPU_TOOLCHAIN)/include/%")
+CPPFLAGS += -iprefix$(ESP_SDK_PATH)/$(CPU_TOOLCHAIN)/include $(ESP_INCLUDE_DIRS:%=-iwithprefixbefore%)
 
 # compiler options for C++ only
 CXXFLAGS ?=
