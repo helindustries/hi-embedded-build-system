@@ -94,6 +94,7 @@ the ESP32)
 * Wine64 or CrossOver (if you want to build FPGA gateware on macOS)
 * GHDL and GTKWave (if you want to simulate your gateware)
 * Yosys (if you want to synthesize your gateware for Lattice devices using open-source tools)
+* `pip install mypy pytest`
 
 ## Setup
 
