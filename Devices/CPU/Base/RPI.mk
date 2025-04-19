@@ -107,7 +107,7 @@ include $(MAKE_INC_PATH)/Architectures/ARM/Targets.mk
 	$(V)python3 -I "$(RPI_SIGNING)" "$(RPI_SIGNING_PRIVATE_KEY)" --bin "$<" --out "$@" > /dev/null
 
 $(ARM_LD): $(ARM_LD_SOURCE)
-	@$(MSG) "[UF2.SIGN]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
+	@$(MSG) "[ARMLD]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
 	$(V)python3 -I $(RPI_SIMPLESUB) --input "$<" --out "$@" --sub __FLASH_LENGTH__ $(RPI_FLASH_LENGTH) --sub __EEPROM_START__ $(RPI_EEPROM_START) \
 			 --sub __FS_START__ $(RPI_FS_START) --sub __FS_END__ $(RPI_FS_END) --sub __RAM_LENGTH__ $(RPI_RAM_SIZE) --sub __PSRAM_LENGTH__ $(RPI_PSRAM_SIZE)
 
