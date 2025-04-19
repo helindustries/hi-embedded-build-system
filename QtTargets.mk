@@ -2,16 +2,19 @@
 SOURCES += $(QT_UI_FILES) $(QT_RESOURCES)
 OBJS += $(QT_FRAMEWORK_INCLUDES) $(QT_UIC_SOURCES:%.cpp=%.o) $(QT_MOC_SOURCES:%.cpp=%.o) $(QT_RCC_SOURCES:%.cpp=%.o)
 
-# Generate the U files
+# Generate the UI files
 $(BUILD_DIR)/%.ui.cpp: %.ui
+	@$(MSG) "[QUI]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
 	$(V)$(UIC) -o "$@" "$<"
 
 # Generate the MOC files
 $(BUILD_DIR)/%.moc.cpp: %.h
+	@$(MSG) "[MOC]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
 	$(V)$(MOC) -o "$@" "$<"
 
 # Generate the RCC files
 $(BUILD_DIR)/%.rcc.cpp: %.qrc
+	@$(MSG) "[QRC]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
 	$(V)$(RCC) -o "$@" "$<"
 
 $(BUILD_DIR)/%.o: $(BUILD_DIR)/%.cpp
