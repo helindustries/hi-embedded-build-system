@@ -46,43 +46,55 @@ RPI_LD_UNDEFINED += __pre_init_runtime_init_bootrom_locking_enable __pre_init_ru
 RPI_LD_UNDEFINED += __pre_init_first_per_core_initializer __pre_init_runtime_init_per_core_bootrom_reset
 RPI_LD_UNDEFINED += __pre_init_runtime_init_per_core_h3_irq_registers __pre_init_runtime_init_per_core_irq_priorities
 
+RPI_LD_WRAP += acosb acosfb acoshb acoshfb __aeabi_cdcmpeqb __aeabi_cdcmpleb __aeabi_cdrcmpleb __aeabi_d2fb __aeabi_d2izb
+RPI_LD_WRAP += __aeabi_d2lzb __aeabi_d2uiz __aeabi_d2ulz __aeabi_dadd __aeabi_dcmpeq __aeabi_dcmpge  __aeabi_dcmpgt __aeabi_dcmple
+RPI_LD_WRAP += __aeabi_dcmplt __aeabi_dcmpun __aeabi_ddiv __aeabi_dmul __aeabi_drsub __aeabi_dsub __aeabi_i2d __aeabi_l2d
+RPI_LD_WRAP += __aeabi_ui2d __aeabi_ul2d asin asinf asinh asinhf atan atan2 atan2f atanf atanh atanhf cbrt cbrtf ceil
+RPI_LD_WRAP += ceilf copysign copysignf cos cosf cosh coshf __ctzdi2 drem dremf exp exp10 exp10f exp2 exp2f expf expm1
+RPI_LD_WRAP += expm1f floor floorf fma fmaf fmod fmodf hypot hypotf ldexp ldexpf log log10 log10f log1p log1pf log2 log2f
+RPI_LD_WRAP += logf pow powf powint powintf remainder remainderf remquo remquof round roundf sin sincos sincosf sinf sinh
+RPI_LD_WRAP += sinhf sqrt tan tanf tanh tanhf trunc truncf memcpy
+
 LDFLAGS += -Wl,--warn-section-align -Wl,--wrap=malloc,--wrap=free,--wrap=realloc,--wrap=calloc -u _printf_float -u_scanf_float
 LDFLAGS += $(RPI_LD_UNDEFINED:%=-Wl,-u,%) $(RPI_LD_WRAP:%=-Wl,--wrap=%) -Wl,--no-warn-rwx-segments
 LDFLAGS += -L$(RPI_BASE_PATH)/lib/$(CPU) -lpico -lipv4 -lbearssl
 ARFLAGS := -rcs
 
-RPI_SDK_INCLUDES += src/$(CPU)/hardware_regs/include src/$(CPU)/hardware_structs/include src/$(CPU)/pico_platform/include
-RPI_SDK_INCLUDES += src/boards/include src/common/hardware_claim/include src/common/pico_base/include
-RPI_SDK_INCLUDES += src/common/pico_base_headers/include src/common/pico_binary_info/include src/common/pico_bit_ops/include
-RPI_SDK_INCLUDES += src/common/pico_divider/include src/common/pico_stdlib/include src/common/pico_sync/include
-RPI_SDK_INCLUDES += src/common/pico_time/include src/common/pico_usb_reset_interface/include src/common/pico_util/include
-RPI_SDK_INCLUDES += src/common/pico_stdlib_headers/include src/common/pico_usb_reset_interface_headers/include
-RPI_SDK_INCLUDES += src/rp2_common/cmsis/stub/CMSIS/Device/RP2350/Include src/rp2_common/hardware_sha256/include
-RPI_SDK_INCLUDES += src/rp2_common/pico_sha256/include src/rp2_common/pico_btstack/include src/rp2_common/pico_cyw43_arch/include
-RPI_SDK_INCLUDES += src/rp2_common/pico_cyw43_driver/include src/rp2_common/boot_bootrom_headers/include src/rp2_common/cmsis/include
-RPI_SDK_INCLUDES += src/rp2_common/cmsis/stub/CMSIS/Core/Include src/rp2_common/hardware_adc/include src/rp2_common/hardware_base/include
-RPI_SDK_INCLUDES += src/rp2_common/hardware_boot_lock/include src/rp2_common/hardware_clocks/include src/rp2_common/hardware_divider/include
-RPI_SDK_INCLUDES += src/rp2_common/hardware_dma/include src/rp2_common/hardware_exception/include src/rp2_common/hardware_flash/include
-RPI_SDK_INCLUDES += src/rp2_common/hardware_gpio/include src/rp2_common/hardware_i2c/include src/rp2_common/hardware_interp/include
-RPI_SDK_INCLUDES += src/rp2_common/hardware_irq/include src/rp2_common/hardware_rtc/include src/rp2_common/hardware_pio/include
-RPI_SDK_INCLUDES += src/rp2_common/hardware_pll/include src/rp2_common/hardware_pwm/include src/rp2_common/hardware_resets/include
-RPI_SDK_INCLUDES += src/rp2_common/hardware_spi/include src/rp2_common/hardware_sync/include src/rp2_common/hardware_sync_spin_lock/include
-RPI_SDK_INCLUDES += src/rp2_common/hardware_timer/include src/rp2_common/hardware_uart/include src/rp2_common/hardware_vreg/include
-RPI_SDK_INCLUDES += src/rp2_common/hardware_watchdog/include src/rp2_common/hardware_xosc/include src/rp2_common/pico_aon_timer/include
-RPI_SDK_INCLUDES += src/rp2_common/pico_async_context/include src/rp2_common/pico_bootrom/include src/rp2_common/pico_double/include
-RPI_SDK_INCLUDES += src/rp2_common/pico_fix/rp2040_usb_device_enumeration/include src/rp2_common/pico_flash/include
-RPI_SDK_INCLUDES += src/rp2_common/pico_float/include src/rp2_common/pico_int64_ops/include src/rp2_common/pico_lwip/include
-RPI_SDK_INCLUDES += src/rp2_common/pico_multicore/include src/rp2_common/pico_platform/include src/rp2_common/pico_platform_compiler/include
-RPI_SDK_INCLUDES += src/rp2_common/pico_platform_sections/include src/rp2_common/pico_platform_panic/include src/rp2_common/pico_printf/include
-RPI_SDK_INCLUDES += src/rp2_common/pico_runtime/include src/rp2_common/pico_runtime_init/include src/rp2_common/pico_rand/include
-RPI_SDK_INCLUDES += src/rp2_common/pico_stdio/include src/rp2_common/pico_stdio_uart/include src/rp2_common/pico_unique_id/include
-RPI_SDK_INCLUDES += lib/lwip/src/include lib/cyw43-driver/src lib/btstack/src lib/btstack/3rd-party/bluedroid/decoder/include
-RPI_SDK_INCLUDES += lib/btstack/3rd-party/bluedroid/encoder/include lib/btstack/3rd-party/yxml lib/btstack/platform/embedded lib/tinyusb/src
-INCLUDE_PATHS += $(RPI_SDK_INCLUDES:%=$(RPI_SDK_PATH)/%)
-INCLUDE_PATHS += $(RPI_INCLUDE_BASE_PATH)/include/$(CPU)
-INCLUDE_PATHS += $(RPI_INCLUDE_BASE_PATH)/include/$(CPU)/pico_base
+RPI_SDK_SRC_INCLUDES += src/$(CPU)/hardware_regs/include src/$(CPU)/hardware_structs/include src/$(CPU)/pico_platform/include
+RPI_SDK_SRC_INCLUDES += src/boards/include src/common/hardware_claim/include src/common/pico_base/include
+RPI_SDK_SRC_INCLUDES += src/common/pico_base_headers/include src/common/pico_binary_info/include src/common/pico_bit_ops/include
+RPI_SDK_SRC_INCLUDES += src/common/pico_divider/include src/common/pico_stdlib/include src/common/pico_sync/include
+RPI_SDK_SRC_INCLUDES += src/common/pico_time/include src/common/pico_usb_reset_interface/include src/common/pico_util/include
+RPI_SDK_SRC_INCLUDES += src/common/pico_stdlib_headers/include src/common/pico_usb_reset_interface_headers/include
+RPI_SDK_SRC_INCLUDES += src/rp2_common/cmsis/stub/CMSIS/Device/RP2350/Include src/rp2_common/hardware_sha256/include
+RPI_SDK_SRC_INCLUDES += src/rp2_common/pico_sha256/include src/rp2_common/pico_btstack/include src/rp2_common/pico_cyw43_arch/include
+RPI_SDK_SRC_INCLUDES += src/rp2_common/pico_cyw43_driver/include src/rp2_common/boot_bootrom_headers/include src/rp2_common/cmsis/include
+RPI_SDK_SRC_INCLUDES += src/rp2_common/cmsis/stub/CMSIS/Core/Include src/rp2_common/hardware_adc/include src/rp2_common/hardware_base/include
+RPI_SDK_SRC_INCLUDES += src/rp2_common/hardware_boot_lock/include src/rp2_common/hardware_clocks/include src/rp2_common/hardware_divider/include
+RPI_SDK_SRC_INCLUDES += src/rp2_common/hardware_dma/include src/rp2_common/hardware_exception/include src/rp2_common/hardware_flash/include
+RPI_SDK_SRC_INCLUDES += src/rp2_common/hardware_gpio/include src/rp2_common/hardware_i2c/include src/rp2_common/hardware_interp/include
+RPI_SDK_SRC_INCLUDES += src/rp2_common/hardware_irq/include src/rp2_common/hardware_rtc/include src/rp2_common/hardware_pio/include
+RPI_SDK_SRC_INCLUDES += src/rp2_common/hardware_pll/include src/rp2_common/hardware_pwm/include src/rp2_common/hardware_resets/include
+RPI_SDK_SRC_INCLUDES += src/rp2_common/hardware_spi/include src/rp2_common/hardware_sync/include src/rp2_common/hardware_sync_spin_lock/include
+RPI_SDK_SRC_INCLUDES += src/rp2_common/hardware_timer/include src/rp2_common/hardware_uart/include src/rp2_common/hardware_vreg/include
+RPI_SDK_SRC_INCLUDES += src/rp2_common/hardware_watchdog/include src/rp2_common/hardware_xosc/include src/rp2_common/pico_aon_timer/include
+RPI_SDK_SRC_INCLUDES += src/rp2_common/pico_async_context/include src/rp2_common/pico_bootrom/include src/rp2_common/pico_double/include
+RPI_SDK_SRC_INCLUDES += src/rp2_common/pico_fix/rp2040_usb_device_enumeration/include src/rp2_common/pico_flash/include
+RPI_SDK_SRC_INCLUDES += src/rp2_common/pico_float/include src/rp2_common/pico_int64_ops/include src/rp2_common/pico_lwip/include
+RPI_SDK_SRC_INCLUDES += src/rp2_common/pico_multicore/include src/rp2_common/pico_platform/include src/rp2_common/pico_platform_compiler/include
+RPI_SDK_SRC_INCLUDES += src/rp2_common/pico_platform_sections/include src/rp2_common/pico_platform_panic/include src/rp2_common/pico_printf/include
+RPI_SDK_SRC_INCLUDES += src/rp2_common/pico_runtime/include src/rp2_common/pico_runtime_init/include src/rp2_common/pico_rand/include
+RPI_SDK_SRC_INCLUDES += src/rp2_common/pico_stdio/include src/rp2_common/pico_stdio_uart/include src/rp2_common/pico_unique_id/include
+
+RPI_SDK_LIB_INCLUDES += lib/lwip/src/include lib/cyw43-driver/src lib/btstack/src lib/btstack/3rd-party/bluedroid/decoder/include
+RPI_SDK_LIB_INCLUDES += lib/btstack/3rd-party/bluedroid/encoder/include lib/btstack/3rd-party/yxml lib/btstack/platform/embedded lib/tinyusb/src
+
+CPPFLAGS += -iprefix$(RPI_SDK_PATH)/src $(RPI_SDK_SRC_INCLUDES:%=-iwithprefixbefore%) -iprefix$(RPI_SDK_PATH)/lib $(RPI_SDK_LIB_INCLUDES:%=-iwithprefixbefore%)
+INCLUDE_PATHS += $(RPI_BASE_PATH)/include/$(CPU)
+INCLUDE_PATHS += $(RPI_BASE_PATH)/include/$(CPU)/pico_base
+INCLUDE_PATHS += $(RPI_BASE_PATH)/include
+INCLUDE_PATHS += $(CORE_LIB_PATH)/Adafruit_TinyUSB_Arduino/src/arduino
 INCLUDE_PATHS += $(CORE_PATH)/api/deprecated-avr-comp
-INCLUDE_PATHS += $(CORE_PATH)/include
 
 include $(MAKE_INC_PATH)/Architectures/ARM/Targets.mk
 
