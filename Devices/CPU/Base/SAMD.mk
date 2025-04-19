@@ -10,7 +10,8 @@ ARM_CMSIS_PATH ?= $(abspath $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packag
 ARM_CMSIS_DEVICE_PATH ?= $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/adafruit/tools/CMSIS-Atmel"/*/"CMSIS/Device/ATMEL" 2>/dev/null | sort | tail -n 1))
 ELF_MAP := $(CPU_TARGET).$(CPU_DEVICE).map
 CPPFLAGS += -DARDUINO_SAMD_ADAFRUIT
-LDFLAGS += -Wl,--warn-section-align
+LDFLAGS += -Wl,--warn-section-align --specs=nano.specs --specs=nosys.specs
+
 USE_DEFAULT_USB_SERIAL_DETECT := no
 
 include $(MAKE_INC_PATH)/Architectures/ARM/Toolchain.mk

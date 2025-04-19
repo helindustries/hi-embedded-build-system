@@ -19,6 +19,7 @@ CPPFLAGS += -DARDUINO_NRF52_ADAFRUIT -DARDUINO_ARCH_NRF52 -DNRF52_SERIES -DADAFR
 CPPFLAGS += -DSOFTDEVICE_PRESENT -DDX_CC_TEE -DLFS_NAME_MAX=64 -DCFG_DEBUG=0 -DCFG_LOGGER=0 -DCFG_SYSVIEW=0 -u _printf_float
 ARFLAGS := -rcs
 LDFLAGS += -Wl,--warn-section-align -Wl,--wrap=malloc,--wrap=free,--wrap=realloc,--wrap=calloc -u _printf_float
+LDFLAGS += --specs=nano.specs --specs=nosys.specs
 
 INCLUDE_PATHS += "$(ARM_CMSIS_DEVICE_PATH)"
 INCLUDE_PATHS += "$(CORE_LIB_PATH)/Adafruit_TinyUSB_Arduino/src/arduino"

@@ -33,7 +33,7 @@ CXXFLAGS += -fno-exceptions -fno-rtti -fpermissive -felide-constructors
 
 # linker options (--specs=nano.specs)
 LDFLAGS += $(OPTIMIZE) -mcpu=$(CPUARCH) -mthumb -mfp16-format=alternative
-LDFLAGS += -save-temps --specs=nano.specs --specs=nosys.specs -T$(ARM_LD)
+LDFLAGS += -save-temps -T$(ARM_LD)
 LDFLAGS += -Wl,--cref,--relax,--gc-sections,--defsym=__rtc_localtime=$(shell date +%s),--check-sections
 LDFLAGS += -Wl,--unresolved-symbols=report-all,--warn-common
 

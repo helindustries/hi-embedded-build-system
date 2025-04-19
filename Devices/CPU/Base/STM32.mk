@@ -27,7 +27,7 @@ CPPFLAGS += -D$(STM32_SERIES) -DARDUINO_STM32_ADAFRUIT -DARDUINO_ARCH_STM32 -DAD
 CPPFLAGS += -fmacro-prefix-map="$(STM32_BASE_PATH)"=. -DSRC_WRAPPER_WITH_LIBSTDCPP
 CXXFLAGS += -fno-use-cxa-atexit
 ARFLAGS := -rcs
-LDFLAGS += -Wl,--no-warn-rwx-segments
+LDFLAGS += -Wl,--no-warn-rwx-segments --specs=nano.specs --specs=nosys.specs
 LDFLAGS += -Wl,--defsym=LD_FLASH_OFFSET=$(STM32_VECTOR_TABLE_OFFSET),--defsym=LD_MAX_SIZE=1048576,--defsym=LD_MAX_DATA_SIZE=131072,--entry=Reset_Handler
 LDFLAGS += -Wl,--default-script=$(STM32_BASE_PATH)/variants/$(STM32_SERIES)/$(ARDUINO_VARIANT_NAME)/ldscript.ld
 ARM_LD := $(STM32_BASE_PATH)/system/ldscript.ld

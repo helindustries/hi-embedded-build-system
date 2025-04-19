@@ -17,6 +17,7 @@ endif
 
 ARM_LD := $(CORE_PATH)/$(CPU).ld
 CPPFLAGS += -DTEENSYDUINO=151
+LDFLAGS += --specs=nano.specs --specs=nosys.specs
 ARFLAGS := -rcs
 USE_DEFAULT_USB_SERIAL_DETECT := no
 
