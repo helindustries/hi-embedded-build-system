@@ -47,8 +47,8 @@ RPI_LD_UNDEFINED += __pre_init_first_per_core_initializer __pre_init_runtime_ini
 RPI_LD_UNDEFINED += __pre_init_runtime_init_per_core_h3_irq_registers __pre_init_runtime_init_per_core_irq_priorities
 
 LDFLAGS += -Wl,--warn-section-align -Wl,--wrap=malloc,--wrap=free,--wrap=realloc,--wrap=calloc -u _printf_float -u_scanf_float
-LDFLAGS += $(RPI_LD_UNDEFINED:%=-Wl,-u,%)
-#LDFLAGS += -Wl,--no-warn-rwx-segments
+LDFLAGS += $(RPI_LD_UNDEFINED:%=-Wl,-u,%) $(RPI_LD_WRAP:%=-Wl,--wrap=%) -Wl,--no-warn-rwx-segments
+LDFLAGS += -L$(RPI_BASE_PATH)/lib/$(CPU) -lpico -lipv4 -lbearssl
 ARFLAGS := -rcs
 
 RPI_SDK_INCLUDES += src/$(CPU)/hardware_regs/include src/$(CPU)/hardware_structs/include src/$(CPU)/pico_platform/include
@@ -92,11 +92,11 @@ include $(MAKE_INC_PATH)/Architectures/ARM/Targets.mk
 
 %.bin.signed: %.bin $(SOURCES) $(DEPENDENCY_LIB_PATHS) $(MODULES_LIBS)
 	@$(MSG) "[UF2.SIGN]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
-	$(V)$(PYTHON) -I "$(RPI_SIGNING)" "$(RPI_SIGNING_PRIVATE_KEY)" --bin "$<" --out "$@" > /dev/null
+	$(V)python3 -I "$(RPI_SIGNING)" "$(RPI_SIGNING_PRIVATE_KEY)" --bin "$<" --out "$@" > /dev/null
 
 $(ARM_LD): $(ARM_LD_SOURCE)
 	@$(MSG) "[UF2.SIGN]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
-	$(V)$(PYTHON) -I $(RPI_SIMPLESUB) --input "$<" --out "$@" --sub __FLASH_LENGTH__ $(RPI_FLASH_LENGTH) --sub __EEPROM_START__ $(RPI_EEPROM_START) \
+	$(V)python3 -I $(RPI_SIMPLESUB) --input "$<" --out "$@" --sub __FLASH_LENGTH__ $(RPI_FLASH_LENGTH) --sub __EEPROM_START__ $(RPI_EEPROM_START) \
 			 --sub __FS_START__ $(RPI_FS_START) --sub __FS_END__ $(RPI_FS_END) --sub __RAM_LENGTH__ $(RPI_RAM_SIZE) --sub __PSRAM_LENGTH__ $(RPI_PSRAM_SIZE)
 
 %.uf2.upload_rpi.timestamp: %.uf2 serial | silent
@@ -104,7 +104,7 @@ ifneq ($(strip $(NO_FIRMWARE_UPLOAD)),yes)
 	@$(FMSG) "INFO:Uploading $<"
 	@$(MSG) "[UPLOAD]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
 
-	$(V)$(PYTHON) -I $(UF2CONV) --serial $(CPU_DEVICE_PORT) --family $(RPI_UF2_UPLOAD_FAMILY) --deploy "$<" > /dev/null \
+	$(V)python3 -I $(UF2CONV) --serial $(CPU_DEVICE_PORT) --family $(RPI_UF2_UPLOAD_FAMILY) --deploy "$<" > /dev/null \
 		&& echo "$(CPU_DEVICE_PORT)" > "$(BUILD_DIR)/.last_esp32_port" && touch "$@"
 	    #$(PROCESS_OUTPUT)
 endif
