@@ -38,7 +38,7 @@ cfg-python: | silent
 	@$(MSG) "[TEST]" "$<"
 	$(V)$(PYTEST) $<
 
-python-exec: $(PYTHON_TARGET) | silent
+python-exec: $(PYTHON_TARGET) $(PYTHON_TARGET).py $(PYTHON_FILES) | silent
 
 $(PYTHON_TARGET): $(PYTHON_EXEC_SPEC_FILE) $(PYTHON_TARGET).py $(PYTHON_FILES)
 	@$(MSG) "[EXEC]" "$(PYTHON_TARGET)"
