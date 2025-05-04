@@ -38,17 +38,7 @@ $(BUILD_DIR)/lib$(CPU_TARGET)-$(CPU).a: $(OBJS) $(DEPENDENCY_LIB_PATHS) $(MODULE
 	@$(MKDIR) "$(dir $@)/"
 	@# This means a library needs to have at least one object or one sub-library, otherwise the target
 	@# will not be created, and the linker will fail due to the result being missing
-	$(V)if [ -n "$(strip $(OBJS))" ]; then $(AR) $(ARFLAGS) $@ $(OBJS); fi
-	$(V)if [ -n "$(strip $(MODULES_LIBS) $(DEPENDENCY_LIB_PATHS))" ]; then \
-			mkdir -p $(shell dirname "$@")/.temp; \
-			pushd $(shell dirname "$@")/.temp > /dev/null; \
-			for lib in $(MODULES_LIBS) $(DEPENDENCY_LIB_PATHS); do \
-				$(AR) -x $$lib; \
-				$(AR) $(ARFLAGS) $@ *.o; \
-				rm -f *.o; \
-			done; \
-			popd > /dev/null; \
-		fi
+	$(V)$(PYTHON) "$(MAKE_INC_PATH)/Tools/make_static_library.py" "$(AR)" "$(ARFLAGS)" -- $(OBJS) $(DEPENDENCY_LIB_PATHS) $(MODULES_LIBS)
 
 stats-cpu: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT) $(SOURCES)
 ifneq ($(strip $(PLATFORM_ID)),macos)
