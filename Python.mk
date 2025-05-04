@@ -42,7 +42,7 @@ python-exec: $(PYTHON_TARGET) | silent
 
 $(PYTHON_TARGET): $(PYTHON_EXEC_SPEC_FILE) $(PYTHON_TARGET).py $(PYTHON_FILES)
 	@$(MSG) "[EXEC]" "$(PYTHON_TARGET)"
-	$(V)pyinstaller $(PYTHON_EXEC_ARGS) --log-level ERROR --distpath bin --workpath $(BUILD_DIR)/$(PYTHON_TARGET).pyinstaller --noconfirm "$<"
+	$(V)pyinstaller $(PYTHON_EXEC_ARGS) --log-level ERROR --distpath dist/$(PLATFORM_ID) --workpath $(BUILD_DIR)/$(PYTHON_TARGET).pyinstaller --noconfirm "$<"
 
 clean-python-exec: | silent
 	$(RMDIR) bin $(BUILD_DIR)/$(PYTHON_TARGET).pyinstaller
