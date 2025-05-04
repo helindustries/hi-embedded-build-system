@@ -1,18 +1,4 @@
-define cleanup #,reports,reports_mr,temporaries
-    $(V)if [ ! -z '$(1)' ]; then             \
-        $(V)mkdir -p "reports";              \
-        $(V)cp -f $(1) "reports" || true;    \
-    fi
-
-    $(V)if [ ! -z '$(2)' ]; then             \
-        $(V)mkdir -p "reports/mr";           \
-        $(V)cp -f $(2) "reports/mr" || true; \
-    fi
-
-    $(V)if [ ! -z '$(1)$(2)$(3)' ]; then     \
-        $(V)rm -fr $(1) $(2) $(3) || true;   \
-    fi
-endef
+cleanup = $(shell $(PYTHON) "$(MAKE_INC_PATH)/Tools/clean_fpga_reports.py" --reports $(1) --mrs $(2) --temps $(3))
 
 %.lso:
 	@$(MSG) "[LSO]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
