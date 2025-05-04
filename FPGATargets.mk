@@ -15,27 +15,27 @@ endif
 
 %_rom.txt: %_rom_gen.py %_rom_base.txt
 	@$(MSG) "[ROM]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
-	$(V)python $< $*_rom_base.txt $@
+	$(V)python "$<" "$*_rom_base.txt" "$@"
 
 %_rom.txt: %_rom_gen.sh %_rom_base.txt
 	@$(MSG) "[ROM]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
-	$(V)bash $< $*_rom_base.txt $@
+	$(V)bash "$<" "$*_rom_base.txt" "$@"
 
 %_ram.txt: %_ram_gen.py %_ram_base.txt
 	@$(MSG) "[RAM]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
-	$(V)python $< $*_ram_base.txt $@
+	$(V)python "$<" "$*_ram_base.txt" "$@"
 
 %_ram.txt: %_ram_gen.sh %_ram_base.txt
 	@$(MSG) "[RAM]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
-	$(V)bash $< $*_ram_base.txt $@
+	$(V)bash "$<" "$*_ram_base.txt" "$@"
 
 %_tb.txt: %_tb_gen.py %_tb_base.txt
 	@$(MSG) "[ROM]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
-	$(V)python $< $*_tb_base.txt $@
+	$(V)python "$<" "$*_tb_base.txt" "$@"
 
 %_tb.txt: %_tb_gen.sh %_tb_base.txt
 	@$(MSG) "[ROM]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
-	$(V)bash $< $*_tb_base.txt $@
+	$(V)bash "$<" "$*_tb_base.txt" "$@"
 
 %.bit.dfu: %.bit
 	@$(MSG) "[BIT]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
