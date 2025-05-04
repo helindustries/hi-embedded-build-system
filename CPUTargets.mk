@@ -103,7 +103,7 @@ ifeq ($(strip $(CPU_WAIT_FOR_BOARD_PORT)),yes)
 	@$(FMSG) "INFO:Wait for serial on $(CPU_DEVICE_PORT)"
 	@$(MSG) "[SERIAL]" "$(CPU_TARGET)" "$(CPU_DEVICE_PORT)"
 ifneq ($(strip $(CPU_DEVICE_PORT)),)
-	@while [ ! -e "$(CPU_DEVICE_PORT)" ]; do sleep 1; done;
+	$(V)$(PYTHON) "$(MAKE_INC_PATH)/wait_for_device.py" "$(CPU_DEVICE_PORT)"
 endif
 endif
 
