@@ -63,7 +63,7 @@ section-sizes: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT) $(SOURCES)
 symbol-sizes: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT) $(SOURCES)
 	$(V)$(MAKE_PLATFORM_UTILS) --exec "$(OBJDUMP)" -t "$<" \; --noempty --filter-out "file format" --filter-out "SYMBOL TABLE" --sort int16,desc,column="^[0-9a-f]+[ \t]+[a-zA-Z]?[ \t]*[dFfO]*[ \t]+[*A-Za-z0-9._]+[ \t]+(?P<value>[0-9a-f]+)" --print
 
-upload-cpu: binary-cpu upload_$(CPU_DEVICE)$(CPU_JTAG_UPLOAD_TARGET) | silent
+upload-cpu: binary-cpu cpu_run_logic upload_$(CPU_DEVICE)$(CPU_JTAG_UPLOAD_TARGET) | silent
 
 clean-cpu: clean-base clean-modules clean_${CPU_TOOLCHAIN}
 	@$(MSG) "[CLEAN]" "$(CPU_TARGET)"
@@ -71,6 +71,13 @@ clean-cpu: clean-base clean-modules clean_${CPU_TOOLCHAIN}
 	$(V)$(RM) $(BUILD_DIR)/$(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/*.d
 ifneq ($(strip $(ELF_MAP)),)
 	$(V)$(RM) $(BUILD_DIR)/$(ELF_MAP)
+endif
+
+cpu_run_logic:
+ifneq ($(strip $(NO_FIRMWARE_UPLOAD)),yes)
+ifeq ($(strip $(CPU_RUN_LOGIC)),yes)
+	$(MSG) "[LOGIC]" "$(CPU_TARGET)"
+	$(V)$(RUN_LOGIC_CMD) &
 endif
 endif
 

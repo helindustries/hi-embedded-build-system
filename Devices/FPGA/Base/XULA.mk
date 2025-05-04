@@ -20,10 +20,10 @@ ifneq ($(strip $(NO_GATEWARE_UPLOAD)),yes)
 		$(V)"$(XSLOAD)" -b "$(FPGA_DEVICE_ID)" --flash "$(FPGA_FLASH_IMAGE)"; \
 	fi
 
-	@if [ "$(RUN_LOGIC)" = "yes" ]; then  \
-		$(MSG) "[LOGIC]" "$(FPGA_TARGET)" \
-		$(V)$(RUN_LOGIC_CMD) &            \
-	fi
+ifeq ($(strip $(FPGA_RUN_LOGIC)),yes)
+	$(MSG) "[LOGIC]" "$(FPGA_TARGET)"
+	$(V)$(RUN_LOGIC_CMD) &
+endif
 
 	@$(FMSG) "INFO:Uploading $<"
 	@$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$<)"

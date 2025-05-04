@@ -43,25 +43,19 @@ endif
 	$(V)$(FPGA_DFUSUFFIX) -v $(FPGA_VENDOR_ID) -p $(FPGA_PRODUCT_ID) -a "$@"
 
 #FPGA_FUJPROG ?= $(TOOLCHAIN_PATH)/FPGA/bin/fujprog
-$(FPGA_DEPLOY_TARGET).upload_fujprog.timestamp: $(FPGA_DEPLOY_TARGET) $(FPGA_TARGET_DEPS)
+$(FPGA_DEPLOY_TARGET).upload_fujprog.timestamp: $(FPGA_DEPLOY_TARGET) $(FPGA_TARGET_DEPS) fpga_run_logic
 ifneq ($(strip $(NO_GATEWARE_UPLOAD)),yes)
-	@# TODO: Find or develop FPGA too to upload ram and flash images
-	@#@if [ -n "$(strip $(FPGA_RAM_IMAGE))" ]; then              \
-	@#	$(FMSG) "INFO:Uploading RAM $(FPGA_RAM_IMAGE)";          \
-	@#	$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(FPGA_RAM_IMAGE)"   \
-	@#	$(FPGA_FUJPROG) -b "$(FPGA_DEVICE)" --ram "$(FPGA_RAM_IMAGE)"; \
-	@#fi
+ifneq ($(strip $(FPGA_RAM_IMAGE)),)
+	$(FMSG) "INFO:Uploading RAM $(FPGA_RAM_IMAGE)";
+	$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(FPGA_RAM_IMAGE)"
+	$(V)$(FPGA_FUJPROG) -b "$(FPGA_DEVICE)" --ram "$(FPGA_RAM_IMAGE)"
+endif
 
-	@#@if [ -n "$(strip $(FPGA_FLASH_IMAGE))" ]; then                \
-	@#	$(FMSG) "INFO:Uploading Flash $(FPGA_FLASH_IMAGE)";          \
-	@#	$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(FPGA_FLASH_IMAGE)"     \
-	@#	$(FPGA_FUJPROG) -b "$(FPGA_DEVICE)" --flash "$(FPGA_FLASH_IMAGE)"; \
-	@#fi
-
-	@if [ "$(RUN_LOGIC)" = "yes" ]; then  \
-		$(MSG) "[LOGIC]" "$(FPGA_TARGET)" \
-		$(V)$(RUN_LOGIC_CMD) &            \
-	fi
+ifneq ($(strip $(FPGA_FLASH_IMAGE)),)
+	$(FMSG) "INFO:Uploading Flash $(FPGA_FLASH_IMAGE)";
+	$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(FPGA_FLASH_IMAGE)"
+	$(V)$(FPGA_FUJPROG) -b "$(FPGA_DEVICE)" --flash "$(FPGA_FLASH_IMAGE)"
+endif
 
 	@$(FMSG) "INFO:Uploading $<"
 	@$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$<)"
@@ -70,32 +64,23 @@ endif
 
 upload_fujprog: $(FPGA_DEPLOY_TARGET).upload_fujprog.timestamp
 
-$(FPGA_DEPLOY_TARGET).upload_dfuutil.timestamp: $(FPGA_DEPLOY_TARGET) $(FPGA_TARGET_DEPS)
+$(FPGA_DEPLOY_TARGET).upload_dfuutil.timestamp: $(FPGA_DEPLOY_TARGET) $(FPGA_TARGET_DEPS) fpga_run_logic
 ifneq ($(strip $(NO_GATEWARE_UPLOAD)),yes)
-	@# TODO: Find or develop FPGA too to upload ram and flash images
-	@#@if [ -n "$(strip $(FPGA_RAM_IMAGE))" ]; then              \
-	@#	$(FMSG) "INFO:Uploading RAM $(FPGA_RAM_IMAGE)";          \
-	@#	$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(FPGA_RAM_IMAGE)"   \
-	@#	$(FPGA_FUJPROG) -b "$(FPGA_DEVICE)" --ram "$(FPGA_RAM_IMAGE)"; \
-	@#fi
-
-	@#@if [ -n "$(strip $(FPGA_FLASH_IMAGE))" ]; then                \
-	@#	$(FMSG) "INFO:Uploading Flash $(FPGA_FLASH_IMAGE)";          \
-	@#	$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(FPGA_FLASH_IMAGE)"     \
-	@#	$(FPGA_FUJPROG) -b "$(FPGA_DEVICE)" --flash "$(FPGA_FLASH_IMAGE)"; \
-	@#fi
-
-	@if [ "$(RUN_LOGIC)" = "yes" ]; then  \
-		$(MSG) "[LOGIC]" "$(FPGA_TARGET)" \
-		$(V)$(RUN_LOGIC_CMD) &            \
-	fi
-
+	# TODO: Find or develop FPGA tool to upload ram and flash images
 	@$(FMSG) "INFO:Uploading $<"
 	@$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$<)"
 	$(V)$(MAKE_PLATFORM_UTILS) --exec $(FPGA_DFUUTIL) -a 0 -D "$<" \; && $(TOUCH) "$@"
 endif
 
 upload_dfuutil: $(FPGA_DEPLOY_TARGET).upload_dfuutil.timestamp
+
+fpga_run_logic:
+ifneq ($(strip $(NO_GATEWARE_UPLOAD)),yes)
+ifeq ($(strip $(FPGA_RUN_LOGIC)),yes)
+	$(MSG) "[LOGIC]" "$(FPGA_TARGET)"
+	$(V)$(RUN_LOGIC_CMD) &
+endif
+endif
 
 cfg-fpga:
 	@echo "BOARD:                  $(FPGA_DEVICE)"
