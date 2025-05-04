@@ -71,11 +71,17 @@ had no reason to look into why.
 * PJRC Teensy 3.6 (tested ages ago, might need work)
 * PJRC Teensy LC (prepared but untested)
 * Adafruit Feather M0 (prepared but untested)
-* Adafruit Feather ESP32S3 (tested and currently working)
+* Adafruit Feather ESP32S3 (vanilla, TFT and reverse TFT) (tested and currently working)
+* Adafruit QtPy ESP32S3 (tested and currently working)
 * Adafruit Feather ESP32S2 (prepared but untested)
 * Adafruit Feather ESP32 (prepared but untested)
 * Radiona ULX3S ESP32 (prepared but untested, requires addition of passthrough upload before programming
 the ESP32)
+* Adafruit Feather NRF52832 (tested and working)
+* Adafruit Feather NRF52840 (tested and working)
+* Adafruit Feather STM32F405 (tested and working)
+* Adafruit Feather RP2350 (prepared but untested)
+* Adafruit Feather RP2040 (prepared but untested)
 
 ### FPGA targets
 
