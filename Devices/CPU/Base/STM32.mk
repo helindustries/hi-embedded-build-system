@@ -10,7 +10,14 @@ ARM_COMPILERPATH := $(call latest,"$(ARDUINO_USERPATH)/packages/STMicroelectroni
 ARM_CMSIS_PATH ?= $(abspath $(call latest,"$(ARDUINO_USERPATH)/packages/STMicroelectronics/tools/CMSIS/*/CMSIS/DSP/PrivateInclude")/../..)
 ARM_CMSIS_DEVICE_PATH ?= $(STM32_SYSTEM_PATH)/Drivers/CMSIS/Device/ST/$(STM32_SERIES)
 ELF_MAP := $(CPU_TARGET).$(CPU_DEVICE).map
-STM32_CUBEPROG := bash "$(ARDUINO_USERPATH)/packages/STMicroelectronics/tools/STM32Tools/2.2.1/stm32CubeProg.sh"
+STM32_TOOLS_PATH := $(call latest,"$(ARDUINO_USERPATH)/packages/STMicroelectronics/tools/STM32Tools/*/")
+STM32_CUBEPROG_PATH := $(STM32_TOOLS_PATH)/stm32CubeProg.sh
+# On Windows, stm32CubeProg.sh uses a busybox to run the bash script
+ifeq ($(PLATFORM_ID),windows)
+	STM32_CUBEPROG := "$(STM32_TOOLS_PATH)/windows/busybox.exe" "$(STM32_CUBEPROG_PATH)"
+else
+	STM32_CUBEPROG := sh "$(STM32_CUBEPROG_PATH)"
+endif
 STM32_VECTOR_TABLE_OFFSET ?= 0x0
 USE_DEFAULT_USB_SERIAL_DETECT := yes
 
