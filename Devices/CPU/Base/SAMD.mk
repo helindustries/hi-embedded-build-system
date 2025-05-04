@@ -31,7 +31,7 @@ endif
 include $(MAKE_INC_PATH)/Architectures/ARM/Targets.mk
 
 BOSSAC ?= $(call latest,"$(ARDUINO_USERPATH)/packages/arduino/tools/bossac/*/bossac")
-CPU_DEVICE_PORT ?= $(strip $(shell for port in $(shell cat "$(BUILD_DIR)/.last_samd_port" 2>/dev/null) "/dev/cu.usb"*; do if $(BOSSAC) --port="$port" -i > /dev/null 2>&1; then echo "$port"; break; fi; done))
+CPU_DEVICE_PORT ?= $(strip $(shell $(PYTHON) "$(MAKE_INC_PATH)/samd_ports.py" "$(BOSSAC)" $(call print,"$(BUILD_DIR)/.last_samd_port") "/dev/cu.usb"*))
 %.bin.upload_samd.timestamp: %.bin $(SOURCES) $(DEPENDENCY_LIB_PATHS) $(MODULES_LIBS) resetter
 ifneq ($(strip $(NO_FIRMWARE_UPLOAD)),yes)
 	@$(FMSG) "INFO:Uploading $<"
