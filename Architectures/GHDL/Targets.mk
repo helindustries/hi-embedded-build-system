@@ -3,11 +3,7 @@ GHDL_LIB_ARGS=$(strip $(shell $(MAKE_PLATFORM_UTILS) --exec $(MAKEFPGAPRJ) "$(FP
 
 $(GHDL_BUILD_DIR)/$(GHDL_WORK)/%.o: %.vhd $(ROMS) $(FPGA_TARGET).vhd $(FPGA_TARGET_DEPS)
 	@$(MSG) "[SIM]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
-	$(V)$(MAKEFPGAPRJ) "$<" --ghdl -l "work" $(FPGA_PROJECT_ARGS) | \
-		xargs -n 2 sh -c ' \
-			echo "Analyzing $$2 ($$1)"; \
-			mkdir -p "$(GHDL_BUILD_DIR)/$$1"; \
-			"$(GHDL)" -a $(GHDL_ARGS) $(GHDL_LIB_ARGS) --work="$$1" --workdir="$(GHDL_BUILD_DIR)/$$1/" "$$2"' sh
+	$(V)$(MAKE_PLATFORM_UTILS) --exec $(MAKEFPGAPRJ) "$<" --ghdl -l "work" $(FPGA_PROJECT_ARGS) \; --foreach $(GHDL_ANALZYE) $(GHDL) $(GHDL_BUILD_DIR) $(GHDL_ARGS) $(GHDL_LIB_ARGS) \;
 	$(V)"$(GHDL)" -a $(GHDL_ARGS) $(GHDL_LIB_ARGS) --work=$(GHDL_WORK) --workdir="$(GHDL_BUILD_DIR)/$(GHDL_WORK)" "$<"
 
 %_tb: $(GHDL_BUILD_DIR)/$(GHDL_WORK)/%_tb.o $(ROMS) $(FPGA_TARGET_DEPS)

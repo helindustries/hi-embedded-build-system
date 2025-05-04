@@ -9,11 +9,7 @@ YOSYS_LIB_ARGS +=  -P$(GHDL_LATTICE_LIB)
 
 %.ysproj: %.vhd $(FPGA_ROMS)
 	@$(MSG) "[YSPROJ]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
-	$(V)$(MAKEFPGAPRJ) "$<" --ghdl -l "$(YOSYS_WORK)" $(FPGA_PROJECT_ARGS) | \
-		xargs -n 2 sh -c ' \
-			echo "Analyzing $$2 ($$1)"; \
-			mkdir -p "$(YOSYS_BUILD_DIR)/$$1"; \
-			$(GHDL) -a $(YOSYS_GHDL_ARGS) $(YOSYS_LIB_ARGS) --work="$$1" --workdir="$(YOSYS_BUILD_DIR)/$$1/" "$$2"' sh
+	$(V)$(MAKE_PLATFORM_UTILS) --exec $(MAKEFPGAPRJ) "$<" --ghdl -l "$(YOSYS_WORK)" $(FPGA_PROJECT_ARGS) \; --foreach $(GHDL_ANALZYE) $(GHDL) $(YOSYS_BUILD_DIR) $(YOSYS_GHDL_ARGS) $(YOSYS_LIB_ARGS) \;
 	$(V)"$(GHDL)" -a $(YOSYS_GHDL_ARGS) $(YOSYS_LIB_ARGS) --work=$(YOSYS_WORK) --workdir=$(YOSYS_BUILD_DIR)/$(YOSYS_WORK) "$<"
 	$(V)"$(YOSYS)" $(YOSYS_GHDL_PLUGIN) -p "ghdl $(YOSYS_GHDL_ARGS) $(YOSYS_LIB_ARGS) --work=$(YOSYS_WORK) --workdir=$(YOSYS_BUILD_DIR)/$(YOSYS_WORK) $*; $(YOSYS_COMMAND) ${YOSYS_OPTS} -json $@"
 
