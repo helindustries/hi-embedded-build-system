@@ -1,4 +1,5 @@
-GHDL_LIB_ARGS=$(shell "$(MAKEFPGAPRJ)" "$(FPGA_TARGET).vhd" --ghdl -l "work" $(FPGA_PROJECT_ARGS) | sed -E "s%([a-zA-Z0-9_\-]+)\ .*%-P$(GHDL_BUILD_DIR)/\1/%" | grep -v "^-P$(GHDL_BUILD_DIR)\/work" | sort | uniq)
+#GHDL_LIB_ARGS=$(shell "$(MAKEFPGAPRJ)" "$(FPGA_TARGET).vhd" --ghdl -l "work" $(FPGA_PROJECT_ARGS) | sed -E "s%([a-zA-Z0-9_\-]+)\ .*%-P$(GHDL_BUILD_DIR)/\1/%" | grep -v "^-P$(GHDL_BUILD_DIR)\/work" | sort | uniq)
+GHDL_LIB_ARGS=$(strip $(shell $(MAKE_PLATFORM_UTILS) --exec $(MAKEFPGAPRJ) "$(FPGA_TARGET).vhd" --ghdl -l "work" $(FPGA_PROJECT_ARGS) \; --sub "([a-zA-Z0-9_\-]+)\ .*" "-P$(GHDL_BUILD_DIR)/\1/" --filter-out "^-P$(GHDL_BUILD_DIR)\/work" --sort --unique --print))
 
 $(GHDL_BUILD_DIR)/$(GHDL_WORK)/%.o: %.vhd $(ROMS) $(FPGA_TARGET).vhd $(FPGA_TARGET_DEPS)
 	@$(MSG) "[SIM]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
@@ -30,8 +31,8 @@ clean-ghdl:
 	@$(MSG) "[CLEAN]" "$(FPGA_TARGET)" "GHDL"
 	$(V)"$(GHDL)" --clean
 ifneq ($(strip $(GHDL_BUILD_DIR)),)
-	$(V)rm -fr "$(GHDL_BUILD_DIR)"
+	$(V)$(RMDIR) "$(GHDL_BUILD_DIR)"
 endif
-	$(V)rm -f "$(FPGA_TARGET)_tb.fst" "$(FPGA_TARGET)_tb.ghw" "$(FPGA_TARGET)_tb" "$(FPGA_TARGET)_tb.exe" "*.cf"
+	$(V)$(RM) "$(FPGA_TARGET)_tb.fst" "$(FPGA_TARGET)_tb.ghw" "$(FPGA_TARGET)_tb" "$(FPGA_TARGET)_tb.exe" "*.cf"
 
 .PHONY: ghdl clean-ghdl

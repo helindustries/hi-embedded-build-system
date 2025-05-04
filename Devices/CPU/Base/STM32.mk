@@ -1,13 +1,13 @@
 CORE_PLATFORM := STM32
-STM32_BASE_PATH ?= $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/STMicroelectronics/hardware/stm32"/* 2>/dev/null | sort | tail -n 1))
+STM32_BASE_PATH ?= $(call latest,"$(ARDUINO_USERPATH)/packages/STMicroelectronics/hardware/stm32/*/")
 CORE_PATH := $(STM32_BASE_PATH)/cores/arduino
 STM32_SYSTEM_PATH := $(STM32_BASE_PATH)/system
 CORE_LIB_PATH := $(STM32_BASE_PATH)/libraries
 CORE_VARIANTS_PATH := $(STM32_BASE_PATH)/variants/$(STM32_SERIES)
 CORE_SKIP_NEW_O := yes
 
-ARM_COMPILERPATH := $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/STMicroelectronics/tools/xpack-arm-none-eabi-gcc"/*/bin 2>/dev/null | sort | tail -n 1))
-ARM_CMSIS_PATH ?= $(abspath $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/STMicroelectronics/tools/CMSIS"/*/"CMSIS/DSP/PrivateInclude" 2>/dev/null | sort | tail -n 1))/../..)
+ARM_COMPILERPATH := $(call latest,"$(ARDUINO_USERPATH)/packages/STMicroelectronics/tools/xpack-arm-none-eabi-gcc/*/bin")
+ARM_CMSIS_PATH ?= $(abspath $(call latest,"$(ARDUINO_USERPATH)/packages/STMicroelectronics/tools/CMSIS/*/CMSIS/DSP/PrivateInclude")/../..)
 ARM_CMSIS_DEVICE_PATH ?= $(STM32_SYSTEM_PATH)/Drivers/CMSIS/Device/ST/$(STM32_SERIES)
 ELF_MAP := $(CPU_TARGET).$(CPU_DEVICE).map
 STM32_CUBEPROG := bash "$(ARDUINO_USERPATH)/packages/STMicroelectronics/tools/STM32Tools/2.2.1/stm32CubeProg.sh"
@@ -62,8 +62,7 @@ ifneq ($(strip $(NO_FIRMWARE_UPLOAD)),yes)
 	@$(FMSG) "INFO:Uploading $<"
 	@$(MSG) "[UPLOAD]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
 
-	$(V)$(STM32_CUBEPROG) $(STM32_UPLOAD_TYPE_ID) "$<" $(STM32_VECTOR_TABLE_OFFSET) && echo "$(CPU_DEVICE_PORT)" > "$(BUILD_DIR)/.last_esp32_port" && touch "$@"
-	    #$(PROCESS_OUTPUT)
+	$(V)$(STM32_CUBEPROG) $(STM32_UPLOAD_TYPE_ID) "$<" $(STM32_VECTOR_TABLE_OFFSET) && $(call write,"$(CPU_DEVICE_PORT)","$(BUILD_DIR)/.last_esp32_port") && $(TOUCH) "$@"
 endif
 
 upload_stm32: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).bin.upload_stm32.timestamp | silent

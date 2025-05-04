@@ -1,6 +1,6 @@
 %_tb.prj: %.prj $(FPGA_TARGET_DEPS)
-	cat "$<" > "$@"
-	echo "vhdl work $*_tb.vhd" >> "$@"
+	$(V)$(call write,"$<","$@")
+	$(V)$(call append,"vhdl work $*_tb.vhd","$@")
 
 %.exe: %.vhd %.prj $(FPGA_ROMS) $(FPGA_TARGET).vhd $(FPGA_TARGET_DEPS)
 	$(XILINX_ISE_WINE) $(XILINX_ISE_FUSE) $(FUSE_OPTS) -o "$@" -prj "$*.prj" "work.$*"
@@ -15,9 +15,9 @@ isim: $(FPGA_TARGET)_tb.wdb $(FPGA_TARGET_DEPS)
 
 clean-isim:
 	@$(MSG) "[CLEAN]" "$(FPGA_TARGET)" "Xilinx ISIM"
-	$(V)rm -f "$(FPGA_TARGET)_tb.prj" "$(FPGA_TARGET)_tb.exe" "$(FPGA_TARGET)_tb.wdb" "xilinxsim.ini"
-	$(V)rm -f "$(FPGA_TARGET)_tb_beh.prj" "$(FPGA_TARGET)_tb_isim_beh.exe" "$(FPGA_TARGET)_tb_isim_beh.wdb"
-	$(V)rm -f "isim.log" "isim.cmd" "fuse.log" "fuse.xmsgs" "fuseRelaunch.cmd"
-	$(V)rm -fr "isim"
+	$(V)$(RM) "$(FPGA_TARGET)_tb.prj" "$(FPGA_TARGET)_tb.exe" "$(FPGA_TARGET)_tb.wdb" "xilinxsim.ini"
+	$(V)$(RM) "$(FPGA_TARGET)_tb_beh.prj" "$(FPGA_TARGET)_tb_isim_beh.exe" "$(FPGA_TARGET)_tb_isim_beh.wdb"
+	$(V)$(RM) "isim.log" "isim.cmd" "fuse.log" "fuse.xmsgs" "fuseRelaunch.cmd"
+	$(V)$(RMDIR) "isim"
 
 .PHONY: isim clean-isim

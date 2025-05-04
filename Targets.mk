@@ -1,5 +1,5 @@
 clean-base:
-	$(V)rm -f $(OBJS) $(OBJS:%.o=%.d)
+	$(V)$(RM) $(OBJS) $(OBJS:%.o=%.d)
 
 begin:
 	@$(VMSG) "Starting at $(MAKE_BASE_PATH) with '$(MAKECMDGOALS)'"
@@ -17,7 +17,7 @@ debug_cli:
 serial:
 ifneq "$(SERIAL_CONFIG)" ""
 	@sleep 10
-	open $(abspath $(SERIAL_CONFIG))
+	$(V)$(PLATFORM_OPEN_FILE) $(abspath $(SERIAL_CONFIG))
 endif
 
 resetter:

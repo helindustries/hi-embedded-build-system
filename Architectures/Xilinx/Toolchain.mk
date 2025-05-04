@@ -20,7 +20,7 @@ FUSE_OPTS := "-intstyle $(INTSTYLE) -incremental -lib secureip"
 ifeq ($(strip $(PLATFORM_ID)),macos)
     ifeq ($(strip $(XILINX_ISE_WINE_USE_CROSSOVER)),yes)
         XILINX_ISE_WINE_BASE_PATH ?= /Applications/CrossOver.app/Contents/SharedSupport/CrossOver
-        XILINX_ISE_WINE := "$(XILINX_ISE_WINE_BASE_PATH)/bin/wine" --bottle $(shell basename "$(XILINX_ISE_WINEPREFIX)")
+        XILINX_ISE_WINE := "$(XILINX_ISE_WINE_BASE_PATH)/bin/wine" --bottle "$(notdir $(XILINX_ISE_WINEPREFIX))"
     else
         XILINX_ISE_WINE_BASE_PATH ?= /Applications/Wine.app/Contents/Resources/wine
         XILINX_ISE_WINE := WINEPREFIX="$(XILINX_ISE_WINEPREFIX)" "$(XILINX_ISE_WINE_BASE_PATH)/bin/wine64"

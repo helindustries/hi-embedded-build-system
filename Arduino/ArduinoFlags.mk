@@ -9,7 +9,7 @@ INO_FILES := $(wildcard *.ino)
 ASM_FILES := $(wildcard *.s */*.s */*/*.s */*/*/*.s)
 
 PROJECT_PATH := $(patsubst %/,%,$(abspath $(dir $(firstword $(MAKEFILE_LIST)))))
-INO_FILE := $(shell pushd $(PROJECT_PATH) > /dev/null; ls --color=never *.ino | head -n 1; popd > /dev/null)
+INO_FILE := $(notdir $(shell $(MAKE_PLATFORM_UTILS) --in "$(PROJECT_PATH)/*.ino" --first --print))
 CPU_TARGET := $(INO_FILE:%.ino=%)
 ARDUINO_BUILD_SYSTEM_PATH := $(patsubst %/,%,$(abspath $(dir $(lastword $(MAKEFILE_LIST)))))
 DEVICES_DIR := $(abspath Devices)
@@ -23,5 +23,5 @@ include $(MAKE_INC_PATH)/CPUFlags.mk
 ifneq ($(strip $(CPU_DEVICE)),teensy32)
     # This is not the main CPU, it is a secondary Teensy board, used for controlling the
     # reset pin during development for more reliable uploads to the more exotic boards
-    RESET_PORT ?= $(shell "$(abspath $(ARDUINO_PATH)/hardware/tools/teensy_ports)" -L | egrep "\(Teensy\s3.2\)" | sed -E 's%[a-zA-Z0-9\:]+\ ([a-zA-Z0-9\/\.]+)\ .*%\1%')
+    RESET_PORT ?= $(strip $(shell $(MAKE_PLATFORM_UTILS) --exec $(abspath $(ARDUINO_PATH)/hardware/tools/teensy_ports) -L \; --filter "\(Teensy 3.2\)" --sub '[a-zA-Z0-9\:]+\ ([a-zA-Z0-9\/\.]+)\ .*' '\1%' --print))
 endif

@@ -20,5 +20,5 @@ FPGA_PROJECT_ARGS += -i helindustries_platform:$(FPGA_BASE_LIBRARY_PATH)/platfor
 FPGA_PROJECT_ARGS += -i helindustries:$(FPGA_BASE_LIBRARY_PATH)
 
 FPGA_TARGET_DEPS := $(shell $(MAKEFPGAPRJ) "$(FPGA_TARGET).vhd" -a -l "work" -p $(FPGA_PROJECT_ARGS))
-FPGA_TARGET_DEPS += $(shell echo "$(FPGA_ROMS)" | sed 's%_rom.txt%_rom_base.txt%g' | sed 's%_ram.txt%_ram_base.txt%g' | sed 's%_tb.txt%_tb_base.txt%g')
-FPGA_TARGET_DEPS += $(shell echo "$(FPGA_ROMS)" | sed 's%_rom.txt%_rom_gen.py%g' | sed 's%_ram.txt%_ram_gen.py%g' | sed 's%_tb.txt%_tb_gen.py%g')
+FPGA_TARGET_DEPS += $(shell $(MAKE_PLATFORM_UTILS) $(FPGA_ROMS:%=--in "%") --sub "_rom.txt" "_rom_base.txt" --sub "_ram.txt" "_ram_base.txt" --sub "_tb.txt" "_tb_base.txt" --print)
+FPGA_TARGET_DEPS += $(shell $(MAKE_PLATFORM_UTILS) $(FPGA_ROMS:%=--in "%") --sub "_rom.txt" "_rom_gen.py" --sub "_ram.txt" "_ram_gen.py" --sub "_tb.txt" "_tb_gen.py" --print)

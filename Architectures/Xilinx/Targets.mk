@@ -16,7 +16,7 @@ endef
 
 %.lso:
 	@$(MSG) "[LSO]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
-	echo "work" > "$@"
+	$(V)$(call write,"work","$@")
 
 %.prj: %.vhd $(FPGA_TARGET_DEPS)
 	@$(MSG) "[PRJ]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
@@ -25,7 +25,7 @@ endef
 %.ngc: %.xst %.prj %.lso $(FPGA_ROMS) $(FPGA_TARGET_DEPS)
 	@$(MSG) "[NGC]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
 	@$(FMSG) "INFO:Synthesizing $*.vhd"
-	$(V)mkdir -p "reports" "xst/projnav.tmp"
+	$(V)$(MKDIR) "reports" "xst/projnav.tmp"
 	$(V)$(XILINX_ISE_WINE) $(XILINX_ISE_XST) -intstyle $(INTSTYLE) -ifn "$*.xst" -ofn "reports/$*.syr" $(PROCESS_OUTPUT)
 	$(V)$(call cleanup,,$*_xst.xrpt,"_xmsgs" "xst" "webtalk.log" "xlnx_auto_0_xdb")
 
@@ -50,7 +50,7 @@ endef
 	@$(MSG) "[BIT]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
 	@$(FMSG) "INFO:Generating $@"
 	$(V)$(XILINX_ISE_WINE) $(XILINX_ISE_BITGEN) -intstyle $(INTSTYLE) -f $*.ut $< $(PROCESS_OUTPUT)
-	$(V)mv "$*.bit" "$@"
+	$(V)$(MOVE) "$*.bit" "$@"
 	$(V)$(call cleanup,"$*.bgn" "$*.drc" "$*.pcf","$*_usage.xml" "$*_summary.xml" "usage_statistics_webtalk.html","_xmsgs" "$*_bitgen.xwbt" "$*_map.ngm" "$*.ngr" "webtalk.log" "xlnx_auto_0_xdb")
 
 synthesize_xilinx: $(FPGA_TARGET).ngc $(FPGA_TARGET_DEPS)
@@ -59,10 +59,10 @@ layout_xilinx: $(FPGA_TARGET).ngd $(FPGA_TARGET_DEPS)
 
 clean_xilinx: clean-isim
 	@$(MSG) "[CLEAN]" "$(FPGA_TARGET)" "Xilinx"
-	$(V)rm -f "$(FPGA_TARGET).bit" "$(FPGA_TARGET).ncd" "$(FPGA_TARGET)_map.ncd" "$(FPGA_TARGET)_map.ngm" "$(FPGA_TARGET).ngd"
-	$(V)rm -f "$(FPGA_TARGET).ngc" "$(FPGA_TARGET).ngr" "$(FPGA_TARGET).pcf" "$(FPGA_TARGET).deps"
-	$(V)rm -f "$(FPGA_TARGET).syr" "$(FPGA_TARGET).gise" "$(FPGA_TARGET).lso" "$(FPGA_TARGET)_summary.html"
-	$(V)rm -fr "iseconfig" "reports"
+	$(V)$(RM) "$(FPGA_TARGET).bit" "$(FPGA_TARGET).ncd" "$(FPGA_TARGET)_map.ncd" "$(FPGA_TARGET)_map.ngm" "$(FPGA_TARGET).ngd"
+	$(V)$(RM) "$(FPGA_TARGET).ngc" "$(FPGA_TARGET).ngr" "$(FPGA_TARGET).pcf" "$(FPGA_TARGET).deps"
+	$(V)$(RM) "$(FPGA_TARGET).syr" "$(FPGA_TARGET).gise" "$(FPGA_TARGET).lso" "$(FPGA_TARGET)_summary.html"
+	$(V)$(RMDIR) "iseconfig" "reports"
 
 
 ifeq ($(strip $(FORCE_GATEWARE_UPLOAD)),yes)

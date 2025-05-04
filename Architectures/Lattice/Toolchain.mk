@@ -15,7 +15,7 @@ LATTICE_SYNTHESIS_OPTS =
 ifeq ($(strip $(PLATFORM_ID)),macos)
     ifeq ($(strip $(LATTICE_WINE_USE_CROSSOVER)),yes)
         LATTICE_WINE_BASE_PATH ?= /Applications/CrossOver.app/Contents/SharedSupport/CrossOver
-        LATTICE_WINE := "$(LATTICE_WINE_BASE_PATH)/bin/wine" --bottle $(shell basename "$(LATTICE_WINEPREFIX)")
+        LATTICE_WINE := "$(LATTICE_WINE_BASE_PATH)/bin/wine" --bottle "$(notdir $(LATTICE_WINEPREFIX))"
     else
         LATTICE_WINE := WINEPREFIX="$(LATTICE_WINEPREFIX)" "$(LATTICE_WINE_BASE_PATH)/bin/wine64"
     endif

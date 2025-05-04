@@ -1,9 +1,9 @@
 CPU_TOOLCHAIN := $(CPU)
 CPU_BINARY_EXT := .elf
-ESP_COMPILERPATH ?= $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/esp32/tools/esp-x32"/*/bin 2>/dev/null | sort | tail -n 1))
+ESP_COMPILERPATH ?= $(call latest,"$(ARDUINO_USERPATH)/packages/esp32/tools/esp-x32/*/bin")
 ifeq ($(strip $(ESP_COMPILERPATH)),)
     # Arduino plugin v2.x
-    ESP_COMPILERPATH := $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/esp32/tools/xtensa-$(CPU_TOOLCHAIN)-elf-gcc"/*/bin 2>/dev/null | sort | tail -n 1))
+    ESP_COMPILERPATH := $(call latest,"$(ARDUINO_USERPATH)/packages/esp32/tools/xtensa-$(CPU_TOOLCHAIN)-elf-gcc/*/bin")
     ESP_SDK_VERSION := 2
 else
     ESP_SDK_VERSION := 3
@@ -20,8 +20,8 @@ SIZE := $(ESP_COMPILERPATH)/xtensa-$(CPU)-elf-size
 START_GROUP := -Wl,--start-group
 END_GROUP := -Wl,--end-group -Wl,-EL
 
-ESP_SDK_PATH ?= $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/esp32/tools/esp32-arduino-libs"/* 2>/dev/null | sort | tail -n 1))
-ESP_BASE_PATH ?= $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/esp32/hardware/esp32"/* 2>/dev/null | sort | tail -n 1))
+ESP_SDK_PATH ?= $(call latest,"$(ARDUINO_USERPATH)/packages/esp32/tools/esp32-arduino-libs/*/")
+ESP_BASE_PATH ?= $(call latest,"$(ARDUINO_USERPATH)/packages/esp32/hardware/esp32/*/")
 ifeq ($(strip $(ESP_SDK_PATH)),)
     # Arduino plugin v2.x
     ESP_SDK_PATH := $(ESP_BASE_PATH)/tools/sdk
@@ -30,9 +30,9 @@ CORE_PATH := $(ESP_BASE_PATH)/cores/esp32
 CORE_LIB_PATH := $(ESP_BASE_PATH)/libraries
 CORE_VARIANTS_PATH := $(ESP_BASE_PATH)/variants
 
-ESPTOOL ?= $(strip $(shell $(LS) "$(ARDUINO_USERPATH)/packages/esp32/tools/esptool_py"/*/esptool 2>/dev/null | sort | tail -n 1))
-ESPGENPART_PY ?= $(strip $(shell $(LS) "$(ARDUINO_USERPATH)/packages/esp32/hardware/esp32"/*/tools/gen_esp32part.py 2>/dev/null | sort | tail -n 1))
-ESPGENINSIGHT_PY ?= $(strip $(shell $(LS) "$(ARDUINO_USERPATH)/packages/esp32/hardware/esp32"/*/tools/gen_insights_package.py 2>/dev/null | sort | tail -n 1))
+ESPTOOL ?= $(call latest,"$(ARDUINO_USERPATH)/packages/esp32/tools/esptool_py/*/esptool"))
+ESPGENPART_PY ?= $(call latest,"$(ARDUINO_USERPATH)/packages/esp32/hardware/esp32/*/tools/gen_esp32part.py"))
+ESPGENINSIGHT_PY ?= $(call latest,"$(ARDUINO_USERPATH)/packages/esp32/hardware/esp32/*/tools/gen_insights_package.py"))
 ESP32_PORTS ?= bash $(abspath $(MAKE_INC_PATH)/Tools/esp32_ports.sh)
 
 ifneq ($(strip $(ESP_BUILD_MINIMAL)),yes)
@@ -187,8 +187,8 @@ ifeq ($(strip $(ESP_WITH_PSRAM)), yes)
 	CPPFLAGS += -DBOARD_HAS_PSRAM
 endif
 
+CPPFLAGS += -iprefix "$(ESP_SDK_PATH)/$(CPU_TOOLCHAIN)/include/" $(ESP_INCLUDE_DIRS:%=-iwithprefixbefore "%")
 INCLUDE_PATHS += "$(ESP_SDK_PATH)/$(CPU_TOOLCHAIN)/qio_qspi/include"
-CPPFLAGS += -iprefix$(ESP_SDK_PATH)/$(CPU_TOOLCHAIN)/include $(ESP_INCLUDE_DIRS:%=-iwithprefixbefore%)
 
 # compiler options for C++ only
 CXXFLAGS ?=
@@ -263,7 +263,7 @@ ESP_LD_SYMBOLS += newlib_include_syscalls_impl newlib_include_pthread_impl newli
 #ESP_LD_SYMBOLS += esp_system_include_startup_funcs newlib_include_init_funcs pthread_include_pthread_cond_var_impl pthread_include_pthread_semaphore_impl __cxx_init_dummy
 #ESP_LD_SYMBOLS += esp_timer_init_include_func uart_vfs_include_dev_init usb_serial_jtag_vfs_include_dev_init usb_serial_jtag_connection_monitor_include esp_vfs_include_console_register
 #ESP_LD_UNDEFINED := esp_kiss_fftndr_alloc esp_kiss_fftndri esp_kiss_fftndr FreeRTOS_openocd_params
-ESP_LD_OPTIONS := --cref --gc-sections --wrap=esp_log_write --wrap=esp_log_writev --wrap=log_printf --wrap=longjmp --undefined=uxTopUsedPriority --defsym=__rtc_localtime=$(shell date +%s)
+ESP_LD_OPTIONS := --cref --gc-sections --wrap=esp_log_write --wrap=esp_log_writev --wrap=log_printf --wrap=longjmp --undefined=uxTopUsedPriority --defsym=__rtc_localtime=$(strip $(shell $(MAKE_PLATFORM_UTILS) --timestamp --print))
 ESP_LD_OPTIONS += --defsym=IDF_TARGET_ESP32S3=0 --warn-common --wrap=esp_log_write --wrap=esp_log_writev --wrap=log_printf
 LDFLAGS += $(OPTIMIZE) $(ESP_LD_OPTIONS:%=-Wl,%) $(ESP_LD_UNDEFINED:%=-Wl,-u,%) $(ESP_LD_SYMBOLS:%=-u %)
 LDFLAGS += -ffunction-sections -fdata-sections -freorder-blocks -fstack-protector -fstrict-volatile-bitfields -fno-jump-tables -fno-tree-switch-conversion -fno-rtti -fno-lto -Wwrite-strings

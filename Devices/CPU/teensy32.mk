@@ -5,7 +5,7 @@ BUS_SPEED = 48
 
 CPU = mk20dx256
 CPUARCH = cortex-m4
-USB_ID = "Teensy\s3.2"
+USB_ID = "Teensy 3.2"
 
 include $(MAKE_INC_PATH)/Devices/CPU/Base/Teensy.mk
 

@@ -19,6 +19,25 @@ endif
 CPU_BASE_TARGET ?= $(CPU_TARGET)
 HAS_UPLOAD_TARGET := $(filter upload upload-% %-upload %upload% install install-% %-install %install%,$(MAKECMDGOALS))
 
+ifeq ($(OS),Windows_NT)
+	WHICH ?= where
+else
+	WHICH ?= which
+endif
+
+
+ifneq ($(strip $(PYTHON_ADDITIONAL_PATHS)),)
+    #PYTHON_PATH := $(strip $(call shell-list,$(PYTHON_ADDITIONAL_PATHS)))
+
+    ifeq ($(strip $(shell echo $$PYTHONPATH)),)
+        PYTHON_ENV += PYTHONPATH="$(PYTHON_PATH)"
+    else
+        PYTHON_ENV += PYTHONPATH="$(shell echo $$PYTHONPATH):$(PYTHON_PATH)"
+    endif
+endif
+
+PYTHON := $(PYTHON_ENV) "$(shell $(WHICH) python)"
+
 silent:
 	@:
 

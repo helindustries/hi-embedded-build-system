@@ -4,7 +4,7 @@ CPU_BINARY_EXT := .elf
 
 # Default to the Adafruit distribution instead of the Teensy version, the Teensy version
 # in hardware/tools/arm/bin is 2016 and does not support C++17
-ARM_COMPILERPATH ?= $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/adafruit/tools/arm-none-eabi-gcc"/*/"bin" 2>/dev/null | sort | tail -n 1))
+ARM_COMPILERPATH ?= $(call latest,"$(ARDUINO_USERPATH)/packages/adafruit/tools/arm-none-eabi-gcc/*/bin")
 ifeq ($(strip $(ARM_COMPILERPATH)),)
 	ARM_COMPILERPATH ?= $(ARDUINO_PATH)/hardware/tools/arm/bin
 endif
@@ -17,8 +17,8 @@ OBJCOPY := $(ARM_COMPILERPATH)/arm-none-eabi-objcopy
 OBJDUMP := $(ARM_COMPILERPATH)/arm-none-eabi-objdump
 SIZE := $(ARM_COMPILERPATH)/arm-none-eabi-size
 AR := $(ARM_COMPILERPATH)/arm-none-eabi-ar
-ifeq ($(strip $(shell $(LS) $(AR))),)
-AR := $(ARM_COMPILERPATH)/arm-none-eabi-gcc-ar
+ifeq ($(call exists,"$(AR)"),)
+    AR := $(ARM_COMPILERPATH)/arm-none-eabi-gcc-ar
 endif
 
 START_GROUP := -Wl,--start-group
@@ -34,7 +34,7 @@ CXXFLAGS += -fno-exceptions -fno-rtti -fpermissive -felide-constructors
 # linker options (--specs=nano.specs)
 LDFLAGS += $(OPTIMIZE) -mcpu=$(CPUARCH) -mthumb -mfp16-format=alternative
 LDFLAGS += -save-temps -T$(ARM_LD)
-LDFLAGS += -Wl,--cref,--relax,--gc-sections,--defsym=__rtc_localtime=$(shell date +%s),--check-sections
+LDFLAGS += -Wl,--cref,--relax,--gc-sections,--defsym=__rtc_localtime=$(strip $(shell $(MAKE_PLATFORM_UTILS) --timestamp --print)),--check-sections
 LDFLAGS += -Wl,--unresolved-symbols=report-all,--warn-common
 
 # additional libraries to link

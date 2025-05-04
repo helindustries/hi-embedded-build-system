@@ -1,20 +1,18 @@
 # Path to your arduino installation
-LS := ls --color=never
-
 MAKEFPGAPRJ := "$(MAKE_INC_PATH)/Tools/makefpgaprj.py"
 FPGA_FUJPROG ?= $(YOSYS_BIN_PATH)/fujprog
 FPGA_DFUUTIL ?= $(YOSYS_BIN_PATH)/dfu-util
 FPGA_DFUSUFFIX ?= $(YOSYS_BIN_PATH)/dfu-suffix
 
 ifneq ($(strip $(NO_PROCESS_OUTPUT)),yes)
-    IDE ?= sublime
+IDE ?= sublime
     PROCESS_OUTPUT := 2>&1 | python3 "$(MAKE_INC_PATH)/Tools/process_output.py" -f $(IDE)
 endif
 
 # Prefer OpenOCD ESP32, as it is compatible with all other platforms as well
-OPENOCD ?= $(strip $(shell $(LS) "$(ARDUINO_USERPATH)/packages/esp32/tools/openocd-esp32/"*"/bin/openocd" 2>/dev/null | sort | tail -n 1))
+OPENOCD ?= $(call latest,"$(ARDUINO_USERPATH)/packages/esp32/tools/openocd-esp32/*/bin/openocd")
 ifeq ($(strip $(OPENOCD)),)
-	OPENOCD ?= $(strip $(shell $(LS) "$(ARDUINO_USERPATH)/packages/arduino/tools/openocd/"*"/bin/openocd" 2>/dev/null | sort | tail -n 1))
+	OPENOCD ?= $(call latest,"$(ARDUINO_USERPATH)/packages/arduino/tools/openocd/*/bin/openocd")
 endif
 
 OPENOCD_DEBUG := -d0
@@ -27,6 +25,6 @@ OPENOCD_SERVER_OPTS := -c "gdb_port $(OPENOCD_PORT)"
 GDB_INIT ?= $(abspath gdbinit)
 GDB_TARGET := target extended-remote :$(OPENOCD_PORT)
 
-PORTS_BY_IDS ?= bash $(abspath $(MAKE_INC_PATH)/Tools/ports_by_ids.sh)
-RESETTER_PORT ?= $(shell "$(abspath $(ARDUINO_PATH)/hardware/tools/teensy_ports)" -L | egrep "\(Teensy\s3.2\)" | sed -E 's%[a-zA-Z0-9\:]+\ ([a-zA-Z0-9\/\.]+)\ .*%\1%')
+PORTS_BY_IDS ?= $(PYTHON) $(abspath $(MAKE_INC_PATH)/Tools/ports_by_ids.py)
+RESETTER_PORT ?= $(shell $(MAKE_PLATFORM_UTILS) --exec "$(abspath $(ARDUINO_PATH)/hardware/tools/teensy_ports)" -L \; --filter "\(Teensy 3.2\)" --sub "[a-zA-Z0-9\:]+\ ([a-zA-Z0-9\/\.]+)\ .*" "\1" --print)
 USE_RESETTER ?= no

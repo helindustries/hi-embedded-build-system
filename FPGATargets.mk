@@ -9,9 +9,9 @@ upload-fpga: upload_$(FPGA_DEVICE)$(FPGA_JTAG_UPLOAD_TARGET) $(FPGA_TARGET_DEPS)
 clean-fpga: clean_${FPGA_TOOLCHAIN}
 	@$(MSG) "[CLEAN]" "$(FPGA_TARGET)"
 ifneq ($(strip $(FPGA_ROMS)),)
-	$(V)rm -f "$(FPGA_ROMS)"
+	$(V)$(RM) "$(FPGA_ROMS)"
 endif
-	$(V)rm -f "$(FPGA_TARGET).prj"
+	$(V)$(RM) "$(FPGA_TARGET).prj"
 
 %_rom.txt: %_rom_gen.py %_rom_base.txt
 	@$(MSG) "[ROM]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
@@ -65,7 +65,7 @@ ifneq ($(strip $(NO_GATEWARE_UPLOAD)),yes)
 
 	@$(FMSG) "INFO:Uploading $<"
 	@$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$<)"
-	$(V)set -o pipefail && $(FPGA_FUJPROG) "$<" > /dev/null && touch "$@"
+	$(V)$(MAKE_PLATFORM_UTILS) --exec $(FPGA_FUJPROG) "$<" \; && $(TOUCH) "$@"
 endif
 
 upload_fujprog: $(FPGA_DEPLOY_TARGET).upload_fujprog.timestamp
@@ -92,7 +92,7 @@ ifneq ($(strip $(NO_GATEWARE_UPLOAD)),yes)
 
 	@$(FMSG) "INFO:Uploading $<"
 	@$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$<)"
-	$(V)set -o pipefail && $(FPGA_DFUUTIL) -a 0 -D "$<" > /dev/null && touch "$@"
+	$(V)$(MAKE_PLATFORM_UTILS) --exec $(FPGA_DFUUTIL) -a 0 -D "$<" \; && $(TOUCH) "$@"
 endif
 
 upload_dfuutil: $(FPGA_DEPLOY_TARGET).upload_dfuutil.timestamp

@@ -191,11 +191,21 @@ if __name__ == '__main__':
 
     parser: argparse.ArgumentParser = argparse.ArgumentParser()
     parser.add_argument('-f', '--format', help="The format to output", default=OutputTypes.CLion, choices=[OutputTypes.CLion, OutputTypes.Sublime])
-    args: argparse.Namespace = parser.parse_args()
+    parser.add_argument('-c', '--command', help="The command to pass", action='store_true')
+    args, command = parser.parse_known_args()
+    if args.command:
+        stdin = os.popen(" ".join(command))
+    else:
+        stdin = sys.stdin
 
     for message in make_messages(args.format,
                    filter_message_categories([re.compile(p) for p in error_regex], [re.compile(p) for p in warning_regex], [re.compile(p) for p in message_regex],
                    combine_lines([re.compile(p) for p in line_regex],
                    filter_excludes([re.compile(p) for p in hide_regex],
-                   strip_eol(sys.stdin))))):
+                   strip_eol(stdin))))):
         print(message)
+
+    if args.command:
+        sys.exit(stdin.close())
+    else:
+        sys.exit(0)

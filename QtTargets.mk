@@ -19,18 +19,18 @@ $(BUILD_DIR)/%.rcc.cpp: %.qrc
 
 $(BUILD_DIR)/%.o: $(BUILD_DIR)/%.cpp
 	@$(MSG) "[CXX]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	@mkdir -p $(shell dirname "$@")
+	@$(MKDIR) $(shell dirname "$@")
 	$(V)"$(CXX)" -c $(CXXFLAGS) $(CPPFLAGS) -o "$@" "$<"
 
 $(BUILD_DIR)/Frameworks/%.timestamp: $(QT_TOOLCHAIN_PATH)/lib/%.framework/Headers
 	@$(MSG) "[FWK]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
-	@mkdir -p "$(shell dirname "$@")"
-	$(V)ln -fs "$<" "$(BUILD_DIR)/Frameworks/$*"
+	@$(MKDIR) "$(shell dirname "$@")"
+	$(V)$(LN) "$<" "$(BUILD_DIR)/Frameworks/$*"
 	$(V)touch "$@"
 
 # Clean the build
 clean-qt:
-	rm -f $(QT_UIC_SOURCES) $(QT_MOC_SOURCES) $(QT_RCC_SOURCES) $(QT_FRAMEWORK_INCLUDES) $(QT_FRAMEWORK_INCLUDES:%.timestamp=%)
+	$(V)$(RM) $(QT_UIC_SOURCES) $(QT_MOC_SOURCES) $(QT_RCC_SOURCES) $(QT_FRAMEWORK_INCLUDES) $(QT_FRAMEWORK_INCLUDES:%.timestamp=%)
 
 .PHONY: clean-qt
 .PRECIOUS: %.ui.cpp %.moc.cpp %.rcc.cpp

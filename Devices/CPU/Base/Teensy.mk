@@ -1,4 +1,4 @@
-CPU_DEVICE_PORT ?= $(shell "$(abspath $(ARDUINO_PATH)/hardware/tools/teensy_ports)" -L | egrep "\($(SERIAL_ID)\)" | sed -E 's%[a-zA-Z0-9\:]+\ ([a-zA-Z0-9\/\.]+)\ .*%\1%')
+CPU_DEVICE_PORT ?= $(strip $(shell $(MAKE_PLATFORM_UTILS) --exec $(abspath $(ARDUINO_PATH)/hardware/tools/teensy_ports) -L \; --filter "\($(SERIAL_ID)\)" --sub '[a-zA-Z0-9\:]+\ ([a-zA-Z0-9\/\.]+)\ .*' '\1%' --first --print))
 CPU_DEVICE_RATE ?= 57600
 CPU_CPPFLAGS ?= -DUSB_SERIAL -DLAYOUT_US_ENGLISH
 
@@ -29,7 +29,7 @@ TEENSY_LOADER=$(MAKE_INC_PATH)/Tools/TeensyLoader/teensy_loader_cli
 ifneq ($(strip $(NO_FIRMWARE_UPLOAD)),yes)
 	@$(FMSG) "INFO:Uploading $<"
 	@$(MSG) "[UPLOAD]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	$(V)set -o pipefail && $(TEENSY_LOADER) -mmcu=$(CPU) -v -w $(CPU_TARGET).hex && touch "$@"
+	$(V)$(TEENSY_LOADER) -mmcu=$(CPU) -v -w $(CPU_TARGET).hex && $(TOUCH) "$@"
 endif
 
 upload_teensy: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).hex.upload_teensy.timestamp | silent

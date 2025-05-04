@@ -1,12 +1,12 @@
 CORE_PLATFORM := NRF52
-NRF52_BASE_PATH ?= $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/adafruit/hardware/nrf52"/* 2>/dev/null | sort | tail -n 1))
+NRF52_BASE_PATH ?= $(call latest,"$(ARDUINO_USERPATH)/packages/adafruit/hardware/nrf52/*/")
 CORE_PATH := $(NRF52_BASE_PATH)/cores/nRF5
 CORE_LIB_PATH := $(NRF52_BASE_PATH)/libraries
 CORE_VARIANTS_PATH := $(NRF52_BASE_PATH)/variants
 CORE_SKIP_NEW_O := yes
 
-ARM_CMSIS_PATH ?= $(abspath $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/adafruit/tools/CMSIS"/*/"CMSIS/DSP/Lib" 2>/dev/null | sort | tail -n 1))/../..)
-ARM_CMSIS_DEVICE_PATH ?= $(strip $(shell $(LS) -d "$(ARDUINO_USERPATH)/packages/adafruit/tools/CMSIS"/*/"CMSIS/Device/ARM" 2>/dev/null | sort | tail -n 1))
+ARM_CMSIS_PATH ?= $(abspath $(call latest,"$(ARDUINO_USERPATH)/packages/adafruit/tools/CMSIS/*/CMSIS/DSP/Lib")/../..)
+ARM_CMSIS_DEVICE_PATH ?= $(call latest,"$(ARDUINO_USERPATH)/packages/adafruit/tools/CMSIS/*/CMSIS/Device/ARM")
 ELF_MAP := $(CPU_TARGET).$(CPU_DEVICE).map
 NRFUTIL ?= $(NRF52_BASE_PATH)/tools/adafruit-nrfutil/macos/adafruit-nrfutil
 CPU_RESET_ARGS = $(USB_PID) $(USB_VID) "$(NRFUTIL)"
@@ -49,7 +49,7 @@ include $(MAKE_INC_PATH)/Architectures/ARM/Targets.mk
 
 %.zip: %.hex %.eep %.lst %.sym $(SOURCES) $(DEPENDENCY_LIB_PATHS) $(MODULES_LIBS) resetter
 	@$(MSG) "[ZIP]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
-	$(V)$(NRFUTIL) dfu genpkg --dev-type $(NRF52_DEV_TYPE) --sd-req $(NRF52_SD_SEQ) --application "$<" "$@" > /dev/null
+	$(V)$(MAKE_PLATFORM_UTILS) --exec $(NRFUTIL) dfu genpkg --dev-type $(NRF52_DEV_TYPE) --sd-req $(NRF52_SD_SEQ) --application "$<" "$@" \;
 
 %.zip.upload_nrf52.timestamp: %.zip serial | silent
 ifneq ($(strip $(NO_FIRMWARE_UPLOAD)),yes)
@@ -57,8 +57,7 @@ ifneq ($(strip $(NO_FIRMWARE_UPLOAD)),yes)
 	@$(MSG) "[UPLOAD]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
 
 	$(V)$(NRFUTIL) dfu serial -pkg "$<" -p $(CPU_DEVICE_PORT) -b 115200 --singlebank $(NRF52_TOUCH_ARG) \
-	    && echo "$(CPU_DEVICE_PORT)" > "$(BUILD_DIR)/.last_esp32_port" && touch "$@"
-	    #$(PROCESS_OUTPUT)
+	    && $(call write,"$(CPU_DEVICE_PORT)","$(BUILD_DIR)/.last_esp32_port") && $(TOUCH) "$@"
 endif
 
 upload_nrf52: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).zip.upload_nrf52.timestamp | silent

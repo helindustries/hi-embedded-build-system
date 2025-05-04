@@ -44,14 +44,14 @@ endif
 
 include $(MAKE_INC_PATH)/Devices/CPU/$(CPU_DEVICE).mk
 
-CPU_UPPER := $(shell echo $(CPU) | tr '[:lower:]' '[:upper:]')
-CPU_DEVICE_UPPER := $(subst -,_,$(shell echo $(CPU_DEVICE) | tr '[:lower:]' '[:upper:]'))
-CPU_ARCH := $(shell echo $(CPU_TOOLCHAIN) | tr '[:lower:]' '[:upper:]')
+CPU_UPPER := $(call upper,"$(CPU)")
+CPU_ARCH := $(call upper,"$(CPU_ARCH)")
+CPU_DEVICE_UPPER := $(subst -,_,$(call upper,"$(CPU_DEVICE)"))
 
 F_CPU := $(CPU_SPEED)000000
 F_BUS := $(BUS_SPEED)000000
 
-CORE_PLATFORM_UPPER := $(shell echo $(CORE_PLATFORM) | tr '[:lower:]' '[:upper:]')
+CORE_PLATFORM_UPPER := $(call upper,"$(CORE_PLATFORM)")
 ASMFLAGS += -x assembler-with-cpp
 CPPFLAGS += -DF_CPU=$(F_CPU) $(CPU_DEVICE_OPTS) -D__$(CPU_UPPER)__
 CPPFLAGS += -DCORE_PLATFORM_$(CORE_PLATFORM_UPPER) -DCORE_PLATFORM=\"$(CORE_PLATFORM)\"

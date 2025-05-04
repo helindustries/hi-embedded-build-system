@@ -31,11 +31,11 @@ ifeq ($(strip $(ELF_MAP)),)
 else
 	$(V)$(CC) -Wl,--Map=$(BUILD_DIR)/$(ELF_MAP) $(LDFLAGS) -L$(CORE_LIB_PATH) $(OBJS) $(START_GROUP) $(DEPENDENCY_LIB_PATHS) $(CORE_LIB) $(MODULES_LIBS) $(LIBS) $(END_GROUP) -o "$@"
 endif
-	$(V)ln -sf $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT) $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)
+	$(V)$(LN) $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT) $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)
 
 $(BUILD_DIR)/lib$(CPU_TARGET)-$(CPU).a: $(OBJS) $(DEPENDENCY_LIB_PATHS) $(MODULES_LIBS) $(SOURCES)
 	@$(MSG) "[A]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
-	@mkdir -p $(shell dirname "$@")/
+	@$(MKDIR) "$(dir $@)/"
 	@# This means a library needs to have at least one object or one sub-library, otherwise the target
 	@# will not be created, and the linker will fail due to the result being missing
 	$(V)if [ -n "$(strip $(OBJS))" ]; then $(AR) $(ARFLAGS) $@ $(OBJS); fi
@@ -52,47 +52,48 @@ $(BUILD_DIR)/lib$(CPU_TARGET)-$(CPU).a: $(OBJS) $(DEPENDENCY_LIB_PATHS) $(MODULE
 
 stats-cpu: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT) $(SOURCES)
 ifneq ($(strip $(PLATFORM_ID)),macos)
-	@echo "ROM: $(shell $(SIZE) -A $< | egrep "\.(text)|(data)" | sed -E 's%\.[a-zA-Z0-9_\.\-]+\ +([0-9]+)\ +[0-9]+%\1%' | awk '{s+=$$1} END {print s}') b, RAM: $(shell $(SIZE) -A $< | egrep "\.((dmabuffers)|(usbbuffers)|(data)|(bss)|(usbdescriptortable))" | sed -E 's%\.[a-zA-Z0-9_\.\-]+\ +([0-9]+)\ +[0-9]+%\1%' | awk '{s+=$$1} END {print s}') b"
+	@echo "ROM: $(shell $(PLATFORM_MAKE_UTILS) --exec $(SIZE) -A "$<" \; --filter "\.(text)|(data)" --sum "\.[a-zA-Z0-9_\.\-]+\ +(?P<value>[0-9]+)\ +[0-9]+" --print) b, RAM: $(shell $(PLATFORM_MAKE_UTILS) --exec $(SIZE) -A "$<" \; --filter "\.((dmabuffers)|(usbbuffers)|(data)|(bss)|(usbdescriptortable))" --sum "\.[a-zA-Z0-9_\.\-]+\ +(?P<value>[0-9]+)\ +[0-9]+" --print) b"
 else
 	@:
 endif
 
 section-sizes: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT) $(SOURCES)
-	$(V)$(SIZE) -A $< > $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).size
+	$(V)$(MAKE_PLATFORM_UTILS) --exec $(SIZE) -A "$<" \; --out "$(BUILD_DIR)/$(CPU_TARGET)-$(CPU).size"
 
 symbol-sizes: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT) $(SOURCES)
-	$(V)$(OBJDUMP) -t $< | sort -n -k 5 > $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).sym
+	$(V)$(MAKE_PLATFORM_UTILS) --exec "$(OBJDUMP)" -t "$<" \; --noempty --filter-out "file format" --filter-out "SYMBOL TABLE" --sort int16,desc,column="^[0-9a-f]+[ \t]+[a-zA-Z]?[ \t]*[dFfO]*[ \t]+[*A-Za-z0-9._]+[ \t]+(?P<value>[0-9a-f]+)" --print
 
 upload-cpu: binary-cpu upload_$(CPU_DEVICE)$(CPU_JTAG_UPLOAD_TARGET) | silent
 
 clean-cpu: clean-base clean-modules clean_${CPU_TOOLCHAIN}
 	@$(MSG) "[CLEAN]" "$(CPU_TARGET)"
-	$(V)rm -f $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT)	$(BUILD_DIR)/lib$(CPU_TARGET)-$(CPU).a $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)
-	$(V)rm -f $(BUILD_DIR)/$(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/*.d
+	$(V)$(RM) $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT) $(BUILD_DIR)/lib$(CPU_TARGET)-$(CPU).a $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)
+	$(V)$(RM) $(BUILD_DIR)/$(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/*.d
 ifneq ($(strip $(ELF_MAP)),)
-	$(V)rm -f $(BUILD_DIR)/$(ELF_MAP)
+	$(V)$(RM) $(BUILD_DIR)/$(ELF_MAP)
+endif
 endif
 
 recover:
 	@$(MSG) "[RECOVER]" "Perform recovery"
-	bash "$(MAKE_INC_PATH)/Tools/FirmwareResetter/recover.sh" full $(CPU_DEVICE) $(CPU_RESET_ARGS) > /dev/null 2>&1
+	@$(MAKE_PLATFORM_UTILS) --exec bash "$(MAKE_INC_PATH)/Tools/FirmwareResetter/recover.py" full $(CPU_DEVICE) $(CPU_RESET_ARGS) \;
 
 detect-recover:
 	@$(MSG) "[RECOVER]" "Check, if recovery is needed"
-	@bash "$(MAKE_INC_PATH)/Tools/FirmwareResetter/recover.sh" detect $(CPU_DEVICE) $(CPU_RESET_ARGS) > /dev/null 2>&1
+	@$(MAKE_PLATFORM_UTILS) --exec bash "$(MAKE_INC_PATH)/Tools/FirmwareResetter/recover.py" detect $(CPU_DEVICE) $(CPU_RESET_ARGS) \;
 
 ifneq ($(strip $(HAS_UPLOAD_TARGET)),)
     ifeq ($(strip $(USE_DEFAULT_USB_SERIAL_DETECT)),yes)
-        CPU_LAST_PORT_FILE := $(BUILD_DIR)/.last_$(shell echo $(CORE_PLATFORM) | tr '[:lower:]' '[:upper:]')_port
-        CPU_DEVICE_PORT ?= $(strip $(shell $(PORTS_BY_IDS) $(strip $(USB_PID)) $(strip $(USB_VID)) $(shell cat "$(CPU_LAST_PORT_FILE)" 2>/dev/null) /dev/cu.usb* | head -n 1))
+        CPU_LAST_PORT_FILE := $(BUILD_DIR)/.last_$(call lower,"$(CORE_PLATFORM)")_port
+        CPU_DEVICE_PORT ?= $(strip $(shell $(MAKE_PLATFORM_UTILS) --stoponerror false --exec $(PORTS_BY_IDS) $(strip $(USB_PID)) $(strip $(USB_VID)) $(call print,"$(CPU_LAST_PORT_FILE)") /dev/cu.usb* \; --include 0 1))
         ifeq ($(strip $(VERBOSE)),1)
-            $(info $(PORTS_BY_IDS) $(strip $(USB_PID)) $(strip $(USB_VID)) $(shell cat "$(CPU_LAST_PORT_FILE)" 2>/dev/null) /dev/cu.usb* | head -n 1)
+            $(info $(PORTS_BY_IDS) $(strip $(USB_PID)) $(strip $(USB_VID)) $(call print,"$(CPU_LAST_PORT_FILE)") /dev/cu.usb* | head -n 1)
             $(info Result: $(CPU_DEVICE_PORT))
         endif
         ifeq ($(strip $(CPU_DEVICE_PORT)),)
-            CPU_DEVICE_PORT := $(strip $(shell $(PORTS_BY_IDS) $(strip $(USB_PROG_PID)) $(strip $(USB_VID)) $(shell cat "$(CPU_LAST_PORT_FILE)" 2>/dev/null) /dev/cu.usb* | head -n 1))
+	        CPU_DEVICE_PORT := $(strip $(shell $(MAKE_PLATFORM_UTILS) --stoponerror false --exec $(PORTS_BY_IDS) $(strip $(USB_PROG_PID)) $(strip $(USB_VID)) $(call print,"$(CPU_LAST_PORT_FILE)") /dev/cu.usb* \; --include 0 1))
             ifeq ($(strip $(VERBOSE)),1)
-                $(info $(PORTS_BY_IDS) $(strip $(USB_PROG_PID)) $(strip $(USB_VID)) $(shell cat "$(CPU_LAST_PORT_FILE)" 2>/dev/null) /dev/cu.usb* | head -n 1)
+	            $(info $(PORTS_BY_IDS) $(strip $(USB_PROG_PID)) $(strip $(USB_VID)) $(call print,"$(CPU_LAST_PORT_FILE)") /dev/cu.usb* | head -n 1)
                 $(info Result: $(CPU_DEVICE_PORT))
             endif
         endif
@@ -110,7 +111,7 @@ endif
 endif
 
 ifeq ($(strip $(CPU_DEVICE_PORT)),)
-	@false
+	@$(FAIL)
 endif
 endif
 
@@ -143,27 +144,27 @@ cfg-cpu: cfg-toolchain --cfg-cpu
 
 $(BUILD_DIR)/%.o: %.c
 	@$(MSG) "[CC]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	@mkdir -p $(shell dirname "$@")
+	@$(MKDIR) "$(dir $@)"
 	$(V)"$(CC)" -c $(CFLAGS) $(CPPFLAGS) -o "$@" "$<"
 
 $(BUILD_DIR)/%.o: %.cpp
 	@$(MSG) "[CXX]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	@mkdir -p $(shell dirname "$@")
+	@$(MKDIR) "$(dir $@)"
 	$(V)"$(CXX)" -c $(CXXFLAGS) $(CPPFLAGS) -o "$@" "$<"
 
 $(BUILD_DIR)/%.o: %.ino
 	@$(MSG) "[INO]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	@mkdir -p $(shell dirname "$@")
+	@$(MKDIR) "$(dir $@)"
 	$(V)"$(CXX)" -c $(CXXFLAGS) $(CPPFLAGS) -o "$@" -x c++ "$<"
 
 $(BUILD_DIR)/%.o: %.S
 	@$(MSG) "[S]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	@mkdir -p $(shell dirname "$@")
+	@$(MKDIR) "$(dir $@)"
 	$(V)"$(CC)" -c $(ASMFLAGS) $(CPPFLAGS) -o "$@" "$<"
 
 $(BUILD_DIR)/%.o: %.s
 	@$(MSG) "[S]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	@mkdir -p $(shell dirname "$@")
+	@$(MKDIR) "$(dir $@)"
 	$(V)"$(CC)" -c $(ASMFLAGS) $(CPPFLAGS) -o "$@" "$<"
 
 .PHONY: binary-cpu library-cpu stats-cpu upload-cpu clean-cpu cfg-cpu --cfg-cpu lib%-$(CPU).a.target

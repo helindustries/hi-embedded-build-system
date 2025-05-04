@@ -1,10 +1,10 @@
 CORE_PLATFORM := RPI
 RPI_TOOLCHAIN_DIR ?= $(ARDUINO_USERPATH)/packages/rp2040
-RPI_BASE_PATH ?= $(strip $(shell $(LS) -d "$(RPI_TOOLCHAIN_DIR)/hardware/rp2040"/* 2>/dev/null | sort | tail -n 1))
+RPI_BASE_PATH ?= $(call latest,"$(RPI_TOOLCHAIN_DIR)/*/")
 CORE_PATH ?= $(RPI_BASE_PATH)/cores/rp2040
 CORE_LIB_PATH ?= $(RPI_BASE_PATH)/libraries
 CORE_VARIANTS_PATH ?= $(RPI_BASE_PATH)/variants
-ARM_COMPILERPATH ?= $(strip $(shell $(LS) -d "$(RPI_TOOLCHAIN_DIR)/tools/pqt-gcc"/*/bin 2>/dev/null | sort | tail -n 1))
+ARM_COMPILERPATH ?= $(call latest,"$(RPI_TOOLCHAIN_DIR)/tools/pqt-gcc/*/")
 ELF_MAP := $(CPU_TARGET).$(CPU_DEVICE).map
 USE_DEFAULT_USB_SERIAL_DETECT := yes
 RPI_UF2_UPLOAD_FAMILY := RP2040
@@ -15,7 +15,7 @@ RPI_TOOLS_DIR := $(RPI_BASE_PATH)/tools
 RPI_UF2CONV := $(RPI_TOOLS_DIR)/uf2conv.py
 RPI_SIGNING := $(RPI_TOOLS_DIR)/signing.py
 RPI_SIMPLESUB := $(RPI_TOOLS_DIR)/simplesub.py
-RPI_PICOTOOL := $(strip $(shell $(LS) -d "$(RPI_TOOLCHAIN_DIR)/tools/pqt-picotool"/*/picotool 2>/dev/null | sort | tail -n 1))
+RPI_PICOTOOL := $(call latest,"$(RPI_TOOLCHAIN_DIR)/tools/pqt-picotool/*/picotool")
 RPI_SDK_PATH := $(RPI_BASE_PATH)/pico-sdk
 RPI_SIGNING_PRIVATE_KEY := "$(abspath $(dir $(STARTUP_MAKEFILE))/private.key)"
 ARM_LD_SOURCE ?= $(RPI_BASE_PATH)/lib/$(CPU)/memmap_default.ld
@@ -89,7 +89,7 @@ RPI_SDK_SRC_INCLUDES += src/rp2_common/pico_stdio/include src/rp2_common/pico_st
 RPI_SDK_LIB_INCLUDES += lib/lwip/src/include lib/cyw43-driver/src lib/btstack/src lib/btstack/3rd-party/bluedroid/decoder/include
 RPI_SDK_LIB_INCLUDES += lib/btstack/3rd-party/bluedroid/encoder/include lib/btstack/3rd-party/yxml lib/btstack/platform/embedded lib/tinyusb/src
 
-CPPFLAGS += -iprefix$(RPI_SDK_PATH)/src $(RPI_SDK_SRC_INCLUDES:%=-iwithprefixbefore%) -iprefix$(RPI_SDK_PATH)/lib $(RPI_SDK_LIB_INCLUDES:%=-iwithprefixbefore%)
+CPPFLAGS += -iprefix "$(RPI_SDK_PATH)/src/" $(RPI_SDK_SRC_INCLUDES:%=-iwithprefixbefore "%") -iprefix "$(RPI_SDK_PATH)/lib/" $(RPI_SDK_LIB_INCLUDES:%=-iwithprefixbefore "%")
 INCLUDE_PATHS += $(RPI_BASE_PATH)/include/$(CPU)
 INCLUDE_PATHS += $(RPI_BASE_PATH)/include/$(CPU)/pico_base
 INCLUDE_PATHS += $(RPI_BASE_PATH)/include
@@ -100,25 +100,25 @@ include $(MAKE_INC_PATH)/Architectures/ARM/Targets.mk
 
 %.uf2: %.elf $(SOURCES) $(DEPENDENCY_LIB_PATHS) $(MODULES_LIBS) resetter
 	@$(MSG) "[UF2]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
-	$(V)$(RPI_PICOTOOL) uf2 convert "$<" "$@" --family $(RPI_PICOTOOL_FAMILY) --abs-block > /dev/null
+	$(V)$(MAKE_PLATFORM_UTILS) --exec $(RPI_PICOTOOL) uf2 convert "$<" "$@" --family $(RPI_PICOTOOL_FAMILY) --abs-block \;
 
 %.bin.signed: %.bin $(SOURCES) $(DEPENDENCY_LIB_PATHS) $(MODULES_LIBS)
 	@$(MSG) "[UF2.SIGN]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
-	$(V)python3 -I "$(RPI_SIGNING)" "$(RPI_SIGNING_PRIVATE_KEY)" --bin "$<" --out "$@" > /dev/null
+	$(V)$(MAKE_PLATFORM_UTILS) --exec python3 -I "$(RPI_SIGNING)" "$(RPI_SIGNING_PRIVATE_KEY)" --bin "$<" --out "$@" \;
 
 $(ARM_LD): $(ARM_LD_SOURCE)
 	@$(MSG) "[ARMLD]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
-	$(V)python3 -I $(RPI_SIMPLESUB) --input "$<" --out "$@" --sub __FLASH_LENGTH__ $(RPI_FLASH_LENGTH) --sub __EEPROM_START__ $(RPI_EEPROM_START) \
-			 --sub __FS_START__ $(RPI_FS_START) --sub __FS_END__ $(RPI_FS_END) --sub __RAM_LENGTH__ $(RPI_RAM_SIZE) --sub __PSRAM_LENGTH__ $(RPI_PSRAM_SIZE)
+	$(V)$(MAKE_PLATFORM_UTILS) --exec python3 -I $(RPI_SIMPLESUB) --input "$<" --out "$@" --sub __FLASH_LENGTH__ $(RPI_FLASH_LENGTH) \
+			--sub __EEPROM_START__ $(RPI_EEPROM_START) --sub __FS_START__ $(RPI_FS_START) --sub __FS_END__ $(RPI_FS_END) \
+			--sub __RAM_LENGTH__ $(RPI_RAM_SIZE) --sub __PSRAM_LENGTH__ $(RPI_PSRAM_SIZE) \;
 
 %.uf2.upload_rpi.timestamp: %.uf2 serial | silent
 ifneq ($(strip $(NO_FIRMWARE_UPLOAD)),yes)
 	@$(FMSG) "INFO:Uploading $<"
 	@$(MSG) "[UPLOAD]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
 
-	$(V)python3 -I $(UF2CONV) --serial $(CPU_DEVICE_PORT) --family $(RPI_UF2_UPLOAD_FAMILY) --deploy "$<" > /dev/null \
-		&& echo "$(CPU_DEVICE_PORT)" > "$(BUILD_DIR)/.last_esp32_port" && touch "$@"
-	    #$(PROCESS_OUTPUT)
+	$(V)$(MAKE_PLATFORM_UTILS) --exec python3 -I $(UF2CONV) --serial $(CPU_DEVICE_PORT) --family $(RPI_UF2_UPLOAD_FAMILY) --deploy "$<" \; \
+		&& $(call write,"$(CPU_DEVICE_PORT)","$(BUILD_DIR)/.last_esp32_port") && $(TOUCH) "$@"
 endif
 upload_rpi: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU).uf2.upload_rpi.timestamp | silent
 	@
