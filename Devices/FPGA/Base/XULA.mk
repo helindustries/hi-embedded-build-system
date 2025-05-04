@@ -8,17 +8,17 @@ include $(MAKE_INC_PATH)/Architectures/Xilinx/ISIMTargets.mk
 # Tools
 $(FPGA_DEPLOY_TARGET).upload_xula.timestamp: $(FPGA_DEPLOY_TARGET) $(FPGA_RAM_IMAGE) $(FPGA_FLASH_IMAGE) $(FPGA_TARGET_DEPS)
 ifneq ($(strip $(NO_GATEWARE_UPLOAD)),yes)
-	@if [ -n "$(strip $(FPGA_RAM_IMAGE))" ]; then                     \
-		$(FMSG) "INFO:Uploading RAM $(FPGA_RAM_IMAGE)";               \
-		$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(FPGA_RAM_IMAGE)"        \
-		$(V)"$(XSLOAD)" -b "$(FPGA_DEVICE_ID)" --ram "$(FPGA_RAM_IMAGE)"; \
-	fi
+ifneq ($(strip $(FPGA_RAM_IMAGE)),)
+	$(FMSG) "INFO:Uploading RAM $(FPGA_RAM_IMAGE)";
+	$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(FPGA_RAM_IMAGE)"
+	$(V)"$(XSLOAD)" -b "$(FPGA_DEVICE_ID)" --ram "$(FPGA_RAM_IMAGE)";
+endif
 
-	@if [ -n "$(strip $(FPGA_FLASH_IMAGE))" ]; then                       \
-		$(FMSG) "INFO:Uploading Flash $(FPGA_FLASH_IMAGE)";               \
-		$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(FPGA_FLASH_IMAGE)"          \
-		$(V)"$(XSLOAD)" -b "$(FPGA_DEVICE_ID)" --flash "$(FPGA_FLASH_IMAGE)"; \
-	fi
+ifneq ($(strip $(FPGA_FLASH_IMAGE)),)
+	$(FMSG) "INFO:Uploading Flash $(FPGA_FLASH_IMAGE)";
+	$(MSG) "[UPLOAD]" "$(FPGA_TARGET)" "$(FPGA_FLASH_IMAGE)"
+	$(V)"$(XSLOAD)" -b "$(FPGA_DEVICE_ID)" --flash "$(FPGA_FLASH_IMAGE)";
+endif
 
 ifeq ($(strip $(FPGA_RUN_LOGIC)),yes)
 	$(MSG) "[LOGIC]" "$(FPGA_TARGET)"
