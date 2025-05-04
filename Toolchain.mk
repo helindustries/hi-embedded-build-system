@@ -4,9 +4,11 @@ FPGA_FUJPROG ?= $(YOSYS_BIN_PATH)/fujprog
 FPGA_DFUUTIL ?= $(YOSYS_BIN_PATH)/dfu-util
 FPGA_DFUSUFFIX ?= $(YOSYS_BIN_PATH)/dfu-suffix
 
-ifneq ($(strip $(NO_PROCESS_OUTPUT)),yes)
 IDE ?= sublime
-    PROCESS_OUTPUT := 2>&1 | python3 "$(MAKE_INC_PATH)/Tools/process_output.py" -f $(IDE)
+ifeq ($(strip $(NO_PROCESS_OUTPUT)),yes)
+	processed_output := $(1)
+else
+    processed_output := $(shell $(PYTHON) "$(MAKE_INC_PATH)/Tools/process_output.py" -f $(IDE) -c $(1))
 endif
 
 # Prefer OpenOCD ESP32, as it is compatible with all other platforms as well

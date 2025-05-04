@@ -32,8 +32,8 @@ endif
 
 teensy_loader_cli:
 	@$(MSG) "[MAKE]" "Teensy Loader CLI"
-	$(V)$(MAKE) -C $(MAKE_BASE_PATH)/TeensyLoader 'USE_LIBUSB=no' 'OS=$(OS)' $(PROCESS_OUTPUT)
+	$(V)$(call process_output,$(MAKE) -C $(MAKE_BASE_PATH)/TeensyLoader 'USE_LIBUSB=no' 'OS=$(OS)')
 
 clean-teensy_loader_cli:
 	@$(MSG) "[MAKE]" "Teensy Loader CLI"
-	$(V)$(MAKE) -C $(MAKE_BASE_PATH)/TeensyLoader clean $(PROCESS_OUTPUT)
+	$(V)$(call process_output,$(MAKE) -C $(MAKE_BASE_PATH)/TeensyLoader clean)
