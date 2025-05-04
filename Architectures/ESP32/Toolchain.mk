@@ -72,39 +72,6 @@ ifeq ($(strip $(ESP_SDK_VERSION)),2)
     ESP_INCLUDE_DIRS += sdmmc/include soc/$(CPU) soc/$(CPU)/include soc/include spi_flash/include spiffs/include tcp_transport/include tcpip_adapter/include ulp/include unity/include
     ESP_INCLUDE_DIRS += unity/unity/src usb/include vfs/include wear_levelling/include wifi_provisioning/include wpa_supplicant/esp_supplicant/include wpa_supplicant/include
     ESP_INCLUDE_DIRS += wpa_supplicant/port/include ws2812_led xtensa/$(CPU)/include xtensa/include
-    # Old 2.0.7 Includes
-	#ESP_INCLUDE_DIRS := esp_hw_support/include esp_hw_support/include/soc esp_hw_support/include/soc/$(CPU) esp_hw_support/port/$(CPU) esp_hw_support/port/$(CPU)/private_include
-	#ESP_INCLUDE_DIRS += esp_rom/include esp_rom/include/$(CPU) esp_rom/$(CPU) esp_common/include esp_system/include esp_system/port/soc esp_system/port/public_compat esp_pm/include
-	#ESP_INCLUDE_DIRS += esp_ringbuf/include esp_wifi/include esp_event/include esp_netif/include esp_eth/include esp_phy/include esp_phy/$(CPU)/include esp_ipc/include esp_timer/include
-	#ESP_INCLUDE_DIRS += esp_gdbstub/include esp_gdbstub/xtensa esp_gdbstub/$(CPU) esp-tls esp-tls/esp-tls-crypto esp_adc_cal/include esp_hid/include esp_local_ctrl/include
-	#ESP_INCLUDE_DIRS += esp_http_client/include esp_http_server/include esp_https_ota/include esp_https_server/include esp_lcd/include esp_lcd/interface esp_diagnostics/include
-	#ESP_INCLUDE_DIRS += esp_schedule/include esp_rainmaker/include esp_insights/include esp_littlefs/include esp_serial_slave_link/include esp_websocket_client/include
-	#ESP_INCLUDE_DIRS += esp-dsp/modules/dotprod/include esp-dsp/modules/support/include esp-dsp/modules/windows/include esp-dsp/modules/windows/hann/include
-	#ESP_INCLUDE_DIRS += esp-dsp/modules/windows/blackman/include esp-dsp/modules/windows/blackman_harris/include esp-dsp/modules/windows/blackman_nuttall/include
-	#ESP_INCLUDE_DIRS += esp-dsp/modules/windows/nuttall/include esp-dsp/modules/windows/flat_top/include esp-dsp/modules/iir/include esp-dsp/modules/fir/include
-	#ESP_INCLUDE_DIRS += esp-dsp/modules/math/include esp-dsp/modules/math/add/include esp-dsp/modules/math/sub/include esp-dsp/modules/math/mul/include
-	#ESP_INCLUDE_DIRS += esp-dsp/modules/math/addc/include esp-dsp/modules/math/mulc/include esp-dsp/modules/math/sqrt/include esp-dsp/modules/matrix/include
-	#ESP_INCLUDE_DIRS += esp-dsp/modules/fft/include esp-dsp/modules/dct/include esp-dsp/modules/conv/include esp-dsp/modules/common/include esp-dsp/modules/kalman/ekf/include
-	#ESP_INCLUDE_DIRS += esp-dsp/modules/kalman/ekf_imu13states/include esp-dl/include esp-dl/include/tool esp-dl/include/typedef esp-dl/include/image esp-dl/include/math
-	#ESP_INCLUDE_DIRS += esp-dl/include/nn esp-dl/include/layer esp-dl/include/detect esp-dl/include/model_zoo esp-sr/src/include esp-sr/esp-tts/esp_tts_chinese/include
-	#ESP_INCLUDE_DIRS += esp-sr/include/$(CPU) esp32-camera/driver/include esp32-camera/conversions/include hal/$(CPU)/include hal/include hal/platform_port/include
-	#ESP_INCLUDE_DIRS += espcoredump/include espcoredump/include/port/xtensa wpa_supplicant/include wpa_supplicant/port/include wpa_supplicant/esp_supplicant/include
-	#ESP_INCLUDE_DIRS += xtensa/include xtensa/$(CPU)/include driver/include driver/$(CPU)/include efuse/include efuse/$(CPU)/include asio/asio/asio/include asio/port/include
-	#ESP_INCLUDE_DIRS += bt/common/osi/include bt/include/$(CPU)/include bt/common/api/include/api bt/common/btc/profile/esp/blufi/include bt/common/btc/profile/esp/include
-	#ESP_INCLUDE_DIRS += bt/host/bluedroid/api/include/api bt/esp_ble_mesh/mesh_common/include bt/esp_ble_mesh/mesh_common/tinycrypt/include bt/esp_ble_mesh/mesh_core
-	#ESP_INCLUDE_DIRS += bt/esp_ble_mesh/mesh_core/include bt/esp_ble_mesh/mesh_core/storage bt/esp_ble_mesh/btc/include bt/esp_ble_mesh/mesh_models/common/include
-	#ESP_INCLUDE_DIRS += bt/esp_ble_mesh/mesh_models/client/include bt/esp_ble_mesh/mesh_models/server/include bt/esp_ble_mesh/api/core/include bt/esp_ble_mesh/api/models/include
-	#ESP_INCLUDE_DIRS += bt/esp_ble_mesh/api ws2812_led rtc_store/include fb_gfx/include rmaker_common/include gpio_button/button/include qrcode/include wifi_provisioning/include
-	#ESP_INCLUDE_DIRS += lwip/include/apps lwip/include/apps/sntp lwip/lwip/src/include lwip/port/esp32/include lwip/port/esp32/include/arch soc/include soc/$(CPU) soc/$(CPU)/include
-	#ESP_INCLUDE_DIRS += freertos/include freertos/include/esp_additions/freertos freertos/port/xtensa/include freertos/include/esp_additions coap/port/include coap/libcoap/include
-	#ESP_INCLUDE_DIRS += expat/expat/expat/lib expat/port/include unity/include unity/unity/src fatfs/diskio fatfs/vfs fatfs/src idf_test/include idf_test/include/$(CPU)
-	#ESP_INCLUDE_DIRS += mbedtls/port/include mbedtls/mbedtls/include mbedtls/esp_crt_bundle/include libsodium/libsodium/src/libsodium/include libsodium/port_include
-	#ESP_INCLUDE_DIRS += nghttp/port/include nghttp/nghttp2/lib/includes jsmn/include json/cJSON json_parser/upstream/include json_parser/upstream json_generator/upstream
-	#ESP_INCLUDE_DIRS += protocomm/include/common protocomm/include/security protocomm/include/transports freertos/include/freertos arduino_tinyusb/tinyusb/src arduino_tinyusb/include
-	#ESP_INCLUDE_DIRS += newlib/platform_include heap/include log/include vfs/include tcpip_adapter/include app_trace/include app_update/include spi_flash/include
-	#ESP_INCLUDE_DIRS += bootloader_support/include nvs_flash/include pthread/include ieee802154/include console cbor/port/include cmock/CMock/src tcp_transport/include
-	#ESP_INCLUDE_DIRS += protobuf-c/protobuf-c mdns/include sdmmc/include wear_levelling/include freemodbus/freemodbus/common/include mqtt/esp-mqtt/include openssl/include
-	#ESP_INCLUDE_DIRS += perfmon/include spiffs/include usb/include ulp/include
 else
 	# Arduino plugin v3.x
     ESP_INCLUDE_DIRS += newlib/platform_include freertos/config/include freertos/config/include/freertos freertos/config/xtensa/include freertos/FreeRTOS-Kernel/include
