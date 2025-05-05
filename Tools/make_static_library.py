@@ -39,7 +39,7 @@ def make_static_library(ar_with_flags_and_target: List[str], source_files: List[
             if result.returncode != 0:
                 sys.exit(result.returncode)
 
-            for obj in glob.glob("*.o"):
+            for obj in glob.glob("*"):
                 os.remove(obj)
         os.chdir(current_dir)
         os.rmdir(temp_dir)
