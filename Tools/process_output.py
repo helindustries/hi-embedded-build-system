@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import subprocess
 from typing import Iterable, Tuple, Self, Match, Pattern, List, Optional
 from dataclasses import dataclass
 from enum import StrEnum
@@ -185,6 +186,16 @@ def strip_eol(lines : Iterable[str]) -> Iterable[str]:
     for line in lines:
         yield line.rstrip()
 
+def process_output(in_stream, format: OutputTypes):
+    for message in make_messages(format,
+                                 filter_message_categories([re.compile(p) for p in error_regex],
+                                                           [re.compile(p) for p in warning_regex],
+                                                           [re.compile(p) for p in message_regex],
+                                                           combine_lines([re.compile(p) for p in line_regex],
+                                                           filter_excludes([re.compile(p) for p in hide_regex],
+                                                           strip_eol(in_stream))))):
+        print(message)
+
 if __name__ == '__main__':
     import argparse
     import sys
@@ -198,20 +209,16 @@ if __name__ == '__main__':
 
     parser: argparse.ArgumentParser = argparse.ArgumentParser()
     parser.add_argument('-f', '--format', help="The format to output", default=OutputTypes.CLion, choices=[OutputTypes.CLion, OutputTypes.Sublime])
+    parser.add_argument("-e", "--ignore-errors", action="store_true", help="Ignore errors")
     args = parser.parse_args(argv)
     if command_start >= 0:
-        stdin = os.popen(" ".join(command))
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+        process_output(process.stdout, args.format)
+        if args.ignore_errors:
+            process.wait()
+            sys.exit(0)
+        else:
+            sys.exit(process.wait())
     else:
-        stdin = sys.stdin
-
-    for message in make_messages(args.format,
-                   filter_message_categories([re.compile(p) for p in error_regex], [re.compile(p) for p in warning_regex], [re.compile(p) for p in message_regex],
-                   combine_lines([re.compile(p) for p in line_regex],
-                   filter_excludes([re.compile(p) for p in hide_regex],
-                   strip_eol(stdin))))):
-        print(message)
-
-    if command_start >= 0:
-        sys.exit(stdin.close())
-    else:
+        process_output(sys.stdin, args.format)
         sys.exit(0)
