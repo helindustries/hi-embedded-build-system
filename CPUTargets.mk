@@ -41,8 +41,8 @@ $(BUILD_DIR)/lib$(CPU_TARGET)-$(CPU).a: $(OBJS) $(DEPENDENCY_LIB_PATHS) $(MODULE
 	$(V)$(PYTHON) "$(MAKE_INC_PATH)/Tools/make_static_library.py" "$(AR)" $(ARFLAGS) "$@" -- $(OBJS) $(DEPENDENCY_LIB_PATHS) $(MODULES_LIBS)
 
 stats-cpu: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT) $(SOURCES)
-ifneq ($(strip $(PLATFORM_ID)),macos)
-	@echo "ROM: $(shell $(PLATFORM_MAKE_UTILS) --exec $(SIZE) -A "$<" \; --filter "\.(text)|(data)" --sum "\.[a-zA-Z0-9_\.\-]+\ +(?P<value>[0-9]+)\ +[0-9]+" --print) b, RAM: $(shell $(PLATFORM_MAKE_UTILS) --exec $(SIZE) -A "$<" \; --filter "\.((dmabuffers)|(usbbuffers)|(data)|(bss)|(usbdescriptortable))" --sum "\.[a-zA-Z0-9_\.\-]+\ +(?P<value>[0-9]+)\ +[0-9]+" --print) b"
+ifneq ($(strip $(CPU_TOOLCHAIN)),macos)
+	@echo "ROM: $(shell $(MAKE_PLATFORM_UTILS) --exec $(SIZE) -A "$<" \; --filter "\.(text)|(data)" --sum int,column="\.[a-zA-Z0-9_\.\-]+\ +(?P<value>[0-9]+)\ +[0-9]+" --print) b, RAM: $(shell $(MAKE_PLATFORM_UTILS) --exec $(SIZE) -A "$<" \; --filter "\.((dmabuffers)|(usbbuffers)|(data)|(bss)|(usbdescriptortable))" --sum int,column="\.[a-zA-Z0-9_\.\-]+\ +(?P<value>[0-9]+)\ +[0-9]+" --print) b"
 else
 	@:
 endif
