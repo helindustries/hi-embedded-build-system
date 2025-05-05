@@ -4,19 +4,19 @@ GHDL_LIB_ARGS=$(strip $(shell $(MAKE_PLATFORM_UTILS) --exec $(MAKEFPGAPRJ) "$(FP
 $(GHDL_BUILD_DIR)/$(GHDL_WORK)/%.o: %.vhd $(ROMS) $(FPGA_TARGET).vhd $(FPGA_TARGET_DEPS)
 	@$(MSG) "[SIM]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
 	$(V)$(MAKE_PLATFORM_UTILS) --exec $(MAKEFPGAPRJ) "$<" --ghdl -l "work" $(FPGA_PROJECT_ARGS) \; --foreach $(GHDL_ANALZYE) $(GHDL) $(GHDL_BUILD_DIR) $(GHDL_ARGS) $(GHDL_LIB_ARGS) \;
-	$(V)"$(GHDL)" -a $(GHDL_ARGS) $(GHDL_LIB_ARGS) --work=$(GHDL_WORK) --workdir="$(GHDL_BUILD_DIR)/$(GHDL_WORK)" "$<"
+	$(V)$(GHDL) -a $(GHDL_ARGS) $(GHDL_LIB_ARGS) --work=$(GHDL_WORK) --workdir="$(GHDL_BUILD_DIR)/$(GHDL_WORK)" "$<"
 
 %_tb: $(GHDL_BUILD_DIR)/$(GHDL_WORK)/%_tb.o $(ROMS) $(FPGA_TARGET_DEPS)
 	@$(MSG) "[TB]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
-	$(V)"$(GHDL)" -e $(GHDL_ARGS) $(GHDL_LIB_ARGS) --work=$(GHDL_WORK) --workdir="$(GHDL_BUILD_DIR)/$(GHDL_WORK)" "$@"
+	$(V)$(GHDL) -e $(GHDL_ARGS) $(GHDL_LIB_ARGS) --work=$(GHDL_WORK) --workdir="$(GHDL_BUILD_DIR)/$(GHDL_WORK)" "$@"
 
 %_tb.fst: %_tb $(FPGA_TARGET_DEPS)
 	@$(MSG) "[FST]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
-	$(V)"$(GHDL)" -r $(GHDL_ARGS) $(GHDL_LIB_ARGS) --work=$(GHDL_WORK) --workdir="$(GHDL_BUILD_DIR)/$(GHDL_WORK)" "$<" --stop-time=$(GHDL_TIMEOUT) --fst="$@"
+	$(V)$(GHDL) -r $(GHDL_ARGS) $(GHDL_LIB_ARGS) --work=$(GHDL_WORK) --workdir="$(GHDL_BUILD_DIR)/$(GHDL_WORK)" "$<" --stop-time=$(GHDL_TIMEOUT) --fst="$@"
 
 %_tb.ghw: %_tb $(FPGA_TARGET_DEPS)
 	@$(MSG) "[GHW]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
-	$(V)"$(GHDL)" -r $(GHDL_ARGS) $(GHDL_LIB_ARGS) --work=$(GHDL_WORK) --workdir="$(GHDL_BUILD_DIR)/$(GHDL_WORK)" "$<" --stop-time=$(GHDL_TIMEOUT) --wave="$@"
+	$(V)$(GHDL) -r $(GHDL_ARGS) $(GHDL_LIB_ARGS) --work=$(GHDL_WORK) --workdir="$(GHDL_BUILD_DIR)/$(GHDL_WORK)" "$<" --stop-time=$(GHDL_TIMEOUT) --wave="$@"
 
 ghdl: $(FPGA_TARGET)_tb.ghw $(FPGA_TARGET)_tb.tcl $(FPGA_TARGET_DEPS)
 	# Requires Switch.pm (run "cpan install Switch")
@@ -25,7 +25,7 @@ ghdl: $(FPGA_TARGET)_tb.ghw $(FPGA_TARGET)_tb.tcl $(FPGA_TARGET_DEPS)
 
 clean-ghdl:
 	@$(MSG) "[CLEAN]" "$(FPGA_TARGET)" "GHDL"
-	$(V)"$(GHDL)" --clean
+	$(V)$(GHDL) --clean
 ifneq ($(strip $(GHDL_BUILD_DIR)),)
 	$(V)$(RMDIR) "$(GHDL_BUILD_DIR)"
 endif
