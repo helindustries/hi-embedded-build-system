@@ -188,12 +188,18 @@ def strip_eol(lines : Iterable[str]) -> Iterable[str]:
 if __name__ == '__main__':
     import argparse
     import sys
+    argv = list(sys.argv[1:])
+    try:
+        command_start = argv.index("--")
+        command = argv[command_start + 1:]
+        argv = argv[:command_start]
+    except:
+        command_start = -1
 
     parser: argparse.ArgumentParser = argparse.ArgumentParser()
     parser.add_argument('-f', '--format', help="The format to output", default=OutputTypes.CLion, choices=[OutputTypes.CLion, OutputTypes.Sublime])
-    parser.add_argument('-c', '--command', help="The command to pass", action='store_true')
-    args, command = parser.parse_known_args()
-    if args.command:
+    args = parser.parse_args(argv)
+    if command_start >= 0:
         stdin = os.popen(" ".join(command))
     else:
         stdin = sys.stdin
@@ -205,7 +211,7 @@ if __name__ == '__main__':
                    strip_eol(stdin))))):
         print(message)
 
-    if args.command:
+    if command_start >= 0:
         sys.exit(stdin.close())
     else:
         sys.exit(0)
