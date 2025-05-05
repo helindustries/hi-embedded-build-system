@@ -9,7 +9,7 @@ INO_FILES := $(wildcard *.ino)
 ASM_FILES := $(wildcard *.s */*.s */*/*.s */*/*/*.s)
 
 PROJECT_PATH := $(patsubst %/,%,$(abspath $(dir $(firstword $(MAKEFILE_LIST)))))
-INO_FILE := $(notdir $(shell $(MAKE_PLATFORM_UTILS) --in "$(PROJECT_PATH)/*.ino" --first --print))
+INO_FILE := $(call path-basename,"$(shell $(MAKE_PLATFORM_UTILS) --in "$(PROJECT_PATH)/*.ino" --first --print)")
 CPU_TARGET := $(INO_FILE:%.ino=%)
 ARDUINO_BUILD_SYSTEM_PATH := $(patsubst %/,%,$(abspath $(dir $(lastword $(MAKEFILE_LIST)))))
 DEVICES_DIR := $(abspath Devices)

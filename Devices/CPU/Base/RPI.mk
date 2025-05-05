@@ -17,9 +17,9 @@ RPI_SIGNING := $(RPI_TOOLS_DIR)/signing.py
 RPI_SIMPLESUB := $(RPI_TOOLS_DIR)/simplesub.py
 RPI_PICOTOOL := $(call latest,"$(RPI_TOOLCHAIN_DIR)/tools/pqt-picotool/*/picotool")
 RPI_SDK_PATH := $(RPI_BASE_PATH)/pico-sdk
-RPI_SIGNING_PRIVATE_KEY := "$(abspath $(dir $(STARTUP_MAKEFILE))/private.key)"
+RPI_SIGNING_PRIVATE_KEY := "$(abspath $(call path-dirname,'$(STARTUP_MAKEFILE))/private.key')"
 ARM_LD_SOURCE ?= $(RPI_BASE_PATH)/lib/$(CPU)/memmap_default.ld
-ARM_LD ?= $(BUILD_DIR)/$(notdir $(ARM_LD_SOURCE))
+ARM_LD ?= $(BUILD_DIR)/$(call path-basename,"$(ARM_LD_SOURCE)")
 BINARY_DEPS += $(ARM_LD)
 
 include $(MAKE_INC_PATH)/Architectures/ARM/Toolchain.mk

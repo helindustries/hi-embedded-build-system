@@ -1,5 +1,5 @@
 FPGA_DEVICE ?= xula2-lx25
-FPGA_TARGET ?= $(basename $(realpath $(abspath .)))
+FPGA_TARGET ?= $(call path-basename,"$(realpath $(abspath .))")
 FPGA_RAM_IMAGE ?=
 FPGA_FLASH_IMAGE ?=
 FPGA_ROMS ?=

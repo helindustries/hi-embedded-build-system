@@ -35,7 +35,7 @@ endif
 
 $(BUILD_DIR)/lib$(CPU_TARGET)-$(CPU).a: $(OBJS) $(DEPENDENCY_LIB_PATHS) $(MODULES_LIBS) $(SOURCES)
 	@$(MSG) "[A]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$@)"
-	@$(MKDIR) "$(dir $@)/"
+	@$(MKDIR) "$(call path-dirname,"$@")/"
 	@# This means a library needs to have at least one object or one sub-library, otherwise the target
 	@# will not be created, and the linker will fail due to the result being missing
 	$(V)$(PYTHON) "$(MAKE_INC_PATH)/Tools/make_static_library.py" "$(AR)" "$(ARFLAGS)" -- $(OBJS) $(DEPENDENCY_LIB_PATHS) $(MODULES_LIBS)
@@ -141,27 +141,27 @@ cfg-cpu: cfg-toolchain --cfg-cpu
 
 $(BUILD_DIR)/%.o: %.c
 	@$(MSG) "[CC]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	@$(MKDIR) "$(dir $@)"
+	@$(MKDIR) "$(call path-dirname,"$@")"
 	$(V)"$(CC)" -c $(CFLAGS) $(CPPFLAGS) -o "$@" "$<"
 
 $(BUILD_DIR)/%.o: %.cpp
 	@$(MSG) "[CXX]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	@$(MKDIR) "$(dir $@)"
+	@$(MKDIR) "$(call path-dirname,"$@")"
 	$(V)"$(CXX)" -c $(CXXFLAGS) $(CPPFLAGS) -o "$@" "$<"
 
 $(BUILD_DIR)/%.o: %.ino
 	@$(MSG) "[INO]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	@$(MKDIR) "$(dir $@)"
+	@$(MKDIR) "$(call path-dirname,"$@")"
 	$(V)"$(CXX)" -c $(CXXFLAGS) $(CPPFLAGS) -o "$@" -x c++ "$<"
 
 $(BUILD_DIR)/%.o: %.S
 	@$(MSG) "[S]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	@$(MKDIR) "$(dir $@)"
+	@$(MKDIR) "$(call path-dirname,"$@")"
 	$(V)"$(CC)" -c $(ASMFLAGS) $(CPPFLAGS) -o "$@" "$<"
 
 $(BUILD_DIR)/%.o: %.s
 	@$(MSG) "[S]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	@$(MKDIR) "$(dir $@)"
+	@$(MKDIR) "$(call path-dirname,"$@")"
 	$(V)"$(CC)" -c $(ASMFLAGS) $(CPPFLAGS) -o "$@" "$<"
 
 .PHONY: binary-cpu library-cpu stats-cpu upload-cpu clean-cpu cfg-cpu --cfg-cpu lib%-$(CPU).a.target
