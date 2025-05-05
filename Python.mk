@@ -45,6 +45,6 @@ $(PYTHON_TARGET): $(PYTHON_EXEC_SPEC_FILE) $(PYTHON_TARGET).py $(PYTHON_FILES)
 	$(V)pyinstaller $(PYTHON_EXEC_ARGS) --log-level ERROR --distpath dist/$(PLATFORM_ID) --workpath $(BUILD_DIR)/$(PYTHON_TARGET).pyinstaller --noconfirm "$<"
 
 clean-python-exec: | silent
-	$(RMDIR) bin $(BUILD_DIR)/$(PYTHON_TARGET).pyinstaller
+	$(V)$(RMDIR) dist $(BUILD_DIR)/$(PYTHON_TARGET).pyinstaller
 
 .PHONY: %.py.build.target %.py.doctest.target %.py.pytest.target build-python test-python cfg-py
