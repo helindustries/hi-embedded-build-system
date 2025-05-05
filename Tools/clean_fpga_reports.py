@@ -37,13 +37,13 @@ def main():
     mrs_index = index_of(argv, "--mrs")
     temps_index = index_of(argv, "--temps")
 
-    if reports_index > mrs_index:
+    if reports_index > 0 and mrs_index > 0 and reports_index > mrs_index:
         print("Error: --reports must come before --mrs", file=sys.stderr)
         sys.exit(1)
-    if reports_index > temps_index:
+    if reports_index > 0 and temps_index > 0 and reports_index > temps_index:
         print("Error: --reports must come before --temps", file=sys.stderr)
         sys.exit(1)
-    if mrs_index > temps_index:
+    if mrs_index > 0 and temps_index > 0 and  mrs_index > temps_index:
         print("Error: --mr must come before --temps", file=sys.stderr)
         sys.exit(1)
 
