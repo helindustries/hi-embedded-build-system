@@ -2,7 +2,7 @@ FPGA_FAMILY_UPPER := $(call upper,"$(FPGA_FAMILY)")
 FPGA_DEVICE_ID_UPPER := $(call upper,"$(FPGA_DEVICE_ID)")
 LATTICE_BUILD_DIR ?= $(BUILD_DIR)/lattice
 
-cleanup = $(shell $(PYTHON) "$(MAKE_INC_PATH)/Tools/clean_fpga_reports.py" --reports $(1) --temps $(3))
+cleanup = $(PYTHON) "$(MAKE_INC_PATH)/Tools/clean_fpga_reports.py" --reports $(1) --temps $(3)
 
 %.ngd: %.vhd %.lpt %.ldc $(FPGA_TARGET_DEPS)
 	@$(MSG) "[NGD]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"

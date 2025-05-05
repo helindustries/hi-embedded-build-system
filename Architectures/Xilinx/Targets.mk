@@ -1,4 +1,4 @@
-cleanup = $(shell $(PYTHON) "$(MAKE_INC_PATH)/Tools/clean_fpga_reports.py" --reports $(1) --mrs $(2) --temps $(3))
+cleanup = $(PYTHON) "$(MAKE_INC_PATH)/Tools/clean_fpga_reports.py" --reports $(1) --mrs $(2) --temps $(3)
 
 %.lso:
 	@$(MSG) "[LSO]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
