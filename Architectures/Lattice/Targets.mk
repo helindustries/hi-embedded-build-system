@@ -45,7 +45,7 @@ layout_lattice: $(FPGA_TARGET).ngd $(FPGA_TARGET_DEPS)
 
 %.bit.lattice.svf: %.bit $(FPGA_TARGET_DEPS)
 	@$(MSG) "[SVF]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
-	$(V)$(call process_output,$(LATTICE_WINE) $(LATTICE_DDTCMD) -oft -svfsingle -if "$<" -dev $(FPGA_DEVICE_ID_UPPER) -op "Fast Program" -reset -of "$@")
+	$(V)$(call process_output,$(LATTICE_WINE) $(LATTICE_DDTCMD) -oft -svfsingle -if "$<" -dev "$(FPGA_DEVICE_ID_UPPER)" -op "Fast Program" -reset -of "$@")
 
 ifeq ($(strip $(FORCE_GATEWARE_UPLOAD)),yes)
 LATTICE_CREATE_TIMESTAMP =
