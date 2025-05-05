@@ -38,7 +38,7 @@ $(BUILD_DIR)/lib$(CPU_TARGET)-$(CPU).a: $(OBJS) $(DEPENDENCY_LIB_PATHS) $(MODULE
 	@$(MKDIR) "$(call path-dirname,"$@")/"
 	@# This means a library needs to have at least one object or one sub-library, otherwise the target
 	@# will not be created, and the linker will fail due to the result being missing
-	$(V)$(PYTHON) "$(MAKE_INC_PATH)/Tools/make_static_library.py" "$(AR)" "$(ARFLAGS)" -- $(OBJS) $(DEPENDENCY_LIB_PATHS) $(MODULES_LIBS)
+	$(V)$(PYTHON) "$(MAKE_INC_PATH)/Tools/make_static_library.py" "$(AR)" $(ARFLAGS) "$@" -- $(OBJS) $(DEPENDENCY_LIB_PATHS) $(MODULES_LIBS)
 
 stats-cpu: $(BUILD_DIR)/$(CPU_TARGET)-$(CPU)$(CPU_BINARY_EXT) $(SOURCES)
 ifneq ($(strip $(PLATFORM_ID)),macos)
