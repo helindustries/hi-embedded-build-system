@@ -33,8 +33,8 @@ def make_static_library(ar_with_flags_and_target: List[str], source_files: List[
             if result.returncode != 0:
                 sys.exit(result.returncode)
 
-            cmd = ar_with_flags_and_target
-            cmd.extend(["*.o"])
+            cmd = list(ar_with_flags_and_target)
+            cmd.extend(glob.glob("*.o"))
             result = subprocess.run(cmd, stdout=sys.stdout, stderr=sys.stderr, text=True)
             if result.returncode != 0:
                 sys.exit(result.returncode)
