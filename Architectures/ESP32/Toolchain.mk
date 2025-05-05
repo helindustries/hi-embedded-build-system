@@ -30,9 +30,9 @@ CORE_PATH := $(ESP_BASE_PATH)/cores/esp32
 CORE_LIB_PATH := $(ESP_BASE_PATH)/libraries
 CORE_VARIANTS_PATH := $(ESP_BASE_PATH)/variants
 
-ESPTOOL ?= $(call latest,"$(ARDUINO_USERPATH)/packages/esp32/tools/esptool_py/*/esptool"))
-ESPGENPART_PY ?= $(call latest,"$(ARDUINO_USERPATH)/packages/esp32/hardware/esp32/*/tools/gen_esp32part.py"))
-ESPGENINSIGHT_PY ?= $(call latest,"$(ARDUINO_USERPATH)/packages/esp32/hardware/esp32/*/tools/gen_insights_package.py"))
+ESPTOOL ?= $(call latest,"$(ARDUINO_USERPATH)/packages/esp32/tools/esptool_py/*/esptool")
+ESPGENPART_PY ?= $(call latest,"$(ARDUINO_USERPATH)/packages/esp32/hardware/esp32/*/tools/gen_esp32part.py")
+ESPGENINSIGHT_PY ?= $(call latest,"$(ARDUINO_USERPATH)/packages/esp32/hardware/esp32/*/tools/gen_insights_package.py")
 ESP32_PORTS ?= $(PYTHON) $(abspath $(MAKE_INC_PATH)/Tools/esp32_ports.py)
 
 ifneq ($(strip $(ESP_BUILD_MINIMAL)),yes)
