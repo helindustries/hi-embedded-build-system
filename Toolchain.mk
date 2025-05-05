@@ -6,7 +6,9 @@ FPGA_DFUSUFFIX ?= $(YOSYS_BIN_PATH)/dfu-suffix
 
 IDE ?= sublime
 ifeq ($(strip $(NO_PROCESS_OUTPUT)),yes)
-    process_output := $(1)
+define process_output
+    $(1)
+endef
 else
 define process_output
     $(PYTHON) "$(MAKE_INC_PATH)/Tools/process_output.py" -f $(IDE) -- $(1)
