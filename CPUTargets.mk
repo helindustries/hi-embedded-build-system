@@ -73,13 +73,13 @@ endif
 
 recover:
 	@$(MSG) "[RECOVER]" "Perform recovery"
-	# XXX: Keeping this as bash for now, it doesn't depend on pipes or redirects. Convert to Python later
-	$(V)$(MAKE_PLATFORM_UTILS) --exec bash "$(MAKE_INC_PATH)/Tools/FirmwareResetter/recover.py" full $(CPU_DEVICE) $(CPU_RESET_ARGS) \;
+	@# XXX: Keeping this as bash for now, it doesn't depend on pipes or redirects. Convert to Python later
+	$(V)$(MAKE_PLATFORM_UTILS) --exec bash "$(MAKE_INC_PATH)/Tools/FirmwareResetter/recover.sh" full $(CPU_DEVICE) $(CPU_RESET_ARGS) \;
 
 detect-recover:
 	@$(MSG) "[RECOVER]" "Check, if recovery is needed"
-	# XXX: Keeping this as bash for now, it doesn't depend on pipes or redirects. Convert to Python later
-	$(V)$(MAKE_PLATFORM_UTILS) --exec bash "$(MAKE_INC_PATH)/Tools/FirmwareResetter/recover.py" detect $(CPU_DEVICE) $(CPU_RESET_ARGS) \;
+	@# XXX: Keeping this as bash for now, it doesn't depend on pipes or redirects. Convert to Python later
+	$(V)$(MAKE_PLATFORM_UTILS) --exec bash "$(MAKE_INC_PATH)/Tools/FirmwareResetter/recover.sh" detect $(CPU_DEVICE) $(CPU_RESET_ARGS) \;
 
 ifneq ($(strip $(HAS_UPLOAD_TARGET)),)
     ifeq ($(strip $(USE_DEFAULT_USB_SERIAL_DETECT)),yes)
