@@ -25,6 +25,7 @@ cleanup = $(PYTHON) "$(MAKE_INC_PATH)/Tools/clean_fpga_reports.py" --reports $(1
 
 %.ncd: %_map.ncd %.pt %.p2t %.p3t %.$(FPGA_CONSTRAINTS) $(FPGA_TARGET_DEPS)
 	@$(MSG) "[NCD]" "$(FPGA_TARGET)" "$(subst $(abspath .)/,,$@)"
+	$(V)$(MKDIR) "$(LATTICE_BUILD_DIR)"
 	$(V)$(COPY) "$*.p3t" "$*.p2t" "$*.pt" "$(LATTICE_BUILD_DIR)/"
 	$(V)$(call append,"-log \"reports/$*.log\"\n-o \"reports/$*.csv\"\n-pr \"$*.prf\"","$(LATTICE_BUILD_DIR)/$*.p3t")
 	$(V)$(call process_output,$(LATTICE_WINE) $(LATTICE_MPARTRCE) $(LATTICE_SYNTHESIS_OPTS) -p "$*.p2t" -f "$(LATTICE_BUILD_DIR)/$*.p3t" -tf "$*.pt" "$<" "$@")
