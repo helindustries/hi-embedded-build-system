@@ -6,9 +6,11 @@ FPGA_DFUSUFFIX ?= $(YOSYS_BIN_PATH)/dfu-suffix
 
 IDE ?= sublime
 ifeq ($(strip $(NO_PROCESS_OUTPUT)),yes)
-	processed_output := $(1)
+    process_output := $(1)
 else
-    processed_output := $(shell $(PYTHON) "$(MAKE_INC_PATH)/Tools/process_output.py" -f $(IDE) -c $(1))
+define process_output
+    $(PYTHON) "$(MAKE_INC_PATH)/Tools/process_output.py" -f $(IDE) -- $(1)
+endef
 endif
 
 # Prefer OpenOCD ESP32, as it is compatible with all other platforms as well
