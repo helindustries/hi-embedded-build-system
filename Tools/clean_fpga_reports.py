@@ -7,11 +7,13 @@ def clean_fpga_reports(reports, mrs, temps):
     if reports:
         os.makedirs("reports", exist_ok=True)
         for report in reports:
-            shutil.copy(report, "reports")
+            if os.path.exists(report):
+                shutil.copy(report, "reports")
     if mrs:
         os.makedirs("reports/mr", exist_ok=True)
         for report in mrs:
-            shutil.copy(report, "reports/mr")
+            if os.path.exists(report):
+                shutil.copy(report, "reports/mr")
 
     files = reports
     files.extend(mrs)
