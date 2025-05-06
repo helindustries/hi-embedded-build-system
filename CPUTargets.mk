@@ -1,7 +1,11 @@
 # automatically create lists of the sources and objects
 SOURCES += $(C_FILES) $(CPP_FILES) $(INO_FILES) $(ASM_FILES) $(HEADERS)
+SOURCES += $(DEVICE_CPP_FILES) $(DEVICE_C_FILES) $(DEVICE_ASM_FILES) $(DEVICE_ASM_FILES)
+SOURCES += $(ARDUINO_VARIANT_CPP_FILES) $(ARDUINO_VARIANT_C_FILES) $(ARDUINO_VARIANT_ASM_FILES) $(ARDUINO_VARIANT_ASM_FILES)
 # $(wildcard $(MODULES_PATHS:%,%/*.c) $(MODULES:%,%/*.cpp) $(MODULES:%,%/*.S) $(MODULES:%,%/*.h))
 OBJS += $(C_FILES:%.c=$(BUILD_DIR)/%.o) $(CPP_FILES:%.cpp=$(BUILD_DIR)/%.o) $(INO_FILES:%.ino=$(BUILD_DIR)/%.o) $(ASM_FILES:%.s=$(BUILD_DIR)/%.o)
+OBJS += $(DEVICE_CPP_FILES:$(DEVICES_DIR)/%.cpp=$(BUILD_DIR)/%.o) $(DEVICE_C_FILES:$(DEVICES_DIR)/%.c=$(BUILD_DIR)/%.o) $(DEVICE_ASM_FILES:$(DEVICES_DIR)/%.s=$(BUILD_DIR)/%.o) $(DEVICE_ASM_FILES:$(DEVICES_DIR)/%.S=$(BUILD_DIR)/%.o)
+OBJS += $(ARDUINO_VARIANT_CPP_FILES:$(CORE_VARIANTS_PATH)/%.cpp=$(BUILD_DIR)/%.o) $(ARDUINO_VARIANT_C_FILES:$(CORE_VARIANTS_PATH)/%.c=$(BUILD_DIR)/%.o) $(ARDUINO_VARIANT_ASM_FILES:$(CORE_VARIANTS_PATH)/%.s=$(BUILD_DIR)/%.o) $(ARDUINO_VARIANT_ASM_FILES:$(CORE_VARIANTS_PATH)/%.S=$(BUILD_DIR)/%.o)
 
 # We allow Makefiles to define CPU_*FLAGS, and either override or include IN_*FLAGS and we pass them around, and we
 # then only create the final version of the flags here, not anywere before for clarity
@@ -141,30 +145,60 @@ cfg-cpu: cfg-toolchain --cfg-cpu
 	@$(CFGMSG) "SIZE:" "$(SIZE)"
 	@$(CFGMSG) "OPENOCD:" "$(OPENOCD)"
 
+define compile_c_file
+	@$(MSG) "[$(1)]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$(3))"
+	@$(MKDIR) "$(call path-dirname,"$(2)")"
+	$(V)"$(CC)" -c $(CFLAGS) $(CPPFLAGS) -o "$(2)" "$(3)"
+endef
+define compile_cpp_file
+	@$(MSG) "[$(1)]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$(3))"
+	@$(MKDIR) "$(call path-dirname,"$(2)")"
+	$(V)"$(CXX)" -c $(CXXFLAGS) $(CPPFLAGS) -o "$(2)" "$(3)"
+endef
+define compile_asm_file
+	@$(MSG) "[$(1)]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$(3))"
+	@$(MKDIR) "$(call path-dirname,"$(2)")"
+	$(V)"$(CC)" -c $(ASMFLAGS) $(CPPFLAGS) -o "$(2)" "$(3)"
+endef
+
 $(BUILD_DIR)/%.o: %.c
-	@$(MSG) "[CC]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	@$(MKDIR) "$(call path-dirname,"$@")"
-	$(V)"$(CC)" -c $(CFLAGS) $(CPPFLAGS) -o "$@" "$<"
+	$(call compile_c_file,CC,$@,$<)
+
+$(BUILD_DIR)/$(CPU_DEVICE)/%.o: $(DEVICES_DIR)/$(CPU_DEVICE)/%.c
+	$(call compile_c_file,CC,$@,$<)
+
+$(BUILD_DIR)/$(ARDUINO_VARIANT_NAME)/%.o: $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/%.c
+	$(call compile_c_file,CC,$@,$<)
 
 $(BUILD_DIR)/%.o: %.cpp
-	@$(MSG) "[CXX]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	@$(MKDIR) "$(call path-dirname,"$@")"
-	$(V)"$(CXX)" -c $(CXXFLAGS) $(CPPFLAGS) -o "$@" "$<"
+	$(call compile_cpp_file,CXX,$@,$<)
+
+$(BUILD_DIR)/$(CPU_DEVICE)/%.o: $(DEVICES_DIR)/$(CPU_DEVICE)/%.cpp
+	$(call compile_cpp_file,CXX,$@,$<)
+
+$(BUILD_DIR)/$(ARDUINO_VARIANT_NAME)/%.o: $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/%.cpp
+	$(call compile_cpp_file,CXX,$@,$<)
 
 $(BUILD_DIR)/%.o: %.ino
-	@$(MSG) "[INO]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	@$(MKDIR) "$(call path-dirname,"$@")"
-	$(V)"$(CXX)" -c $(CXXFLAGS) $(CPPFLAGS) -o "$@" -x c++ "$<"
+	$(call compile_cpp_file,INO,$@,$<)
 
 $(BUILD_DIR)/%.o: %.S
-	@$(MSG) "[S]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	@$(MKDIR) "$(call path-dirname,"$@")"
-	$(V)"$(CC)" -c $(ASMFLAGS) $(CPPFLAGS) -o "$@" "$<"
+	$(call compile_asm_file,S,$@,$<)
+
+$(BUILD_DIR)/$(CPU_DEVICE)/%.o: $(DEVICES_DIR)/$(CPU_DEVICE)/%.S
+	$(call compile_asm_file,S,$@,$<)
+
+$(BUILD_DIR)/$(ARDUINO_VARIANT_NAME)/%.o: $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/%.S
+	$(call compile_asm_file,S,$@,$<)
 
 $(BUILD_DIR)/%.o: %.s
-	@$(MSG) "[S]" "$(CPU_TARGET)" "$(subst $(abspath .)/,,$<)"
-	@$(MKDIR) "$(call path-dirname,"$@")"
-	$(V)"$(CC)" -c $(ASMFLAGS) $(CPPFLAGS) -o "$@" "$<"
+	$(call compile_asm_file,S,$@,$<)
+
+$(BUILD_DIR)/$(CPU_DEVICE)/%.o: $(DEVICES_DIR)/$(CPU_DEVICE)/%.s
+	$(call compile_asm_file,S,$@,$<)
+
+$(BUILD_DIR)/$(ARDUINO_VARIANT_NAME)/%.o: $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/%.s
+	$(call compile_asm_file,S,$@,$<)
 
 .PHONY: binary-cpu library-cpu stats-cpu upload-cpu clean-cpu cfg-cpu --cfg-cpu lib%-$(CPU).a.target
 .NOTPARALLEL: cfg-cpu

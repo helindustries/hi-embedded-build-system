@@ -34,10 +34,10 @@ ifneq ($(strip $(DEVICES_DIR)),)
     ASM_FILES := $(filter-out $(DEVICES_DIR)/%,$(ASM_FILES))
 
     HEADERS += $(wildcard $(DEVICES_DIR)/$(CPU_DEVICE)/*.h)
-    CPP_FILES += $(wildcard $(DEVICES_DIR)/$(CPU_DEVICE)/*.cpp)
-    C_FILES += $(wildcard $(DEVICES_DIR)/$(CPU_DEVICE)/*.c)
-    ASM_FILES += $(wildcard $(DEVICES_DIR)/$(CPU_DEVICE)/*.s)
-    ASM_FILES += $(wildcard $(DEVICES_DIR)/$(CPU_DEVICE)/*.S)
+    DEVICE_CPP_FILES += $(wildcard $(DEVICES_DIR)/$(CPU_DEVICE)/*.cpp)
+    DEVICE_C_FILES += $(wildcard $(DEVICES_DIR)/$(CPU_DEVICE)/*.c)
+    DEVICE_ASM_FILES += $(wildcard $(DEVICES_DIR)/$(CPU_DEVICE)/*.s)
+    DEVICE_ASM_FILES += $(wildcard $(DEVICES_DIR)/$(CPU_DEVICE)/*.S)
 
     INCLUDE_PATHS += "$(DEVICES_DIR)/$(CPU_DEVICE)"
 endif
@@ -82,9 +82,10 @@ ifeq ($(strip $(USE_ARDUINO_CORE)),yes)
             LIBRARY_PATHS += "$(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)"
 
             HEADERS += $(wildcard $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/*.h)
-            CPP_FILES += $(wildcard $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/*.cpp)
-            C_FILES += $(wildcard $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/*.c)
-            ASM_FILES += $(wildcard $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/*.s)
+            ARDUINO_VARIANT_CPP_FILES += $(wildcard $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/*.cpp)
+            ARDUINO_VARIANT_C_FILES += $(wildcard $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/*.c)
+            ARDUINO_VARIANT_ASM_FILES += $(wildcard $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/*.s)
+            ARDUINO_VARIANT_ASM_FILES += $(wildcard $(CORE_VARIANTS_PATH)/$(ARDUINO_VARIANT_NAME)/*.S)
         endif
     endif
 endif
